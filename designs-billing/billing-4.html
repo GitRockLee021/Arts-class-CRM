@@ -1,0 +1,59 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>4 · Single gradient strip</title>
+<style>
+  * { box-sizing: border-box; }
+  body { margin: 0; padding: 22px; background: #f7f4fa; color: #fff; font-family: Inter, Arial, sans-serif; }
+  .strip {
+    border-radius: 18px; padding: 20px 26px; position: relative; overflow: hidden;
+    background: linear-gradient(120deg, #241f31 0%, #454059 40%, #6b4fa0 100%);
+    box-shadow: 0 10px 26px rgba(80,70,90,.18);
+  }
+  .strip .deco { position: absolute; right: -40px; top: -50px; width: 160px; height: 160px; border-radius: 50%; background: rgba(255,255,255,.08); }
+  .cells { position: relative; display: grid; grid-template-columns: 1.2fr 1fr .9fr .9fr; gap: 4px; }
+  @media (max-width: 760px) { .cells { grid-template-columns: 1fr 1fr; } }
+  .cell { text-align: center; }
+  .cell + .cell { border-left: 1px solid rgba(255,255,255,.16); }
+  @media (max-width: 760px) { .cell:nth-child(3) { border-left: none; } }
+  .cell .k { font-size: 10.5px; font-weight: 700; letter-spacing: 1.3px; text-transform: uppercase; opacity: .75; }
+  .cell .v { font-size: 28px; font-weight: 800; letter-spacing: -1px; margin-top: 6px; }
+  .cell .v .cur { font-size: .72em; font-weight: 600; opacity: .8; }
+  .cell .s { font-size: 11px; opacity: .72; margin-top: 4px; }
+  .seg { display: flex; height: 9px; border-radius: 99px; overflow: hidden; background: rgba(255,255,255,.2); margin: 10px auto 8px; max-width: 160px; }
+  .seg i { display: block; height: 100%; background: rgba(255,255,255,.95); }
+  .seg i.t2 { background: rgba(255,255,255,.5); }
+  .seg i.t3 { background: rgba(255,255,255,.26); }
+  .leg { display: flex; justify-content: center; gap: 12px; font-size: 10px; opacity: .8; }
+  .leg b { font-weight: 800; }
+</style>
+</head>
+<body>
+  <div class="strip">
+    <div class="deco"></div>
+    <div class="cells">
+      <div class="cell">
+        <div class="k">Collected · Sept</div>
+        <div class="v"><span class="cur">₹</span>7,980</div>
+        <div class="s">14 transactions</div>
+      </div>
+      <div class="cell">
+        <div class="k">Outstanding</div>
+        <div class="v"><span class="cur">₹</span>2,150</div>
+        <div class="s">6 students</div>
+      </div>
+      <div class="cell">
+        <div class="k">Methods</div>
+        <div class="seg"><i style="width:61%"></i><i class="t2" style="width:27%"></i><i class="t3" style="width:12%"></i></div>
+        <div class="leg"><span>UPI <b>₹4,850</b></span><span>Cash <b>₹2,130</b></span></div>
+      </div>
+      <div class="cell">
+        <div class="k">Fee mix</div>
+        <div class="seg"><i style="width:82%"></i><i class="t2" style="width:18%"></i></div>
+        <div class="leg"><span>Course <b>₹6,580</b></span><span>OT <b>₹1,400</b></span></div>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

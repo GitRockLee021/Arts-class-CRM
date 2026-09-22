@@ -1,0 +1,40 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>2 · 4 uniform gradient tiles</title>
+<style>
+  * { box-sizing: border-box; }
+  body { margin: 0; padding: 22px; background: #f7f4fa; color: #fff; font-family: Inter, Arial, sans-serif; }
+  .row { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 14px; }
+  .tile { border-radius: 16px; padding: 16px 18px; position: relative; overflow: hidden; box-shadow: 0 8px 20px rgba(80,70,90,.14); display: flex; flex-direction: column; gap: 2px; }
+  .tile .deco { position: absolute; right: -18px; top: -18px; width: 80px; height: 80px; border-radius: 50%; background: rgba(255,255,255,.14); }
+  .t-get { background: linear-gradient(135deg, #7a5ba8, #9a7cc4); }
+  .t-out { background: linear-gradient(135deg, #d96a5a, #b94444); }
+  .t-met { background: linear-gradient(135deg, #1e7f8e, #3fa9b4); }
+  .t-fee { background: linear-gradient(135deg, #241f31, #454059); }
+  .tile .l { position: relative; font-size: 10px; font-weight: 700; letter-spacing: 1.2px; text-transform: uppercase; opacity: .85; }
+  .tile .v { position: relative; font-size: 27px; font-weight: 800; letter-spacing: -1px; margin-top: 8px; }
+  .tile .v .cur { font-size: .72em; font-weight: 600; opacity: .8; }
+  .tile .s { position: relative; font-size: 11px; opacity: .82; margin-top: 4px; }
+  .seg { position: relative; display: flex; height: 9px; border-radius: 99px; overflow: hidden; margin-top: 12px; background: rgba(255,255,255,.22); }
+  .seg i { display: block; height: 100%; background: rgba(255,255,255,.95); }
+  .leg { position: relative; display: flex; justify-content: space-between; font-size: 10px; opacity: .85; margin-top: 7px; }
+  .leg b { font-weight: 700; }
+</style>
+</head>
+<body>
+  <div class="row">
+    <div class="tile t-get"><div class="deco"></div><span class="l">Collected · Sept</span><div class="v"><span class="cur">₹</span>7,980</div><span class="s">14 transactions</span></div>
+    <div class="tile t-out"><div class="deco"></div><span class="l">Outstanding</span><div class="v"><span class="cur">₹</span>2,150</div><span class="s">6 students</span></div>
+    <div class="tile t-met"><div class="deco"></div><span class="l">Methods</span>
+      <div class="seg"><i style="width:61%"></i><i style="width:27%;background:rgba(255,255,255,.45)"></i><i style="width:12%;background:rgba(255,255,255,.22)"></i></div>
+      <div class="leg"><span>UPI ₹4,850</span><span>8</span></div>
+    </div>
+    <div class="tile t-fee"><div class="deco"></div><span class="l">Fee mix</span>
+      <div class="seg"><i style="width:82%"></i><i style="width:18%;background:rgba(255,255,255,.45)"></i></div>
+      <div class="leg"><span>Course ₹6,580</span><span>ℹ One-time ₹1,400</span></div>
+    </div>
+  </div>
+</body>
+</html>

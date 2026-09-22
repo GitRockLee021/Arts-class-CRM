@@ -1,0 +1,119 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Students page — possible cards</title>
+<style>
+  * { box-sizing: border-box; }
+  body { margin: 0; padding: 34px 26px; background: #f7f4fa; color: #2f2a36; font-family: Inter, Arial, sans-serif; }
+  h1 { margin: 0 0 4px; font-size: 21px; }
+  p.muted { color: #8b8590; font-size: 13.5px; margin: 0 0 8px; max-width: 760px; }
+  h2 { font-size: 13px; margin: 28px 0 12px; color: #6b4fa0; letter-spacing: .4px; }
+  h2 .n { color: #b5adc0; margin-right: 8px; font-weight: 800; }
+  .menu { display: grid; grid-template-columns: repeat(auto-fill, minmax(190px, 1fr)); gap: 15px; }
+  .menu { margin-bottom: 6px; }
+
+  .tile {
+    border-radius: 16px; padding: 14px 16px; color: #fff; box-shadow: 0 8px 20px rgba(80,70,90,.14);
+    position: relative; overflow: hidden; min-height: 96px;
+    display: flex; flex-direction: column; justify-content: space-between;
+    cursor: pointer; transition: transform .12s ease, box-shadow .12s ease;
+  }
+  .tile:hover { transform: translateY(-2px); box-shadow: 0 10px 24px rgba(80,70,90,.2); }
+  .tile .deco { position: absolute; right: -18px; top: -18px; width: 78px; height: 78px; border-radius: 50%; background: rgba(255,255,255,.14); }
+  .tile .l { position: relative; font-size: 10px; font-weight: 700; letter-spacing: 1.2px; text-transform: uppercase; opacity: .85; }
+  .tile .n { position: relative; font-size: 27px; font-weight: 800; letter-spacing: -1px; line-height: 1; }
+  .tile .n .cur { font-size: .7em; font-weight: 600; opacity: .8; }
+  .tile .s { position: relative; font-size: 11px; opacity: .8; margin-top: 6px; }
+
+  .t-dark { background: linear-gradient(135deg, #241f31, #454059); }
+  .t-green { background: linear-gradient(135deg, #2f8f6b, #50a886); }
+  .t-gray { background: linear-gradient(135deg, #5b6570, #7e8892); }
+  .t-red { background: linear-gradient(135deg, #d96a5a, #b94444); }
+  .t-purple { background: linear-gradient(135deg, #6b4fa0, #9a7cc4); }
+  .t-teal { background: linear-gradient(135deg, #1e7f8e, #3fa9b4); }
+  .t-blue { background: linear-gradient(135deg, #3a62c4, #6d8be0); }
+  .t-amber { background: linear-gradient(135deg, #c penal, #e0a13a); }
+  .t-amber { background: linear-gradient(135deg, #c8932e, #e0a13a); }
+
+  .group {
+    background: #fff; border: 1px solid #e4dfec; border-radius: 16px; padding: 18px;
+    box-shadow: 0 4px 14px rgba(80,70,90,.05);
+  }
+  .group .title { font-size: 11.5px; font-weight: 800; letter-spacing: 1.2px; text-transform: uppercase; color: #8b8590; margin-bottom: 14px; }
+  .row { display: grid; grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); gap: 14px; }
+  .note { margin-top: 20px; font-size: 12.5px; color: #8b8590; }
+  .note code { background: #ede6f5; color: #60438c; padding: 1px 6px; border-radius: 6px; font-size: 11.5px; }
+</style>
+</head>
+<body>
+  <h1>Students page — the cards you can show</h1>
+  <p class="muted">Everything here is computable from your existing data (students · enrollments · courses · batches · payments). Hover to feel the tiles. Sample values are illustrative.</p>
+
+  <h2>Menu of individual cards</h2>
+  <div class="menu">
+    <div class="tile t-dark"><div class="deco"></div><div class="l">Total students</div><div class="n">32</div><div class="s">all time</div></div>
+    <div class="tile t-green"><div class="deco"></div><div class="l">Active</div><div class="n">27</div><div class="s">84% of total</div></div>
+    <div class="tile t-gray"><div class="deco"></div><div class="l">Inactive / left</div><div class="n">5</div><div class="s">16% of total</div></div>
+    <div class="tile t-blue"><div class="deco"></div><div class="l">New this month</div><div class="n">3</div><div class="s">joined in Sept 2026</div></div>
+    <div class="tile t-amber"><div class="deco"></div><div class="l">Under 18</div><div class="n">21</div><div class="s">of 32 · min age 4</div></div>
+    <div class="tile t-teal"><div class="deco"></div><div class="l">Avg age</div><div class="n">14.5</div><div class="s">min 4 · max 38</div></div>
+    <div class="tile t-purple"><div class="deco"></div><div class="l">In a batch</div><div class="n">24</div><div class="s">assigned to classes</div></div>
+    <div class="tile t-gray"><div class="deco"></div><div class="l">Without a batch</div><div class="n">8</div><div class="s">need scheduling</div></div>
+    <div class="tile t-purple"><div class="deco"></div><div class="l">Active levels</div><div class="n">4</div><div class="s">Varnam · Vidhai · …</div></div>
+    <div class="tile t-red"><div class="deco"></div><div class="l">Outstanding dues</div><div class="n"><span class="cur">₹</span>2,150</div><div class="s">6 students with dues</div></div>
+    <div class="tile t-red"><div class="deco"></div><div class="l">Overdue</div><div class="n"><span class="cur">₹</span>1,250</div><div class="s">3 students · oldest 9d</div></div>
+    <div class="tile t-green"><div class="deco"></div><div class="l">Collected this month</div><div class="n"><span class="cur">₹</span>5,600</div><div class="s">from 18 students</div></div>
+  </div>
+
+  <h2>Composed rows you could land on</h2>
+
+  <div class="group">
+    <div class="title">Option 1 · Status — who's in the class</div>
+    <div class="row">
+      <div class="tile t-dark"><div class="deco"></div><div class="l">Total students</div><div class="n">32</div><div class="s">all time</div></div>
+      <div class="tile t-green"><div class="deco"></div><div class="l">Active</div><div class="n">27</div><div class="s">84% of total</div></div>
+      <div class="tile t-gray"><div class="deco"></div><div class="l">Inactive / left</div><div class="n">5</div><div class="s">16% of total</div></div>
+      <div class="tile t-blue"><div class="deco"></div><div class="l">New this month</div><div class="n">3</div><div class="s">joined in Sept 2026</div></div>
+    </div>
+  </div>
+
+  <div class="group" style="margin-top:16px">
+    <div class="title">Option 2 · Money — who owes</div>
+    <div class="row">
+      <div class="tile t-purple"><div class="deco"></div><div class="l">Total students</div><div class="n">32</div><div class="s">all time</div></div>
+      <div class="tile t-red"><div class="deco"></div><div class="l">Outstanding dues</div><div class="n"><span class="cur">₹</span>2,150</div><div class="s">6 students with dues</div></div>
+      <div class="tile t-red"><div class="deco"></div><div class="l">Overdue</div><div class="n"><span class="cur">₹</span>1,250</div><div class="s">3 students · oldest 9d</div></div>
+      <div class="tile t-green"><div class="deco"></div><div class="l">Collected this month</div><div class="n"><span class="cur">₹</span>5,600</div><div class="s">from 18 students</div></div>
+    </div>
+  </div>
+
+  <div class="group" style="margin-top:16px">
+    <div class="title">Option 3 · Structure — batches & age</div>
+    <div class="row">
+      <div class="tile t-dark"><div class="deco"></div><div class="l">Total students</div><div class="n">32</div><div class="s">all time</div></div>
+      <div class="tile t-purple"><div class="deco"></div><div class="l">In a batch</div><div class="n">24</div><div class="s">assigned to classes</div></div>
+      <div class="tile t-gray"><div class="deco"></div><div class="l">Without a batch</div><div class="n">8</div><div class="s">need scheduling</div></div>
+      <div class="tile t-teal"><div class="deco"></div><div class="l">Avg age</div><div class="n">14.5</div><div class="s">min 4 · max 38</div></div>
+    </div>
+  </div>
+
+  <div class="group" style="margin-top:16px">
+    <div class="title">Option 4 · Full mix (two rows)</div>
+    <div class="row">
+      <div class="tile t-dark"><div class="deco"></div><div class="l">Total students</div><div class="n">32</div><div class="s">all time</div></div>
+      <div class="tile t-green"><div class="deco"></div><div class="l">Active</div><div class="n">27</div><div class="s">84% of total</div></div>
+      <div class="tile t-blue"><div class="deco"></div><div class="l">New this month</div><div class="n">3</div><div class="s">joined in Sept</div></div>
+      <div class="tile t-gray"><div class="deco"></div><div class="l">Without a batch</div><div class="n">8</div><div class="s">need scheduling</div></div>
+    </div>
+    <div class="row" style="margin-top:14px">
+      <div class="tile t-red"><div class="deco"></div><div class="l">Outstanding dues</div><div class="n"><span class="cur">₹</span>2,150</div><div class="s">6 students with dues</div></div>
+      <div class="tile t-red"><div class="deco"></div><div class="l">Overdue</div><div class="n"><span class="cur">₹</span>1,250</div><div class="s">3 students · oldest 9d</div></div>
+      <div class="tile t-teal"><div class="deco"></div><div class="l">Avg age</div><div class="n">14.5</div><div class="s">min 4 · max 38</div></div>
+      <div class="tile t-purple"><div class="deco"></div><div class="l">Active levels</div><div class="n">4</div><div class="s">Varnam…Kani</div></div>
+    </div>
+  </div>
+
+  <p class="note">Legend: <code>dark</code> total · <code>green</code> positive · <code>gray</code> neutral/fill-in · <code>red</code> money owed · <code>blue</code> growth · <code>teal</code> age/demography · <code>purple</code> structure · <code>amber</code> under-18. Tell me which cards (from the menu) should be on the page, and I'll wire the real counts in.</p>
+</body>
+</html>

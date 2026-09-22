@@ -1,0 +1,36 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>3 · Gradient strip</title>
+<style>
+  * { box-sizing: border-box; }
+  body { margin: 0; padding: 24px; background: #f7f4fa; color: #fff; font-family: Inter, Arial, sans-serif; }
+  .strip {
+    border-radius: 18px; padding: 18px 26px; position: relative; overflow: hidden;
+    background: linear-gradient(120deg, #241f31, #454059 55%, #6b4fa0);
+    box-shadow: 0 10px 26px rgba(80,70,90,.18);
+    display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px;
+  }
+  @media (max-width: 720px) { .strip { grid-template-columns: repeat(2, 1fr); gap: 14px; } }
+  .strip .deco { position: absolute; right: -45px; top: -45px; width: 160px; height: 160px; border-radius: 50%; background: rgba(255,255,255,.08); }
+  .cell { text-align: center; position: relative; }
+  .cell + .cell { border-left: 1px solid rgba(255,255,255,.18); }
+  @media (max-width: 720px) { .cell:nth-child(3) { border-left: none; } }
+  .cell .k { font-size: 10.5px; font-weight: 700; letter-spacing: 1.4px; text-transform: uppercase; opacity: .78; }
+  .cell .v { font-size: 30px; font-weight: 800; letter-spacing: -1px; margin-top: 4px; line-height: 1; }
+  .cell .v small { font-size: .72em; font-weight: 600; opacity: .8; }
+  .cell .s { font-size: 11px; opacity: .72; margin-top: 5px; }
+  .cell.due { background: rgba(255,255,255,.1); border-radius: 12px; margin: -6px 0; padding: 6px 8px; }
+</style>
+</head>
+<body>
+  <div class="strip">
+    <div class="deco"></div>
+    <div class="cell"><div class="k">Total</div><div class="v">32</div><div class="s">all time</div></div>
+    <div class="cell"><div class="k">Active</div><div class="v">27</div><div class="s">enrolled now</div></div>
+    <div class="cell"><div class="k">Inactive</div><div class="v">5</div><div class="s">paused</div></div>
+    <div class="cell due"><div class="k">Outstanding</div><div class="v">₹2,150</div><div class="s">6 students with dues</div></div>
+  </div>
+</body>
+</html>

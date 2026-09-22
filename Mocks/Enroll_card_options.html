@@ -1,0 +1,432 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Enrollment card — choose your details</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Syne:wght@600;700;800&display=swap');
+
+:root {
+  --bg: #f7f4fa; --surface: #fffdf8; --surface-2: #f1ebf3;
+  --ink: #2f2a36; --muted: #8b8590; --line: #e4dfec;
+  --brand: #7a5ba8; --brand-dark: #60438c; --brand-2: #c09ad8; --brand-soft: #ede6f5;
+  --ok: #5e7e8c; --ok-soft: #e7edf0;
+  --warn: #b0893f; --warn-soft: #f3edde;
+  --bad: #a8507e; --bad-soft: #f4e6ee;
+  --radius: 14px;
+  --shadow: 0 2px 3px rgba(80,70,90,.06), 0 10px 26px rgba(80,70,90,.08);
+  --font-body: 'Inter', Arial, sans-serif; --font-accent: 'Syne', 'Inter', sans-serif;
+}
+* { box-sizing: border-box; }
+body { margin: 0; background: var(--bg); background-image: linear-gradient(160deg, var(--bg), #e9e3f0); color: var(--ink); font-family: var(--font-body); font-size: 15px; -webkit-font-smoothing: antialiased; }
+
+.wrap { max-width: 1180px; margin: 0 auto; padding: 26px 22px 90px; }
+h1 { font-family: var(--font-accent); font-size: 26px; margin: 0 0 6px; font-weight: 700; }
+.sub { color: var(--muted); font-size: 14px; margin: 0 0 22px; max-width: 760px; }
+.sub b { color: var(--ink); }
+
+.var-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; }
+@media (max-width: 1020px) { .var-grid { grid-template-columns: 1fr; } }
+
+.varbox { background: var(--surface); border: 1px solid var(--line); border-radius: 26px 18px 28px 20px / 18px 26px 16px 22px; padding: 16px; box-shadow: var(--shadow); }
+.var-tag { display: inline-flex; align-items: center; gap: 6px; font-family: var(--font-accent); font-weight: 700; font-size: 13px; color: var(--brand-dark); margin-bottom: 4px; }
+.var-tag .chip { background: var(--brand-soft); border-radius: 10px 7px 11px 8px / 8px 10px 7px 11px; padding: 3px 10px; }
+.var-desc { color: var(--muted); font-size: 12.5px; margin: 0 0 12px; }
+
+/* ---- enrollment card chrome (same in every variant) ---- */
+.enroll-card { border: 1px solid var(--line); border-radius: 20px 14px 22px 16px / 14px 20px 12px 18px; background: var(--surface); padding: 14px; }
+.enroll-head { display: flex; align-items: flex-start; justify-content: space-between; gap: 10px; margin-bottom: 12px; }
+.course { display: flex; gap: 10px; align-items: flex-start; }
+.monogram { width: 34px; height: 34px; border-radius: 45% 55% 50% 50% / 55% 45% 65% 35%; background: linear-gradient(135deg, var(--brand), var(--brand-2)); color: #fff; display: grid; place-items: center; font-weight: 800; font-family: var(--font-accent); font-size: 15px; flex: none; }
+.course h4 { margin: 0 0 2px; font-size: 15px; font-weight: 700; font-family: var(--font-accent); }
+.course p { margin: 0; color: var(--muted); font-size: 12px; }
+.head-side { display: flex; flex-direction: column; align-items: flex-end; gap: 6px; }
+.enrolled { color: var(--muted); font-size: 11.5px; }
+.status { display: inline-flex; align-items: center; gap: 6px; font-size: 12px; font-weight: 600; color: var(--ok); background: var(--ok-soft); padding: 3px 10px; border-radius: 11px 8px 12px 9px / 8px 11px 7px 10px; }
+.status .dot { width: 6px; height: 6px; border-radius: 50%; background: currentColor; }
+
+.enroll-body { display: flex; gap: 12px; align-items: stretch; }
+.pay-main { flex: 1 1 auto; min-width: 0; border-top: 1px dashed var(--line); padding-top: 10px; }
+.pay-main h6 { margin: 0 0 6px; color: var(--muted); font-size: 11px; letter-spacing: .04em; text-transform: uppercase; }
+.paylist { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; }
+.paylist li { display: flex; align-items: center; gap: 10px; padding: 5px 0; border-bottom: 1px solid var(--line); font-size: 12.5px; }
+.paylist li:last-child { border-bottom: none; }
+.paylist li span:first-child { width: 70px; color: var(--ink); }
+.paylist li strong { margin-left: auto; font-variant-numeric: tabular-nums; }
+.paylist li em { font-style: normal; color: var(--muted); font-size: 11.5px; width: 46px; text-align: right; }
+.mini-x { color: var(--muted); background: transparent; border: none; cursor: pointer; font-size: 14px; line-height: 1; padding: 2px 4px; }
+
+/* ---- detail panels ---- */
+.panel { width: 208px; flex: none; border: 1px solid var(--line); border-radius: 16px 11px 17px 12px / 12px 16px 10px 14px; background: var(--surface-2); padding: 10px 12px; }
+.panel-label { margin: 0 0 8px; color: var(--muted); font-size: 10.5px; letter-spacing: .05em; text-transform: uppercase; }
+.prow { display: flex; align-items: baseline; justify-content: space-between; gap: 8px; font-size: 12.5px; padding: 4px 0; }
+.prow span { color: var(--muted); }
+.prow strong { font-variant-numeric: tabular-nums; }
+.prow+ .prow { border-top: 1px dashed var(--line); }
+
+.bigdue { font-family: var(--font-accent); font-size: 19px; font-weight: 800; }
+.bigdue.ok { color: var(--ok); }
+.bigdue.bad { color: var(--bad); }
+.bigdue-sub { display: block; font-size: 11.5px; color: var(--muted); font-family: var(--font-body); font-weight: 500; }
+
+.flag { display: inline-flex; align-items: center; gap: 5px; font-size: 11.5px; font-weight: 600; color: var(--bad); margin-top: 8px; }
+.flag.warn { color: var(--warn); }
+.flag.ok { color: var(--ok); }
+
+/* dots */
+.dots { display: flex; gap: 5px; justify-content: space-between; margin: 2px 0 8px; }
+.dots .dotw { display: flex; flex-direction: column; align-items: center; gap: 3px; }
+.dots i { width: 15px; height: 15px; border-radius: 50%; }
+.dots b { font-size: 9.5px; font-weight: 600; color: var(--muted); }
+.d-dot-p { background: var(--ok); }
+.d-dot-l { background: var(--warn); }
+.d-dot-u { background: var(--bad); }
+.d-dot-pend { background: transparent; border: 2px dashed var(--line); }
+.dotlegend { display: flex; flex-wrap: wrap; gap: 8px; font-size: 10.5px; color: var(--muted); }
+.dotlegend i { display: inline-block; width: 9px; height: 9px; border-radius: 50%; margin-right: 3px; vertical-align: -1px; }
+
+/* tiles 2x2 */
+.tiles { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; margin-top: 8px; }
+.tile { background: var(--surface); border: 1px solid var(--line); border-radius: 12px 8px 13px 9px / 8px 12px 8px 10px; padding: 8px 9px; }
+.tile .lbl { color: var(--muted); font-size: 10px; letter-spacing: .04em; text-transform: uppercase; display: block; margin-bottom: 2px; }
+.tile .val { font-size: 13px; font-weight: 700; font-variant-numeric: tabular-nums; }
+.tile .val sub { font-size: 10px; color: var(--muted); font-weight: 500; }
+
+/* strip (variant E single line) */
+.strip { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; font-size: 12.5px; color: var(--muted); padding-top: 8px; border-top: 1px dashed var(--line); }
+.chip-mini { border-radius: 10px 7px 11px 8px / 8px 10px 7px 11px; padding: 3px 9px; font-weight: 600; font-size: 12px; }
+.chip-mini.bad { background: var(--bad-soft); color: var(--bad); }
+.chip-mini.ok { background: var(--ok-soft); color: var(--ok); }
+.chip-mini.warn { background: var(--warn-soft); color: var(--warn); }
+.strip b { color: var(--ink); }
+
+/* component library */
+.lib { margin-top: 26px; }
+.lib h2 { font-family: var(--font-accent); font-size: 19px; margin: 0 0 4px; font-weight: 700; }
+.lib p { margin: 0 0 14px; color: var(--muted); font-size: 13px; }
+.lib-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 14px; }
+.lib-item { background: var(--surface); border: 1px solid var(--line); border-radius: 20px 14px 22px 16px / 14px 20px 12px 18px; padding: 14px; box-shadow: var(--shadow); }
+.lib-item h5 { margin: 0 0 8px; font-size: 13.5px; font-family: var(--font-accent); }
+.lib-item h5 em { font-style: normal; color: var(--muted); font-size: 11.5px; font-family: var(--font-body); font-weight: 500; display: block; margin-top: 2px; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>Enrollment card — detail options</h1>
+  <p class="sub">Same enrollment, six ways. Pick the panel that feels right (A–D), or mix individual blocks from the <b>component library</b> below. Every datum here already exists in the app — no new storage needed.</p>
+
+  <div class="var-grid">
+
+    <!-- A: Billing head -->
+    <div class="varbox">
+      <div class="var-tag"><span class="chip">A — Billing head</span></div>
+      <p class="var-desc">One hero number + three quiet rows. Best when a student owes you money.</p>
+      <div class="enroll-card">
+        <div class="enroll-head">
+          <div class="course">
+            <span class="monogram">AS</span>
+            <div>
+              <h4>Watercolor Painting</h4>
+              <p>Weekend Evening · Sat &amp; Sun · 5:00 PM</p>
+            </div>
+          </div>
+          <div class="head-side">
+            <span class="status"><span class="dot"></span>Active</span>
+            <span class="enrolled">Enrolled: 12 Mar 2026</span>
+          </div>
+        </div>
+        <div class="enroll-body">
+          <div class="pay-main">
+            <h6>Payments</h6>
+            <ul class="paylist">
+              <li><span>02 Sep</span><strong>₹2,000</strong><em>UPI</em></li>
+              <li><span>02 Aug</span><strong>₹2,000</strong><em>Cash</em></li>
+              <li><span>03 Jul</span><strong>₹1,800</strong><em>UPI</em></li>
+              <li><span>01 Jun</span><strong>₹2,000</strong><em>UPI</em></li>
+              <li><span>04 May</span><strong>₹2,000</strong><em>Cash</em></li>
+            </ul>
+          </div>
+          <div class="panel">
+            <p class="panel-label">Billing</p>
+            <div class="bigdue bad">₹2,000 due
+              <span class="bigdue-sub">Sep cycle · 12d overdue</span>
+            </div>
+            <div class="prow"><span>Next due</span><strong>05 Oct</strong></div>
+            <div class="prow"><span>Base fee</span><strong>₹2,000<sub style="font-size:10px;color:var(--muted);">/mo</sub></strong></div>
+            <div class="prow"><span>Last payment</span><strong>02 Sep · UPI</strong></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- B: Regularity dots -->
+    <div class="varbox">
+      <div class="var-tag"><span class="chip">B — Regularity dots</span></div>
+      <p class="var-desc">Last 8 months at a glance — is this family regular? One squint answers it.</p>
+      <div class="enroll-card">
+        <div class="enroll-head">
+          <div class="course">
+            <span class="monogram">AS</span>
+            <div>
+              <h4>Watercolor Painting</h4>
+              <p>Weekend Evening · Sat &amp; Sun · 5:00 PM</p>
+            </div>
+          </div>
+          <div class="head-side">
+            <span class="status"><span class="dot"></span>Active</span>
+            <span class="enrolled">Enrolled: 12 Mar 2026</span>
+          </div>
+        </div>
+        <div class="enroll-body">
+          <div class="pay-main">
+            <h6>Payments</h6>
+            <ul class="paylist">
+              <li><span>02 Sep</span><strong>₹2,000</strong><em>UPI</em></li>
+              <li><span>02 Aug</span><strong>₹2,000</strong><em>Cash</em></li>
+              <li><span>03 Jul</span><strong>₹1,800</strong><em>UPI</em></li>
+              <li><span>01 Jun</span><strong>₹2,000</strong><em>UPI</em></li>
+              <li><span>04 May</span><strong>₹2,000</strong><em>Cash</em></li>
+            </ul>
+          </div>
+          <div class="panel">
+            <p class="panel-label">Payment regularity — last 8 months</p>
+            <div class="dots">
+              <div class="dotw"><i class="d-dot-p"></i><b>Feb</b></div>
+              <div class="dotw"><i class="d-dot-p"></i><b>Mar</b></div>
+              <div class="dotw"><i class="d-dot-p"></i><b>Apr</b></div>
+              <div class="dotw"><i class="d-dot-l"></i><b>May</b></div>
+              <div class="dotw"><i class="d-dot-p"></i><b>Jun</b></div>
+              <div class="dotw"><i class="d-dot-p"></i><b>Jul</b></div>
+              <div class="dotw"><i class="d-dot-l"></i><b>Aug</b></div>
+              <div class="dotw"><i class="d-dot-pend"></i><b>Sep</b></div>
+            </div>
+            <div class="dotlegend">
+              <span><i class="d-dot-p"></i>paid</span>
+              <span><i class="d-dot-l"></i>late</span>
+              <span><i class="d-dot-u"></i>unpaid</span>
+              <span><i class="d-dot-pend"></i>this month</span>
+            </div>
+            <div style="border-top:1px dashed var(--line);margin-top:8px;padding-top:6px;">
+              <span class="flag warn">bell Reminder sent 3d ago</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- C: Fee health -->
+    <div class="varbox">
+      <div class="var-tag"><span class="chip">C — Fee health</span></div>
+      <p class="var-desc">The accounting view — totals + overdueness, no fluff.</p>
+      <div class="enroll-card">
+        <div class="enroll-head">
+          <div class="course">
+            <span class="monogram">AS</span>
+            <div>
+              <h4>Watercolor Painting</h4>
+              <p>Weekend Evening · Sat &amp; Sun · 5:00 PM</p>
+            </div>
+          </div>
+          <div class="head-side">
+            <span class="status"><span class="dot"></span>Active</span>
+            <span class="enrolled">Enrolled: 12 Mar 2026</span>
+          </div>
+        </div>
+        <div class="enroll-body">
+          <div class="pay-main">
+            <h6>Payments</h6>
+            <ul class="paylist">
+              <li><span>02 Sep</span><strong>₹2,000</strong><em>UPI</em></li>
+              <li><span>02 Aug</span><strong>₹2,000</strong><em>Cash</em></li>
+              <li><span>03 Jul</span><strong>₹1,800</strong><em>UPI</em></li>
+              <li><span>01 Jun</span><strong>₹2,000</strong><em>UPI</em></li>
+              <li><span>04 May</span><strong>₹2,000</strong><em>Cash</em></li>
+            </ul>
+          </div>
+          <div class="panel">
+            <p class="panel-label">Fee health</p>
+            <div class="flag" style="margin-top:0;">bell ₹2,000 overdue · 12d</div>
+            <div class="prow"><span>Paid so far</span><strong>₹9,800</strong></div>
+            <div class="prow"><span>Expected</span><strong>₹12,000</strong></div>
+            <div class="prow"><span>Base fee</span><strong>₹2,000<sub style="font-size:10px;color:var(--muted);">/mo</sub></strong></div>
+            <div class="prow" style="border-top:1px solid var(--line);"><span>Reminder</span><strong class="flag warn" style="margin-top:0;">3d ago</strong></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- D: 2x2 tiles -->
+    <div class="varbox">
+      <div class="var-tag"><span class="chip">D — Stat tiles</span></div>
+      <p class="var-desc">Grid of four — scannable, calm, works great alongside the timeline.</p>
+      <div class="enroll-card">
+        <div class="enroll-head">
+          <div class="course">
+            <span class="monogram">AS</span>
+            <div>
+              <h4>Watercolor Painting</h4>
+              <p>Weekend Evening · Sat &amp; Sun · 5:00 PM</p>
+            </div>
+          </div>
+          <div class="head-side">
+            <span class="status"><span class="dot"></span>Active</span>
+            <span class="enrolled">Enrolled: 12 Mar 2026</span>
+          </div>
+        </div>
+        <div class="enroll-body">
+          <div class="pay-main">
+            <h6>Payments</h6>
+            <ul class="paylist">
+              <li><span>02 Sep</span><strong>₹2,000</strong><em>UPI</em></li>
+              <li><span>02 Aug</span><strong>₹2,000</strong><em>Cash</em></li>
+              <li><span>03 Jul</span><strong>₹1,800</strong><em>UPI</em></li>
+              <li><span>01 Jun</span><strong>₹2,000</strong><em>UPI</em></li>
+              <li><span>04 May</span><strong>₹2,000</strong><em>Cash</em></li>
+            </ul>
+          </div>
+          <div class="panel" style="width:auto;flex:1;">
+            <p class="panel-label">Quick stats</p>
+            <div class="tiles">
+              <div class="tile"><span class="lbl">Cycle</span><span class="val" style="color:var(--bad);">Due</span></div>
+              <div class="tile"><span class="lbl">Next due</span><span class="val">05 Oct</span></div>
+              <div class="tile"><span class="lbl">Last pay</span><span class="val">₹2,000<sub>02 Sep · UPI</sub></span></div>
+              <div class="tile"><span class="lbl">Tenure</span><span class="val">6 mo<sub>since Mar</sub></span></div>
+            </div>
+            <p class="panel-label" style="margin-top:10px;">Reminder</p>
+            <span class="flag warn">bell Sent 3d ago</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- E: minimal strip (current) -->
+    <div class="varbox">
+      <div class="var-tag"><span class="chip">E — Minimal strip <em style="color:var(--muted);font-weight:500;">(today's build)</em></span></div>
+      <p class="var-desc">No side panel — one compact line. Shortest card, least informative.</p>
+      <div class="enroll-card">
+        <div class="enroll-head">
+          <div class="course">
+            <span class="monogram">AS</span>
+            <div>
+              <h4>Watercolor Painting</h4>
+              <p>Weekend Evening · Sat &amp; Sun · 5:00 PM</p>
+            </div>
+          </div>
+          <div class="head-side">
+            <span class="status"><span class="dot"></span>Active</span>
+            <span class="enrolled">Enrolled: 12 Mar 2026</span>
+          </div>
+        </div>
+        <div class="strip">
+          <span class="chip-mini bad">₹2,000 due</span>
+          <span>Base fee <b>₹2,000</b>/mo</span>
+          <span>·</span>
+          <span>Paid so far <b>₹9,800</b></span>
+          <span class="flag" style="margin-top:0;">bell 12d overdue</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- F: empty / cleared state -->
+    <div class="varbox">
+      <div class="var-tag"><span class="chip">F — Cleared state</span></div>
+      <p class="var-desc">The same panels when the student is current — the design doesn't just handle red.</p>
+      <div class="enroll-card">
+        <div class="enroll-head">
+          <div class="course">
+            <span class="monogram">RS</span>
+            <div>
+              <h4>Portrait Studio</h4>
+              <p>Weekday Morning · Mon · Wed · Fri · 9:30 AM</p>
+            </div>
+          </div>
+          <div class="head-side">
+            <span class="status"><span class="dot"></span>Active</span>
+            <span class="enrolled">Enrolled: 20 Jan 2026</span>
+          </div>
+        </div>
+        <div class="enroll-body">
+          <div class="pay-main">
+            <h6>Payments</h6>
+            <ul class="paylist">
+              <li><span>05 Sep</span><strong>₹2,400</strong><em>UPI</em></li>
+              <li><span>05 Aug</span><strong>₹2,400</strong><em>UPI</em></li>
+              <li><span>05 Jul</span><strong>₹2,400</strong><em>Cash</em></li>
+            </ul>
+          </div>
+          <div class="panel">
+            <p class="panel-label">Billing</p>
+            <div class="bigdue ok">Cleared
+              <span class="bigdue-sub">Sep paid on 05 Sep · UPI</span>
+            </div>
+            <div class="prow"><span>Next due</span><strong>05 Oct</strong></div>
+            <div class="prow"><span>Base fee</span><strong>₹2,400<sub style="font-size:10px;color:var(--muted);">/mo</sub></strong></div>
+            <div class="dots" style="margin-bottom:0;">
+              <div class="dotw"><i class="d-dot-p"></i><b>Mar</b></div>
+              <div class="dotw"><i class="d-dot-p"></i><b>Apr</b></div>
+              <div class="dotw"><i class="d-dot-p"></i><b>May</b></div>
+              <div class="dotw"><i class="d-dot-p"></i><b>Jun</b></div>
+              <div class="dotw"><i class="d-dot-p"></i><b>Jul</b></div>
+              <div class="dotw"><i class="d-dot-p"></i><b>Aug</b></div>
+              <div class="dotw"><i class="d-dot-p"></i><b>Sep</b></div>
+              <div class="dotw"><i class="d-dot-pend"></i><b>Oct</b></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="lib">
+    <h2>Component library — mix &amp; match</h2>
+    <p>The atomic blocks. Anything here can be combined in any configuration above.</p>
+    <div class="lib-grid">
+      <div class="lib-item">
+        <h5>Cycle chip<em>current month's status</em></h5>
+        <div style="display:flex;gap:6px;flex-wrap:wrap;">
+          <span class="chip-mini ok">Cleared</span>
+          <span class="chip-mini warn">Due soon</span>
+          <span class="chip-mini bad">₹2,000 due</span>
+        </div>
+      </div>
+      <div class="lib-item">
+        <h5>Regularity dots<em>last 8 months, tooltip shows date + amount</em></h5>
+        <div class="dots">
+          <div class="dotw"><i class="d-dot-p"></i><b>Feb</b></div>
+          <div class="dotw"><i class="d-dot-p"></i><b>Mar</b></div>
+          <div class="dotw"><i class="d-dot-l"></i><b>Apr</b></div>
+          <div class="dotw"><i class="d-dot-u"></i><b>May</b></div>
+          <div class="dotw"><i class="d-dot-p"></i><b>Jun</b></div>
+          <div class="dotw"><i class="d-dot-p"></i><b>Jul</b></div>
+          <div class="dotw"><i class="d-dot-pend"></i><b>Aug</b></div>
+          <div class="dotw"><i class="d-dot-pend"></i><b>Sep</b></div>
+        </div>
+      </div>
+      <div class="lib-item">
+        <h5>Next installment<em>amount + expected date</em></h5>
+        <div class="tiles" style="grid-template-columns:1fr;">
+          <div class="tile"><span class="lbl">Next installment</span><span class="val">₹2,000 <sub style="font-size:11px;">due 05 Oct</sub></span></div>
+        </div>
+      </div>
+      <div class="lib-item">
+        <h5>Last payment<em>date · amount · method</em></h5>
+        <div class="prow"><span>Last payment</span><strong>02 Sep · ₹2,000 · UPI</strong></div>
+      </div>
+      <div class="lib-item">
+        <h5>Reminder state<em>pulls from reminder_logs</em></h5>
+        <span class="flag ok">bell Sent 3d ago</span>
+        <span class="flag">bell No reminder yet — Send?</span>
+      </div>
+      <div class="lib-item">
+        <h5>Tenure<em>computed from start date</em></h5>
+        <div class="tiles" style="grid-template-columns:1fr;">
+          <div class="tile"><span class="lbl">Enrolled</span><span class="val">6 mo <sub style="font-size:11px;">since 12 Mar 2026</sub></span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+</body>
+</html>

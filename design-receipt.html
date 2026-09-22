@@ -1,0 +1,272 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Payment Receipt — Pravaha Art Space</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Syne:wght@600;700;800&display=swap');
+
+:root {
+  --bg: #f7f4fa; --bg-2: #e9e3f0; --surface: #fffdf8; --surface-2: #f1ebf3;
+  --ink: #2f2a36; --muted: #8b8590; --line: #e4dfec;
+  --brand: #7a5ba8; --brand-dark: #60438c; --brand-2: #c09ad8; --brand-soft: #ede6f5;
+  --ok: #2f8f6b; --ok-soft: #e4f2ec; --bad: #b04a6f;
+  --shadow: 0 2px 3px rgba(80,70,90,.06), 0 10px 26px rgba(80,70,90,.08);
+  --font-body: 'Inter', Arial, sans-serif; --font-accent: 'Syne', 'Inter', sans-serif;
+}
+* { box-sizing: border-box; }
+body { margin: 0; background: var(--bg); background-image: linear-gradient(160deg, var(--bg), var(--bg-2)); color: var(--ink); font-family: var(--font-body); font-size: 14px; -webkit-font-smoothing: antialiased; min-height: 100vh; }
+button, a { font-family: inherit; }
+
+.wrap { max-width: 860px; width: 100%; margin: 0 auto; padding: 20px 18px 80px; }
+
+/* viewer chrome (hidden on print) */
+.toolbar { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin-bottom: 16px; flex-wrap: wrap; }
+.toolbar .crumb { color: var(--muted); font-size: 13px; }
+.toolbar .crumb a { color: var(--brand-dark); font-weight: 600; text-decoration: none; border-bottom: 1px dashed var(--brand-2); }
+.toolbar .crumb a:hover { color: var(--brand); }
+.actions { display: flex; gap: 8px; flex-wrap: wrap; }
+.btn { border: none; cursor: pointer; font-size: 13px; font-weight: 600; padding: 9px 14px; border-radius: 12px; display: inline-flex; align-items: center; gap: 7px; }
+.btn:focus-visible { outline: 2px solid var(--brand-2); outline-offset: 2px; }
+.btn-solid { background: var(--brand-dark); color: #fff; }
+.btn-solid:hover { background: #4d3771; }
+.btnwhats { background: #25d366; color: #fff; }
+.btnwhats:hover { background: #1ebc5d; }
+.btn-ghost { background: var(--surface); color: var(--brand-dark); border: 1px solid var(--line); }
+.btn-ghost:hover { border-color: var(--brand); }
+.btn svg { width: 15px; height: 15px; }
+
+/* the printable document */
+.receipt { background: var(--surface); border: 1px solid var(--line); border-radius: 26px 18px 28px 20px / 18px 26px 16px 22px; overflow: hidden; box-shadow: var(--shadow); }
+
+.r-head { background: linear-gradient(135deg, var(--brand-dark), var(--brand)); color: #fff; padding: 22px 26px 16px; }
+.r-head-top { display: flex; align-items: center; justify-content: space-between; gap: 10px; flex-wrap: wrap; }
+.r-brand { display: flex; align-items: center; gap: 12px; }
+.r-mark { width: 48px; height: 48px; border-radius: 12px; background: #fff; display: grid; place-items: center; flex: none; box-shadow: 0 3px 10px rgba(43,25,74,.25); overflow: hidden; }
+.r-mark img { width: 100%; height: 100%; object-fit: cover; display: block; transform: scale(1.3); }
+.r-brand strong { font-family: var(--font-accent); font-size: 20px; line-height: 1; display: block; }
+.r-brand small { color: rgba(255,255,255,.78); font-size: 11px; letter-spacing: 1.6px; text-transform: uppercase; font-weight: 600; }
+.r-badge { background: rgba(255,255,255,.16); border: 1px solid rgba(255,255,255,.28); padding: 5px 12px; border-radius: 99px; font-size: 11px; font-weight: 800; letter-spacing: 1.4px; text-transform: uppercase; }
+.r-meta { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 14px; margin-top: 16px; padding-top: 14px; border-top: 1px solid rgba(255,255,255,.22); align-items: start; }
+.r-meta .k { font-size: 10px; letter-spacing: 1.4px; text-transform: uppercase; color: rgba(255,255,255,.72); font-weight: 700; display: block; }
+.r-meta .v { font-size: 13.5px; font-weight: 700; margin-top: 3px; }
+.chip { display: inline-flex; align-items: center; padding: 3px 12px; border-radius: 99px; font-size: 12px; font-weight: 700; }
+.chip-cash { background: var(--brand-soft); color: var(--brand-dark); }
+.chip-upi { background: var(--ok-soft); color: var(--ok); }
+.chip-card { background: #f6efdd; color: #a97f2d; }
+
+.r-body { padding: 18px 26px 10px; }
+.r-status { background: var(--ok-soft); border: 1px solid #cfe6db; border-radius: 14px; padding: 11px 14px; display: flex; align-items: center; gap: 11px; }
+.r-status .tick { width: 28px; height: 28px; border-radius: 50%; background: var(--ok); color: #fff; display: grid; place-items: center; flex: none; }
+.r-status .tick svg { width: 15px; height: 15px; }
+.r-status b { font-size: 13px; color: #1f5c45; text-transform: uppercase; letter-spacing: .4px; }
+.r-status span { font-size: 12.5px; color: #2f7a5e; }
+.r-status .paid { margin-left: auto; font-size: 11px; font-weight: 800; letter-spacing: 1px; text-transform: uppercase; color: var(--ok); }
+
+.grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 12px 16px; margin-top: 18px; }
+.cell .k { font-size: 10px; letter-spacing: 1.2px; text-transform: uppercase; color: var(--muted); font-weight: 700; display: block; }
+.cell .v { font-size: 13.5px; font-weight: 600; margin-top: 3px; display: block; }
+.cell .v small { display: block; color: var(--muted); font-weight: 500; font-size: 12px; }
+
+.sec-title { display: flex; align-items: center; gap: 8px; font-size: 11px; font-weight: 800; text-transform: uppercase; letter-spacing: 1.2px; color: var(--brand-dark); margin: 22px 0 10px; }
+.row-line { display: flex; align-items: center; justify-content: space-between; gap: 10px; padding: 10px 12px; border: 1px solid var(--line); border-radius: 14px; background: var(--brand-soft); }
+.course-name { font-size: 15px; font-weight: 700; }
+.course-sub { font-size: 12px; color: var(--muted); }
+.row-amt { font-size: 17px; font-weight: 800; color: var(--brand-dark); font-variant-numeric: tabular-nums; }
+.line { display: flex; justify-content: space-between; gap: 10px; padding: 8px 2px; border-bottom: 1px dashed var(--line); font-size: 13px; color: var(--muted); }
+.line b { color: var(--ink); }
+
+.total { margin-top: 12px; display: flex; align-items: center; justify-content: space-between; gap: 10px; padding: 10px 12px; border: 1px solid var(--line); border-radius: 14px; background: var(--brand-soft); }
+.total .course-sub { font-style: italic; }
+
+.due { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin-top: 14px; padding: 6px 2px; font-size: 13px; }
+.due .lbl { color: var(--muted); }
+.due .val { color: var(--ok); font-weight: 800; background: var(--ok-soft); border: 1px solid #cfe6db; padding: 4px 12px; border-radius: 99px; font-size: 12px; letter-spacing: .3px; }
+
+.r-foot { margin-top: 20px; border-top: 1px solid var(--line); padding: 14px 26px 18px; text-align: center; background: var(--surface-2); border-radius: 0 0 26px 18px; }
+.r-foot p { margin: 0; font-size: 13px; color: var(--muted); }
+.r-foot b { color: var(--brand-dark); }
+.r-foot .contact { font-size: 11.5px; margin-top: 4px; color: var(--muted); }
+.r-foot .contact b { color: var(--muted); font-weight: 600; }
+
+.hint { margin-top: 14px; font-size: 12px; color: var(--muted); }
+.hint code { background: var(--surface); border: 1px solid var(--line); padding: 1px 5px; border-radius: 6px; }
+
+@media print {
+  body { background: #fff; }
+  .toolbar { display: none; }
+  .wrap { max-width: 100%; padding: 0; }
+  .receipt { box-shadow: none; border-radius: 0; border: none; }
+  .hint { display: none; }
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="toolbar">
+    <div class="crumb">← <a href="design-billing.html">Back to Billing</a> &nbsp;·&nbsp; <span id="crumbNo">Receipt</span></div>
+    <div class="actions">
+      <a class="btn btnwhats" id="waLink" href="#" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M.057 24l1.687-6.163a11.867 11.867 0 0 1-1.587-5.946C.16 5.335 5.495 0 12.05 0a11.817 11.817 0 0 1 8.413 3.488 11.824 11.824 0 0 1 3.48 8.414c-.003 6.557-5.338 11.892-11.893 11.892a11.9 11.9 0 0 1-5.688-1.448L.057 24zm6.597-3.807c1.676.995 3.276 1.591 5.392 1.592 5.448 0 9.886-4.434 9.889-9.885.002-5.462-4.415-9.89-9.881-9.892-5.452 0-9.887 4.434-9.889 9.884a9.86 9.86 0 0 0 1.515 5.258l-.999 3.648 3.973-1.605zm11.387-5.464c-.074-.124-.272-.198-.57-.347-.297-.149-1.758-.868-2.031-.967-.272-.099-.47-.149-.669.149-.198.297-.768.967-.941 1.165-.173.198-.347.223-.644.074-.297-.149-1.255-.462-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.297-.347.446-.521.151-.172.2-.296.3-.495.099-.198.05-.372-.025-.521-.075-.148-.669-1.611-.916-2.206-.242-.579-.487-.501-.669-.51l-.57-.01c-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.095 3.2 5.076 4.487.709.306 1.263.489 1.694.626.712.226 1.36.194 1.872.118.571-.085 1.758-.719 2.006-1.413.248-.695.248-1.29.173-1.414z"/></svg>Share on WhatsApp</a>
+      <button class="btn btn-solid" onclick="window.print()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9V2h12v7"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>Download PDF</button>
+    </div>
+  </div>
+
+  <div class="receipt">
+    <div class="r-head">
+      <div class="r-head-top">
+        <div class="r-brand">
+          <div class="r-mark"><img src="Pravaha_logo.jpeg" alt="Pravaha Art Space" /></div>
+          <div>
+            <strong>Pravaha Art Space</strong>
+            <small>Right &amp; Left Learning Academy</small>
+          </div>
+        </div>
+        <span class="r-badge">E-Receipt</span>
+      </div>
+      <div class="r-meta">
+        <div>
+          <span class="k">Receipt no</span>
+          <span class="v" id="mNo">RCPT-2026-0000</span>
+        </div>
+        <div>
+          <span class="k">Date</span>
+          <span class="v" id="mDate">—</span>
+        </div>
+        <div>
+          <span class="k">Month</span>
+          <span class="v" id="mMonth">—</span>
+        </div>
+        <div>
+          <span class="k">Payment mode</span>
+          <span class="v" id="mMethodChip">—</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="r-body">
+      <div class="r-status">
+        <span class="tick"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M20 6L9 17l-5-5"/></svg></span>
+        <div><b>Fee Payment Successful</b></div>
+        <span class="paid">Paid in Full</span>
+      </div>
+
+      <div class="grid">
+        <div class="cell">
+          <span class="k">Student ID</span>
+          <span class="v" id="mId">—</span>
+        </div>
+        <div class="cell">
+          <span class="k">Student name</span>
+          <span class="v" id="mName">—</span>
+        </div>
+        <div class="cell">
+          <span class="k">Parent</span>
+          <span class="v" id="mGuardian">—</span>
+        </div>
+        <div class="cell">
+          <span class="k">Mobile no.</span>
+          <span class="v" id="mPhone">—</span>
+        </div>
+      </div>
+
+      <div class="sec-title">Fee Particulars</div>
+      <div class="row-line">
+        <div>
+          <div class="course-name" id="mCourse">—</div>
+          <div class="course-sub">Course fee — <span id="mMonthLine">—</span></div>
+        </div>
+        <div class="row-amt" id="mAmt">₹0</div>
+      </div>
+
+      <div class="total">
+        <div>
+          <div class="course-name">Total Amount Paid</div>
+          <div class="course-sub" id="mWords"></div>
+        </div>
+        <div class="row-amt" id="mTotal">₹0</div>
+      </div>
+
+      <div class="due">
+        <span class="lbl">Outstanding balance for this month</span>
+        <span class="val" id="mDue">₹0.00 (Nil)</span>
+      </div>
+    </div>
+
+    <div class="r-foot">
+      <p>Thank you for nurturing <b id="mName2">your child's</b> creative journey at <b>Pravaha Art Space</b>.</p>
+      <p class="contact"><b>Pravaha Art Space</b> +91 76656 580 | Chennai, India | This is a computer-generated receipt.</p>
+    </div>
+  </div>
+
+  <p class="hint">Design preview (essentials only) — click demo links from <a href="design-billing.html">Billing</a> to populate, or load with <code>?no&date&name&course&method&amt&month</code>. Live receipt will be a server-rendered page that prints to PDF.</p>
+
+</div>
+
+<script>
+  const q = new URLSearchParams(location.search);
+  const D = {
+    no: 'RCPT-2026-0704', date: '06 Sep 2026', month: 'September 2026',
+    name: 'Nithilan', phone: '6382680024', guardian: 'Nithin Kumar',
+    course: 'Arumbu · Sunday batch', method: 'cash', amt: '1220', studentId: 'PAS-2026-104',
+  };
+  const P = new Proxy({}, { get: (_, k) => q.has(k) ? q.get(k) : D[k] });
+
+  const no = P.no;
+  const date = P.date;
+  const month = P.month;
+  const name = P.name;
+  const phone = P.phone;
+  const guardian = P.guardian && P.guardian !== '—' ? P.guardian : '—';
+  const course = (P.course || '—').split(' · ')[0].split(' ·')[0];
+  const mRaw = P.method || '';
+  const method = mRaw || '—';
+  const amt = parseInt(P.amt || '0', 10);
+  const studentId = P.studentId;
+
+  const inr = amt.toLocaleString('en-IN');
+
+  const mLabel = mRaw ? (mRaw === 'upi' ? 'UPI' : mRaw.charAt(0).toUpperCase() + mRaw.slice(1)) : '—';
+
+  document.getElementById('mNo').textContent = no;
+  document.getElementById('mDate').textContent = date;
+  document.getElementById('mMonth').textContent = month;
+  document.getElementById('mName').textContent = name;
+  document.getElementById('mGuardian').textContent = guardian;
+  document.getElementById('mPhone').textContent = phone;
+  document.getElementById('mId').textContent = studentId;
+  document.getElementById('mCourse').textContent = course;
+  document.getElementById('mMonthLine').textContent = month;
+  document.getElementById('mAmt').textContent = '₹' + inr;
+  const chip = document.getElementById('mMethodChip');
+  chip.textContent = mLabel;
+  document.getElementById('mTotal').textContent = '₹' + inr;
+  document.getElementById('mWords').textContent = 'In words: ' + amountWords(amt) + ' only';
+  document.getElementById('mName2').textContent = name + "'s";
+  document.getElementById('crumbNo').textContent = no;
+
+  const waText = '🎨 *Pravaha Art Space — Receipt Confirmation*\n\nDear ' + (guardian !== '—' ? guardian : 'Parent') + ',\nThank you! Payment of *₹' + inr + '* for *' + name + '* for *' + course + '* (' + month + ') has been received successfully.\n\n🧾 Receipt no: *' + no + '*\n✅ Balance due: *₹0.00 (Nil)*\n\nWarm regards,\nPravaha Atelier Team';
+  const waTel = (phone || '').replace(/\D/g, '').replace(/^0+/, '');
+  document.getElementById('waLink').href = 'https://wa.me/' + (waTel || '917000000000') + '?text=' + encodeURIComponent(waText);
+  window.__waText = waText;
+
+  const ONES = ['', 'One','Two','Three','Four','Five','Six','Seven','Eight','Nine','Ten','Eleven','Twelve','Thirteen','Fourteen','Fifteen','Sixteen','Seventeen','Eighteen','Nineteen'];
+  const TENS = ['', '', 'Twenty','Thirty','Forty','Fifty','Sixty','Seventy','Eighty','Ninety'];
+  function two(n) { return n < 20 ? ONES[n] : (TENS[Math.floor(n / 10)] + (n % 10 ? ' ' + ONES[n % 10] : '')); }
+  function three(n) { const h = Math.floor(n / 100), r = n % 100; return (h ? ONES[h] + ' Hundred' + (r ? ' ' : '') : '') + (r ? two(r) : ''); }
+  function amountWords(n) {
+    if (!n) return 'Zero Rupees';
+    let out = [];
+    const cr = Math.floor(n / 10000000); n %= 10000000;
+    const lk = Math.floor(n / 100000); n %= 100000;
+    const th = Math.floor(n / 1000); n %= 1000;
+    if (cr) out.push(three(cr) + ' Crore');
+    if (lk) out.push(three(lk) + ' Lakh');
+    if (th) out.push(three(th) + ' Thousand');
+    if (n) out.push(three(n));
+    return out.join(' ') + ' Rupees';
+  }
+</script>
+</body>
+</html>

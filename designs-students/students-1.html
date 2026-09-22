@@ -1,0 +1,34 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>1 · Uniform tile row</title>
+<style>
+  * { box-sizing: border-box; }
+  body { margin: 0; padding: 24px; background: #f7f4fa; color: #fff; font-family: Inter, Arial, sans-serif; }
+  .row { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 14px; }
+  .tile {
+    border-radius: 16px; padding: 16px 18px; box-shadow: 0 8px 20px rgba(80,70,90,.14);
+    position: relative; overflow: hidden; min-height: 104px;
+    display: flex; flex-direction: column; justify-content: space-between;
+  }
+  .tile .deco { position: absolute; right: -22px; top: -22px; width: 90px; height: 90px; border-radius: 50%; background: rgba(255,255,255,.14); }
+  .label { font-size: 10.5px; font-weight: 700; letter-spacing: 1.2px; text-transform: uppercase; opacity: .85; }
+  .num { font-size: 30px; font-weight: 800; letter-spacing: -1px; line-height: 1; }
+  .num .cur { font-size: .7em; font-weight: 600; opacity: .8; }
+  .sub { font-size: 11.5px; opacity: .82; margin-top: 6px; }
+  .t-total { background: linear-gradient(135deg, #241f31, #454059); }
+  .t-active { background: linear-gradient(135deg, #2f8f6b, #50a886); }
+  .t-inactive { background: linear-gradient(135deg, #5b6570, #7e8892); }
+  .t-due { background: linear-gradient(135deg, #d96a5a, #b94444); }
+</style>
+</head>
+<body>
+  <div class="row">
+    <div class="tile t-total"><div class="deco"></div><span class="label">Total students</span><div><div class="num">32</div><div class="sub">since signup</div></div></div>
+    <div class="tile t-active"><div class="deco"></div><span class="label">Active</span><div><div class="num">27</div><div class="sub">84% of total</div></div></div>
+    <div class="tile t-inactive"><div class="deco"></div><span class="label">Inactive</span><div><div class="num">5</div><div class="sub">16% of total</div></div></div>
+    <div class="tile t-due"><div class="deco"></div><span class="label">Outstanding due</span><div><div class="num"><span class="cur">₹</span>2,150</div><div class="sub">6 students with dues</div></div></div>
+  </div>
+</body>
+</html>

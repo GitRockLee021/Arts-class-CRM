@@ -1,0 +1,503 @@
+<!DOCTYPE html>
+
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Payment Receipt #PAS-REC-2026-0482 - Pravaha Art Space CRM</title>
+<!-- Tailwind CSS v3 with Forms and Container Queries Plugins -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<!-- Font Awesome Icons CDN -->
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet"/>
+<!-- Google Fonts: Plus Jakarta Sans & Outfit -->
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&amp;family=Plus+Jakarta+Sans:wght@400;500;600;700&amp;family=Playfair+Display:ital,wght@1,600&amp;display=swap" rel="stylesheet"/>
+<!-- Tailwind Custom Config -->
+<script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            brand: {
+              50: '#FAF5FF',
+              100: '#F3E8FF',
+              200: '#E9D5FF',
+              600: '#7E22CE',
+              700: '#6B21A8',
+              800: '#581C87',
+              900: '#3B0764',
+              plum: '#8C3D74',
+              softBg: '#F5F3FA',
+              lightPurple: '#ECE7F6'
+            },
+            canvas: '#F4F2FA',
+            whatsapp: '#25D366',
+            whatsappDark: '#1EBE5D'
+          },
+          fontFamily: {
+            sans: ['"Plus Jakarta Sans"', 'sans-serif'],
+            display: ['"Outfit"', 'sans-serif'],
+            serif: ['"Playfair Display"', 'serif']
+          },
+          boxShadow: {
+            'soft': '0 4px 20px -2px rgba(99, 56, 140, 0.06)',
+            'card': '0 10px 30px -5px rgba(88, 28, 135, 0.08)'
+          }
+        }
+      }
+    }
+  </script>
+<!-- Custom Styles for Print and Texture -->
+<style data-purpose="custom-decorations">
+    @media print {
+      body {
+        background: #ffffff !important;
+      }
+      .no-print {
+        display: none !important;
+      }
+      .print-full-width {
+        width: 100% !important;
+        max-width: 100% !important;
+        margin: 0 !important;
+        box-shadow: none !important;
+        border: none !important;
+      }
+    }
+
+    /* Subtle Perforated Coupon Edge */
+    .receipt-perforation {
+      background-image: linear-gradient(to right, #C084FC 50%, rgba(255, 255, 255, 0) 0%);
+      background-position: bottom;
+      background-size: 14px 2px;
+      background-repeat: repeat-x;
+    }
+
+    /* Background Geometric Wave Motif */
+    .atelier-pattern {
+      background-color: #581C87;
+      background-image: radial-gradient(circle at 80% 10%, rgba(192, 132, 252, 0.35) 0%, transparent 40%),
+                        radial-gradient(circle at 10% 90%, rgba(147, 51, 234, 0.3) 0%, transparent 45%);
+    }
+  </style>
+</head>
+<body class="bg-canvas text-gray-800 font-sans min-h-screen flex antialiased selection:bg-brand-200">
+<!-- BEGIN: Left Sidebar -->
+<aside class="w-64 bg-white border-r border-purple-100 flex flex-col shrink-0 min-h-screen no-print select-none" data-purpose="main-sidebar">
+<!-- Atelier Logo Header -->
+<div class="p-6 border-b border-purple-50 flex items-center gap-3">
+<div class="w-10 h-10 rounded-full bg-gradient-to-tr from-purple-600 via-pink-500 to-amber-400 p-[2px] shadow-sm">
+<div class="w-full h-full bg-white rounded-full flex items-center justify-center">
+<i class="fa-solid fa-palette text-brand-700 text-lg"></i>
+</div>
+</div>
+<div>
+<h1 class="font-display font-bold text-gray-900 text-base leading-tight tracking-tight">Pravaha Art Space</h1>
+<span class="text-[11px] uppercase font-bold tracking-wider text-brand-600">Creative CRM</span>
+</div>
+</div>
+<!-- Navigation Menu Items -->
+<nav class="p-4 flex-1 space-y-1 text-sm font-medium" data-purpose="sidebar-nav">
+<a class="flex items-center gap-3.5 px-4 py-2.5 rounded-xl text-gray-600 hover:text-brand-700 hover:bg-purple-50/60 transition-colors" href="#">
+<i class="fa-regular fa-compass w-5 text-center text-gray-400"></i>
+<span>Dashboard</span>
+</a>
+<a class="flex items-center gap-3.5 px-4 py-2.5 rounded-xl text-gray-600 hover:text-brand-700 hover:bg-purple-50/60 transition-colors" href="#">
+<i class="fa-solid fa-user-group w-5 text-center text-gray-400"></i>
+<span>Students</span>
+</a>
+<a class="flex items-center gap-3.5 px-4 py-2.5 rounded-xl text-gray-600 hover:text-brand-700 hover:bg-purple-50/60 transition-colors" href="#">
+<i class="fa-solid fa-layer-group w-5 text-center text-gray-400"></i>
+<span>Enrollments</span>
+</a>
+<!-- Fees & Dues (Active Category) -->
+<a class="flex items-center justify-between px-4 py-2.5 rounded-xl bg-brand-100/70 text-brand-800 font-semibold shadow-xs transition-colors" href="#">
+<div class="flex items-center gap-3.5">
+<i class="fa-solid fa-indian-rupee-sign w-5 text-center text-brand-700"></i>
+<span>Fees &amp; Dues</span>
+</div>
+<span class="w-2 h-2 rounded-full bg-brand-700"></span>
+</a>
+<a class="flex items-center gap-3.5 px-4 py-2.5 rounded-xl text-gray-600 hover:text-brand-700 hover:bg-purple-50/60 transition-colors" href="#">
+<i class="fa-regular fa-folder-open w-5 text-center text-gray-400"></i>
+<span>Courses</span>
+</a>
+<a class="flex items-center gap-3.5 px-4 py-2.5 rounded-xl text-gray-600 hover:text-brand-700 hover:bg-purple-50/60 transition-colors" href="#">
+<i class="fa-regular fa-calendar-check w-5 text-center text-gray-400"></i>
+<span>Batches</span>
+</a>
+<a class="flex items-center gap-3.5 px-4 py-2.5 rounded-xl text-gray-600 hover:text-brand-700 hover:bg-purple-50/60 transition-colors" href="#">
+<i class="fa-regular fa-bell w-5 text-center text-gray-400"></i>
+<span>Reminders</span>
+</a>
+<a class="flex items-center gap-3.5 px-4 py-2.5 rounded-xl text-gray-600 hover:text-brand-700 hover:bg-purple-50/60 transition-colors" href="#">
+<i class="fa-solid fa-sliders w-5 text-center text-gray-400"></i>
+<span>Settings</span>
+</a>
+</nav>
+<!-- Sidebar Bottom User Profile -->
+<div class="p-4 border-t border-purple-50 bg-gradient-to-b from-transparent to-purple-50/30">
+<div class="flex items-center gap-3 px-2 py-2">
+<div class="w-10 h-10 rounded-full bg-brand-700 text-white font-bold flex items-center justify-center text-xs tracking-wider shadow-inner ring-2 ring-purple-200">
+          PA
+        </div>
+<div class="flex flex-col min-w-0">
+<span class="text-xs font-bold text-gray-900 truncate">Main Studio Admin</span>
+<span class="text-[11px] text-gray-500 truncate">admin@pravaha.art</span>
+</div>
+<button class="ml-auto text-gray-400 hover:text-gray-600 text-xs" title="Sign out">
+<i class="fa-solid fa-arrow-right-from-bracket"></i>
+</button>
+</div>
+</div>
+</aside>
+<!-- END: Left Sidebar -->
+<!-- BEGIN: Main Workspace Area -->
+<main class="flex-1 flex flex-col min-h-screen overflow-y-auto" data-purpose="crm-main-viewport">
+<!-- BEGIN: Top Bar Navigation -->
+<header class="bg-white/80 backdrop-blur-md sticky top-0 z-30 border-b border-purple-100/70 px-8 py-4 flex items-center justify-between no-print">
+<!-- Breadcrumb Navigation -->
+<nav class="flex items-center gap-2 text-xs text-gray-500 font-medium">
+<a class="hover:text-brand-700" href="#">Fees &amp; Dues</a>
+<i class="fa-solid fa-chevron-right text-[9px] text-gray-400"></i>
+<a class="hover:text-brand-700" href="#">Receipts</a>
+<i class="fa-solid fa-chevron-right text-[9px] text-gray-400"></i>
+<span class="text-brand-800 font-semibold bg-purple-50 px-2 py-0.5 rounded-md border border-purple-100">#PAS-REC-2026-0482</span>
+</nav>
+<!-- Quick Action Controls -->
+<div class="flex items-center gap-3">
+<!-- Back to Student Profile -->
+<a class="inline-flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs font-semibold text-gray-600 bg-gray-50 hover:bg-gray-100 border border-gray-200 transition-all shadow-xs" href="#">
+<i class="fa-solid fa-arrow-left"></i>
+<span>Student Profile</span>
+</a>
+<!-- Print Action -->
+<button class="inline-flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-semibold text-brand-800 bg-purple-50 hover:bg-purple-100 border border-purple-200 transition-all shadow-xs" onclick="window.print()">
+<i class="fa-solid fa-print"></i>
+<span>Print / PDF</span>
+</button>
+<!-- WhatsApp Quick Send -->
+<a class="inline-flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-semibold text-white bg-whatsapp hover:bg-whatsappDark shadow-sm shadow-emerald-200 transition-all" href="https://wa.me/916798989966?text=Dear%20Vathsalyan%2C%20Payment%20receipt%20for%20Nitilakshan%20(Perspective%20Drawing%20-%20Sept%202026)%20of%20INR%201%2C800%20has%20been%20confirmed.%20Receipt%20No%3A%20PAS-REC-2026-0482." rel="noopener noreferrer" target="_blank">
+<i class="fa-brands fa-whatsapp text-sm"></i>
+<span>Share WhatsApp</span>
+</a>
+</div>
+</header>
+<!-- END: Top Bar Navigation -->
+<!-- Page Content Wrap -->
+<div class="p-8 max-w-6xl mx-auto w-full space-y-6">
+<!-- BEGIN: Receipt Title & Meta Bar -->
+<section class="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-2 no-print" data-purpose="page-title-section">
+<div>
+<div class="flex items-center gap-3">
+<h2 class="text-2xl font-bold font-display text-gray-900 tracking-tight">Payment Receipt</h2>
+<span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-bold bg-emerald-50 text-emerald-700 border border-emerald-200">
+<span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
+              PAID IN FULL
+            </span>
+<span class="text-xs font-medium text-purple-700 bg-purple-50 px-2 py-0.5 rounded border border-purple-100">
+<i class="fa-solid fa-check-double text-[10px] mr-1 text-purple-500"></i> Direct Parent Copy
+            </span>
+</div>
+<p class="text-xs text-gray-500 mt-1">Official electronic tuition acknowledgement voucher issued by Pravaha Art Space Atelier.</p>
+</div>
+<!-- Verification Stamp Quick Tag -->
+<div class="text-right text-xs text-gray-500 flex md:flex-col items-center md:items-end justify-between">
+<span class="font-semibold text-purple-900">Receipt Verified <i class="fa-solid fa-circle-check text-purple-600 ml-0.5"></i></span>
+<span class="text-[11px] text-gray-400">Generated on 13 Sep 2026, 11:30 AM IST</span>
+</div>
+</section>
+<!-- END: Receipt Title & Meta Bar -->
+<!-- BEGIN: Dual Column Layout (Desktop Document + Context Sidebar) -->
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+<!-- BEGIN: Left Column - Official E-Receipt Document -->
+<div class="lg:col-span-8 print-full-width">
+<article class="bg-white rounded-3xl shadow-card border border-purple-100/80 overflow-hidden relative print:shadow-none print:border-gray-200" data-purpose="official-receipt-card">
+<!-- Atelier Top Gradient Card Header -->
+<div class="atelier-pattern text-white p-7 relative">
+<div class="flex items-start justify-between">
+<div class="flex items-center gap-3.5">
+<div class="w-12 h-12 rounded-2xl bg-white/10 backdrop-blur-md border border-white/20 flex items-center justify-center shadow-inner">
+<i class="fa-solid fa-palette text-2xl text-purple-200"></i>
+</div>
+<div>
+<h3 class="font-display text-xl font-extrabold tracking-tight leading-none text-white">Pravaha Art Space</h3>
+<p class="text-[11px] uppercase tracking-widest text-purple-200 font-semibold mt-1">Creative Atelier &amp; CRM</p>
+</div>
+</div>
+<div class="text-right">
+<span class="inline-block px-3 py-1 rounded-full bg-white/15 backdrop-blur-md border border-white/20 text-[11px] uppercase font-extrabold tracking-wider text-purple-100">
+                    E-RECEIPT
+                  </span>
+</div>
+</div>
+<!-- Receipt Number and Date Row inside Header -->
+<div class="mt-7 pt-4 border-t border-purple-400/25 grid grid-cols-2 text-xs">
+<div>
+<span class="block text-[10px] uppercase font-bold tracking-wider text-purple-300">Receipt Number</span>
+<span class="text-sm font-extrabold font-mono text-white">#PAS-REC-2026-0482</span>
+</div>
+<div class="text-right">
+<span class="block text-[10px] uppercase font-bold tracking-wider text-purple-300">Date &amp; Time</span>
+<span class="text-sm font-semibold text-white">13 Sep 2026, 11:30 AM</span>
+</div>
+</div>
+</div>
+<!-- Verified Payment Success Banner -->
+<div class="bg-emerald-50/80 border-b border-emerald-100 px-6 py-3.5 flex items-center justify-between">
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 rounded-full bg-emerald-500 text-white flex items-center justify-center shrink-0 shadow-xs">
+<i class="fa-solid fa-check text-sm font-bold"></i>
+</div>
+<div>
+<h4 class="text-xs font-extrabold uppercase text-emerald-900 tracking-wide leading-tight">Fee Payment Successful</h4>
+<p class="text-[11px] font-mono text-emerald-700">Ref: <span class="font-semibold">UPI-425689102341</span></p>
+</div>
+</div>
+<span class="px-2.5 py-1 bg-white rounded-lg border border-emerald-200 text-[11px] font-bold text-emerald-700 uppercase tracking-wider shadow-xs">
+                Paid in Full
+              </span>
+</div>
+<!-- Receipt Body Container -->
+<div class="p-7 space-y-6">
+<!-- Section: Student & Guardian Info Grid -->
+<section data-purpose="student-guardian-info">
+<div class="flex items-center justify-between mb-3">
+<div class="flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-brand-800">
+<i class="fa-regular fa-circle-user text-brand-600"></i>
+<span>Student &amp; Guardian Info</span>
+</div>
+<span class="text-[11px] font-mono font-bold bg-purple-50 text-purple-800 px-2.5 py-0.5 rounded-full border border-purple-100">
+                    ID: #PAS-2026-084
+                  </span>
+</div>
+<div class="bg-purple-50/40 rounded-2xl p-4 border border-purple-100/70 grid grid-cols-2 md:grid-cols-4 gap-4">
+<!-- Student Name & Age -->
+<div>
+<span class="text-[10px] uppercase font-bold text-gray-400 block tracking-wider">Student</span>
+<span class="text-sm font-bold text-gray-900 block mt-0.5">Nitilakshan</span>
+<span class="text-xs font-medium text-brand-plum">Age 7 yrs</span>
+</div>
+<!-- Guardian Name & Relation -->
+<div>
+<span class="text-[10px] uppercase font-bold text-gray-400 block tracking-wider">Guardian</span>
+<span class="text-sm font-bold text-gray-900 block mt-0.5">Vathsalyan</span>
+<span class="text-xs text-gray-500 font-medium">Father</span>
+</div>
+<!-- Contact Number -->
+<div>
+<span class="text-[10px] uppercase font-bold text-gray-400 block tracking-wider">Phone / WhatsApp</span>
+<span class="text-xs font-mono font-bold text-gray-900 block mt-1">+91 67989 89966</span>
+<span class="text-[11px] text-emerald-600 font-medium"><i class="fa-brands fa-whatsapp text-[10px]"></i> Verified</span>
+</div>
+<!-- Enrollment Status -->
+<div>
+<span class="text-[10px] uppercase font-bold text-gray-400 block tracking-wider">Enrollment Status</span>
+<span class="inline-flex items-center gap-1.5 text-xs font-bold text-emerald-700 mt-1">
+<span class="w-2 h-2 rounded-full bg-emerald-500"></span>
+                      Active Student
+                    </span>
+<span class="block text-[11px] text-gray-400">Regular Member</span>
+</div>
+</div>
+</section>
+<!-- Perforation Visual Line -->
+<div class="receipt-perforation w-full h-1 my-2"></div>
+<!-- Section: Course & Fee Particulars -->
+<section data-purpose="fee-particulars-section">
+<div class="flex items-center justify-between mb-3">
+<div class="flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-brand-800">
+<i class="fa-solid fa-receipt text-brand-600"></i>
+<span>Fee Particulars</span>
+</div>
+<span class="text-xs font-medium text-gray-500">
+                    Month: <strong class="text-gray-800">September 2026</strong>
+</span>
+</div>
+<!-- Course Highlight Block -->
+<div class="bg-purple-50/70 rounded-2xl p-4 border border-purple-200/70 mb-4">
+<div class="flex items-start justify-between">
+<div>
+<h5 class="text-base font-bold text-gray-900 font-display">Perspective Drawing</h5>
+<p class="text-xs text-brand-800 font-medium mt-0.5">Juniors (Studio 2B • Weekend Batch)</p>
+</div>
+<span class="text-base font-mono font-extrabold text-brand-900">₹1,800.00</span>
+</div>
+<div class="mt-3 pt-2.5 border-t border-purple-200/50 flex items-center justify-between text-xs text-gray-500">
+<span>Started 13 Sept 2026</span>
+<span class="font-medium text-brand-700 bg-white px-2 py-0.5 rounded border border-purple-200/60">Regular Monthly Track</span>
+</div>
+</div>
+<!-- Itemized Cost Breakdown Table -->
+<div class="space-y-2 text-xs text-gray-600 px-1">
+<div class="flex justify-between py-1 border-b border-gray-100">
+<span>Course Tuition (Sept 2026)</span>
+<span class="font-medium text-gray-900 font-mono">₹1,800.00</span>
+</div>
+<div class="flex justify-between py-1 border-b border-gray-100">
+<span>Studio Art Kit &amp; Materials (Acrylic, Canvas, Graphite)</span>
+<span class="font-medium text-emerald-700">Included (₹0)</span>
+</div>
+<div class="flex justify-between py-1 border-b border-gray-100">
+<span>Discounts &amp; Concessions</span>
+<span class="font-medium text-gray-500 font-mono">₹0.00</span>
+</div>
+</div>
+<!-- Total Paid Highlight Banner -->
+<div class="mt-4 bg-gradient-to-r from-purple-100/60 via-purple-50/80 to-purple-100/40 rounded-2xl p-4 border border-purple-200 flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+<div>
+<span class="text-[11px] uppercase font-extrabold tracking-wider text-brand-800 block">Total Amount Paid</span>
+<span class="text-xs italic text-brand-plum font-serif">In words: One Thousand Eight Hundred Rupees Only</span>
+</div>
+<div class="text-right">
+<span class="text-2xl font-black font-mono text-brand-900">₹1,800<span class="text-base font-semibold">.00</span></span>
+</div>
+</div>
+<!-- Outstanding Dues Row -->
+<div class="mt-3 flex items-center justify-between px-2 py-1 text-xs">
+<span class="text-gray-500 font-medium">Outstanding Balance for September:</span>
+<span class="px-2.5 py-0.5 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200 font-mono font-bold text-xs">
+                    ₹0.00 (Nil)
+                  </span>
+</div>
+</section>
+<!-- Section: Payment Metadata & Authorized Stamp -->
+<section class="pt-4 border-t border-purple-100 grid grid-cols-1 md:grid-cols-2 gap-4 items-center" data-purpose="verification-stamp">
+<div class="space-y-1.5 text-xs">
+<div>
+<span class="text-[10px] uppercase font-bold text-gray-400 block tracking-wider">Payment Mode</span>
+<span class="font-semibold text-gray-800 flex items-center gap-1.5">
+<i class="fa-solid fa-credit-card text-brand-600"></i> UPI Instant Transfer
+                    </span>
+</div>
+<div>
+<span class="text-[10px] uppercase font-bold text-gray-400 block tracking-wider">Received At</span>
+<span class="font-medium text-gray-700">Main Atelier, Studio 1</span>
+</div>
+<div class="pt-1">
+<span class="text-[10px] text-gray-400 font-mono">SYSTEM VERIFIED • Pravaha Secure Pay ID: #77491</span>
+</div>
+</div>
+<!-- Official Verification Seal Box -->
+<div class="border-2 border-dashed border-purple-300/80 bg-purple-50/40 rounded-2xl p-3 flex items-center gap-3">
+<div class="w-10 h-10 rounded-full bg-purple-200/70 border border-purple-300 flex items-center justify-center text-brand-800 shrink-0">
+<i class="fa-solid fa-stamp text-lg"></i>
+</div>
+<div>
+<span class="text-[11px] font-black tracking-wider uppercase text-purple-900 block">Authorized Seal</span>
+<span class="text-[10px] text-purple-700 font-semibold block leading-tight">Pravaha Art Space Admin</span>
+<span class="text-[9px] text-gray-400 block font-mono">Digital Signature Hash Verified</span>
+</div>
+<i class="fa-solid fa-circle-check text-emerald-500 ml-auto text-lg"></i>
+</div>
+</section>
+<!-- Footer Note -->
+<footer class="pt-4 border-t border-gray-100 text-center text-xs text-gray-500 space-y-1">
+<p>Thank you for nurturing <strong class="text-brand-800 font-semibold">Nitilakshan's</strong> creative journey at <strong class="text-brand-900">Pravaha Art Space</strong>.</p>
+<p class="text-[11px] text-gray-400">Support: +91 98450 12345 • support@pravaha.art • Bangalore, India</p>
+</footer>
+</div>
+</article>
+</div>
+<!-- END: Left Column -->
+<!-- BEGIN: Right Column - Quick Actions, WhatsApp Previews, & Audit Log -->
+<div class="lg:col-span-4 space-y-5 no-print" data-purpose="actions-and-metadata">
+<!-- Primary WhatsApp Quick Dispatch Box -->
+<div class="bg-white rounded-2xl p-5 border border-purple-100 shadow-soft">
+<div class="flex items-center gap-2 mb-3">
+<div class="w-7 h-7 rounded-lg bg-emerald-100 text-whatsappDark flex items-center justify-center text-sm font-bold">
+<i class="fa-brands fa-whatsapp"></i>
+</div>
+<h4 class="font-bold text-sm text-gray-900">Parent WhatsApp Dispatch</h4>
+</div>
+<p class="text-xs text-gray-500 mb-3 leading-relaxed">
+              Send the official confirmation receipt directly to guardian <strong class="text-gray-700">Vathsalyan (+91 67989 89966)</strong> via WhatsApp with one click.
+            </p>
+<!-- Pre-drafted WhatsApp Message Preview Box -->
+<div class="bg-gray-50 rounded-xl p-3 border border-gray-200/80 text-[11px] font-mono text-gray-700 mb-4 leading-normal relative">
+<span class="absolute top-2 right-2 text-[9px] font-bold text-gray-400 uppercase tracking-wider">Preview</span>
+<p class="font-sans text-gray-800">
+                🎨 *Pravaha Art Space - Receipt Confirmation*<br/><br/>
+                Dear *Vathsalyan*,<br/>
+                Thank you! Payment of *₹1,800.00* for *Nitilakshan* for *Perspective Drawing (Sept 2026)* has been received successfully.<br/><br/>
+                🧾 Receipt No: *PAS-REC-2026-0482*<br/>
+                ✅ Balance Due: *₹0.00 (Nil)*<br/><br/>
+                Warm regards,<br/>
+                Pravaha Atelier Team
+              </p>
+</div>
+<!-- WhatsApp Action Buttons -->
+<div class="space-y-2">
+<a class="w-full flex items-center justify-center gap-2 py-2.5 px-4 bg-whatsapp hover:bg-whatsappDark text-white font-semibold rounded-xl text-xs shadow-xs transition-all" href="https://wa.me/916798989966?text=Dear%20Vathsalyan%2C%20Payment%20receipt%20for%20Nitilakshan%20(Perspective%20Drawing%20-%20Sept%202026)%20of%20INR%201%2C800%20has%20been%20confirmed.%20Receipt%20No%3A%20PAS-REC-2026-0482." rel="noopener noreferrer" target="_blank">
+<i class="fa-brands fa-whatsapp text-sm"></i>
+<span>Send WhatsApp Message</span>
+</a>
+<button class="w-full flex items-center justify-center gap-2 py-2 px-4 bg-gray-50 hover:bg-gray-100 text-gray-700 font-medium rounded-xl text-xs border border-gray-200 transition-all" onclick="navigator.clipboard.writeText('Dear Vathsalyan, payment receipt for Nitilakshan for Sept 2026 (Perspective Drawing) of ₹1,800 is confirmed. Receipt #PAS-REC-2026-0482. Thank you, Pravaha Art Space.'); alert('WhatsApp message text copied to clipboard!');">
+<i class="fa-regular fa-copy"></i>
+<span>Copy Message Text</span>
+</button>
+</div>
+</div>
+<!-- Document Utilities Card -->
+<div class="bg-white rounded-2xl p-5 border border-purple-100 shadow-soft space-y-3">
+<h4 class="font-bold text-xs uppercase tracking-wider text-gray-400">Document Actions</h4>
+<div class="grid grid-cols-2 gap-2">
+<!-- Print Button -->
+<button class="flex flex-col items-center justify-center p-3 rounded-xl border border-purple-100 bg-purple-50/40 hover:bg-purple-100/60 text-brand-800 transition-colors text-center" onclick="window.print()">
+<i class="fa-solid fa-file-pdf text-lg mb-1 text-purple-600"></i>
+<span class="text-xs font-semibold">Download PDF</span>
+</button>
+<!-- Email Receipt -->
+<button class="flex flex-col items-center justify-center p-3 rounded-xl border border-gray-200 bg-gray-50 hover:bg-gray-100 text-gray-700 transition-colors text-center" onclick="alert('Receipt copy dispatched to student record email.');">
+<i class="fa-regular fa-envelope text-lg mb-1 text-gray-500"></i>
+<span class="text-xs font-semibold">Send Email</span>
+</button>
+</div>
+<!-- Student Ledger Link -->
+<a class="flex items-center justify-between p-3 rounded-xl border border-purple-100 bg-white hover:bg-purple-50/50 text-xs font-semibold text-brand-800 transition-colors" href="#">
+<span class="flex items-center gap-2">
+<i class="fa-solid fa-clock-rotate-left text-brand-600"></i>
+<span>Nitilakshan Ledger History</span>
+</span>
+<i class="fa-solid fa-chevron-right text-[10px] text-gray-400"></i>
+</a>
+</div>
+<!-- Payment Security & Audit Log Card -->
+<div class="bg-white rounded-2xl p-5 border border-purple-100 shadow-soft">
+<h4 class="font-bold text-xs uppercase tracking-wider text-gray-400 mb-3">Audit Trail &amp; Verification</h4>
+<ul class="text-xs space-y-3">
+<li class="flex items-start gap-2.5">
+<div class="w-2 h-2 rounded-full bg-emerald-500 mt-1.5 shrink-0"></div>
+<div>
+<span class="font-semibold text-gray-800 block">Payment Captured</span>
+<span class="text-[11px] text-gray-400">13 Sep 2026 • 11:30 AM via UPI</span>
+</div>
+</li>
+<li class="flex items-start gap-2.5">
+<div class="w-2 h-2 rounded-full bg-purple-500 mt-1.5 shrink-0"></div>
+<div>
+<span class="font-semibold text-gray-800 block">Receipt Voucher Emitted</span>
+<span class="text-[11px] text-gray-400">Recorded by Studio Admin</span>
+</div>
+</li>
+<li class="flex items-start gap-2.5">
+<div class="w-2 h-2 rounded-full bg-blue-500 mt-1.5 shrink-0"></div>
+<div>
+<span class="font-semibold text-gray-800 block">Accounts Ledger Synchronized</span>
+<span class="text-[11px] text-gray-400">Outstanding updated to ₹0.00</span>
+</div>
+</li>
+</ul>
+<div class="mt-4 pt-3 border-t border-gray-100 text-[11px] text-gray-400 flex items-center justify-between">
+<span>Security: TLS 256-bit</span>
+<span class="font-mono text-emerald-600 font-semibold"><i class="fa-solid fa-lock text-[10px]"></i> Encrypted</span>
+</div>
+</div>
+</div>
+<!-- END: Right Column -->
+</div>
+<!-- END: Dual Column Layout -->
+</div>
+</main>
+<!-- END: Main Workspace Area -->
+</body></html>

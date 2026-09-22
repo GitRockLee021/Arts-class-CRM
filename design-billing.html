@@ -1,0 +1,312 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Billing — Design preview</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Syne:wght@600;700;800&display=swap');
+
+:root {
+  --bg: #f7f4fa; --bg-2: #e9e3f0; --surface: #fffdf8; --surface-2: #f1ebf3;
+  --ink: #2f2a36; --muted: #8b8590; --line: #e4dfec;
+  --brand: #7a5ba8; --brand-dark: #60438c; --brand-2: #c09ad8; --brand-soft: #ede6f5;
+  --ok: #2f8f6b; --ok-soft: #e4f2ec; --bad: #b04a6f; --bad-soft: #fbeaef;
+  --warn: #b0893f; --warn-soft: #f6efdd;
+  --shadow: 0 2px 3px rgba(80,70,90,.06), 0 10px 26px rgba(80,70,90,.08);
+  --font-body: 'Inter', Arial, sans-serif; --font-accent: 'Syne', 'Inter', sans-serif;
+}
+* { box-sizing: border-box; }
+body { margin: 0; background: var(--bg); background-image: linear-gradient(160deg, var(--bg), var(--bg-2)); color: var(--ink); font-family: var(--font-body); font-size: 15px; -webkit-font-smoothing: antialiased; }
+
+button { font-family: inherit; }
+
+.app { display: flex; min-height: 100vh; }
+
+.sidebar { width: 236px; background: var(--surface); border-right: 1px solid var(--line); padding: 18px 14px; display: flex; flex-direction: column; gap: 18px; }
+.brand { display: flex; align-items: center; gap: 10px; padding: 4px 6px; }
+.brand-mark { width: 40px; height: 40px; border-radius: 10px; background: #fff; display: grid; place-items: center; overflow: hidden; box-shadow: 0 3px 8px rgba(90,80,140,.2); flex: none; }
+.brand-mark img { width: 100%; height: 100%; object-fit: cover; display: block; transform: scale(1.3); }
+.brand strong { font-family: var(--font-accent); font-size: 19px; display: block; line-height: 1; }
+.brand small { color: var(--muted); font-family: var(--font-body); font-size: 12px; }
+.nav { display: flex; flex-direction: column; gap: 4px; }
+.nav-item { display: flex; align-items: center; gap: 10px; padding: 9px 12px; border-radius: 14px 9px 15px 10px / 10px 15px 9px 14px; color: var(--muted); text-decoration: none; font-weight: 600; font-size: 16px; }
+.nav-item.active { background: var(--brand-soft); color: var(--brand-dark); }
+
+.main { flex: 1; }
+.content { max-width: 960px; width: 100%; margin: 0 auto; padding: 22px 22px 90px; }
+
+h1 { font-family: var(--font-accent); font-size: 24px; margin: 0; font-weight: 700; }
+h2 { font-family: var(--font-accent); font-size: 18px; margin: 0 0 12px; font-weight: 700; }
+.muted { color: var(--muted); font-size: 13px; }
+.block { display: block; }
+
+.page-head { display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; margin-bottom: 14px; }
+.monthfield { display: flex; align-items: center; gap: 8px; }
+.monthfield .input { width: 180px; }
+
+.card { background: var(--surface); border: 1px solid var(--line); border-radius: 26px 18px 28px 20px / 18px 26px 16px 22px; padding: 18px; box-shadow: var(--shadow); margin-bottom: 16px; }
+
+.stat-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 14px; margin-bottom: 16px; }
+.stat { padding: 16px 18px; margin-bottom: 0; }
+.stat-label { display: block; color: var(--muted); font-size: 12.5px; font-weight: 600; margin-bottom: 6px; }
+.stat-value { display: block; font-size: 24px; line-height: 1.2; font-family: var(--font-body); font-weight: 700; font-variant-numeric: tabular-nums; letter-spacing: -0.3px; }
+.stat-sub { display: block; color: var(--muted); font-size: 12px; margin-top: 4px; }
+.money .cur { font-size: 0.82em; font-weight: 600; margin-right: 3px; opacity: .8; }
+.text-danger { color: var(--bad); }
+
+.mix-list { display: flex; flex-direction: column; gap: 9px; margin-top: 10px; }
+.mix-row { display: grid; grid-template-columns: 64px 1fr 92px; align-items: center; gap: 10px; font-size: 13px; }
+.mix-row .bar { height: 8px; border-radius: 99px; background: var(--surface-2); overflow: hidden; }
+.mix-row .bar i { display: block; height: 100%; border-radius: 99px; }
+.mix-row .amt { text-align: right; font-weight: 700; white-space: nowrap; }
+.mix-row .amt small { display: block; color: var(--muted); font-weight: 500; }
+
+.tablewrap { overflow-x: auto; }
+table { width: 100%; border-collapse: collapse; font-size: 14px; }
+thead th { text-align: left; color: var(--muted); font-size: 12px; text-transform: uppercase; letter-spacing: .03em; padding: 8px 12px; border-bottom: 1px solid var(--line); white-space: nowrap; }
+tbody td { padding: 11px 12px; border-bottom: 1px solid var(--line); vertical-align: middle; }
+tbody tr:last-child td { border-bottom: none; }
+
+.input { width: 100%; padding: 9px 12px; border: 1px solid var(--line); border-radius: 10px; font-size: 14px; background: var(--surface); color: var(--ink); font-family: inherit; }
+.input:focus { outline: 2px solid var(--brand-soft); border-color: var(--brand); }
+
+.chip { display: inline-flex; align-items: center; padding: 2px 10px; border-radius: 99px; font-size: 12px; font-weight: 600; }
+.chip-cash { background: var(--brand-soft); color: var(--brand-dark); }
+.chip-upi { background: var(--ok-soft); color: var(--ok); }
+.chip-card { background: var(--warn-soft); color: var(--warn); }
+.chip-razorpay { background: #e7edf8; color: #34559c; }
+
+.link { color: var(--brand-dark); font-weight: 600; font-size: 14px; cursor: pointer; text-decoration: underline; text-underline-offset: 3px; }
+.link:hover { color: var(--brand); }
+.rno { font-size: 12px; font-variant-numeric: tabular-nums; letter-spacing: .2px; font-weight: 700; text-underline-offset: 3px; }
+.sidlink { color: var(--brand); font-size: 12px; font-variant-numeric: tabular-nums; letter-spacing: .3px; text-decoration: underline; text-underline-offset: 3px; cursor: pointer; white-space: nowrap; }
+.sidlink:hover { color: var(--brand-dark); }
+
+.btn-ghost-mini { border: 1px solid var(--line); background: var(--surface); color: var(--muted); padding: 5px 10px; border-radius: 10px; font-size: 12.5px; font-weight: 600; cursor: pointer; }
+.btn-ghost-mini:hover { color: var(--bad); border-color: var(--bad); }
+
+.empty { padding: 26px 12px; text-align: center; color: var(--muted); }
+.empty b { color: var(--ok); font-size: 26px; display: block; line-height: 1; margin-bottom: 6px; }
+</style>
+</head>
+<body>
+<div class="app">
+  <aside class="sidebar">
+    <div class="brand">
+      <div class="brand-mark"><img src="Pravaha_logo.jpeg" alt="Pravaha Art Space" /></div>
+      <div><strong>Arts Class</strong><small>studio CRM</small></div>
+    </div>
+    <nav class="nav">
+      <a class="nav-item">Dashboard</a>
+      <a class="nav-item">Students</a>
+      <a class="nav-item">Attendance</a>
+      <a class="nav-item">Dues</a>
+      <a class="nav-item active">Billing</a>
+      <a class="nav-item">Courses</a>
+      <a class="nav-item">Batches</a>
+      <a class="nav-item">Users</a>
+      <a class="nav-item">Settings</a>
+    </nav>
+  </aside>
+
+  <main class="main">
+    <div class="content">
+
+      <div class="page-head">
+        <h1>Billing</h1>
+        <div class="monthfield">
+          <span class="muted">Month</span>
+          <select class="input" id="monthSel" onchange="render()">
+            <option value="2026-09" selected>September 2026</option>
+            <option value="2026-08">August 2026</option>
+            <option value="2026-07">July 2026</option>
+            <option value="2026-06">June 2026</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="stat-grid">
+
+        <div class="card stat">
+          <span class="stat-label">Collected</span>
+          <span class="stat-value money"><span class="cur">₹</span><span id="collected">8,720</span></span>
+          <span class="stat-sub" id="collectedSub">6 payments</span>
+        </div>
+
+        <div class="card stat">
+          <span class="stat-label">Outstanding dues — <b id="duesMonth">Sep 2026</b></span>
+          <span class="stat-value money text-danger"><span class="cur">₹</span>6,000</span>
+          <span class="stat-sub" id="duesSub">4 students</span>
+        </div>
+
+        <div class="card stat">
+          <span class="stat-label">Method split — <b id="mixMonth">Sep 2026</b></span>
+          <div class="mix-list" id="mixList"></div>
+        </div>
+
+      </div>
+
+      <h2 id="tableTitle">Payments — Sep 2026</h2>
+      <div class="card">
+        <div class="tablewrap">
+          <table id="payTable">
+            <thead>
+              <tr><th>Receipt no</th><th>Date</th><th>Student ID</th><th>Student</th><th>Course</th><th>Method</th><th>Amount</th></tr>
+            </thead>
+            <tbody id="payBody"></tbody>
+          </table>
+        </div>
+        <div class="empty" id="noRows" style="display:none;"><b>✓</b>No payments in this month.</div>
+      </div>
+
+      <p class="muted">Mock data for preview only — try the month selector. Click any <b>Receipt no</b> to open the receipt page in a new tab (it prints to PDF; live app will serve it from the server). Data source: <code>GET /api/payments?from&to</code>.</p>
+
+    </div>
+  </main>
+</div>
+
+<script>
+  const MONTH_LABEL = { '2026-09': 'Sep 2026', '2026-08': 'Aug 2026', '2026-07': 'Jul 2026', '2026-06': 'Jun 2026' };
+  const MONTH_FULL = { '2026-09': 'September 2026', '2026-08': 'August 2026', '2026-07': 'July 2026', '2026-06': 'June 2026' };
+  const CHIP = { cash: 'chip-cash', upi: 'chip-upi', card: 'chip-card', razorpay: 'chip-razorpay' };
+
+  const GUARD = {
+    'Nithilan': ['Nithin Kumar', '6382680044'],
+    'Tanvi Shetty': ['Rakesh Shetty', '9902030099'],
+    'Aaditya K': ['K Vaidyanath', '9150289402'],
+    'Diya Patel': ['Sanjay Patel', '9876501234'],
+    'Aarav Sharma': ['Rahul Sharma', '9876543211'],
+    'Riya Nair': ['Sunil Nair', '9876502468'],
+    'Rohit Varma': ['Mohan Varma', '9876501209'],
+    'Vivaan Iyer': ['Ganesh Iyer', '9822335544'],
+    'Meera Krishnan': ['Vijay Krishnan', '9962034451'],
+  };
+
+  const DATA = {
+    '2026-09': {
+      collected: '8,720', count: 6,
+      dues: '6,000', duesCount: 4,
+      mix: [['Cash', 4020, 3, 'var(--brand)'], ['UPI', 2700, 2, 'var(--ok)'], ['Razorpay', 2000, 1, '#34559c']],
+      payments: [
+        ['RCPT-2026-0706','18 Sep 2026','Tanvi Shetty','9902030012','Perspective Drawing · Weekday Evening','cash','1,300'],
+        ['RCPT-2026-0705','10 Sep 2026','Aaditya K','9150289403','Perspective Drawing · Weekday Evening','upi','1,500'],
+        ['RCPT-2026-0704','06 Sep 2026','Nithilan','6382680024','Arumbu · Sunday batch','cash','1,220'],
+        ['RCPT-2026-0703','05 Sep 2026','Diya Patel','9876501234','Varnam · No batch','razorpay','2,000'],
+        ['RCPT-2026-0702','05 Sep 2026','Aarav Sharma','9876543210','Varnam · No batch','cash','1,500'],
+        ['RCPT-2026-0701','02 Sep 2026','Nithilan','6382680024','Arumbu · Sunday batch','upi','1,200'],
+      ],
+    },
+    '2026-08': {
+      collected: '6,500', count: 5,
+      dues: '8,400', duesCount: 6,
+      mix: [['Cash', 3800, 3, 'var(--brand)'], ['UPI', 2700, 2, 'var(--ok)']],
+      payments: [
+        ['RCPT-2026-0605','28 Aug 2026','Riya Nair','9876502468','Sketching Basics · Weekday Morning','upi','1,100'],
+        ['RCPT-2026-0604','21 Aug 2026','Rohit Varma','9876501208','Watercolor · Weekend Evening','cash','1,200'],
+        ['RCPT-2026-0603','14 Aug 2026','Vivaan Iyer','9822335544','Sketching Basics · Weekday Morning','cash','1,000'],
+        ['RCPT-2026-0602','07 Aug 2026','Meera Krishnan','9962034451','Sketching Basics · Weekday Morning','upi','1,600'],
+        ['RCPT-2026-0601','05 Aug 2026','Aarav Sharma','9876543210','Varnam · No batch','cash','1,500'],
+      ],
+    },
+    '2026-07': {
+      collected: '7,200', count: 6,
+      dues: '5,900', duesCount: 4,
+      mix: [['Cash', 5200, 4, 'var(--brand)'], ['UPI', 2000, 2, 'var(--ok)']],
+      payments: [
+        ['RCPT-2026-0506','24 Jul 2026','Kavin Raj','9841022833','Sketching Basics · Weekday Morning','cash','1,200'],
+        ['RCPT-2026-0505','18 Jul 2026','Diya Menon','9880145002','Sketching Basics · Weekday Morning','upi','1,100'],
+        ['RCPT-2026-0504','12 Jul 2026','Nila Devi','9840011223','Sketching Basics · Weekday Morning','cash','1,000'],
+        ['RCPT-2026-0503','08 Jul 2026','Sara Mathew','9847056090','Watercolor · Weekend Evening','cash','1,300'],
+        ['RCPT-2026-0502','06 Jul 2026','Nithilan','6382680024','Arumbu · Sunday batch','upi','1,200'],
+        ['RCPT-2026-0501','05 Jul 2026','Aarav Sharma','9876543210','Varnam · No batch','cash','1,500'],
+      ],
+    },
+    '2026-06': {
+      collected: '8,000', count: 7,
+      dues: '3,200', duesCount: 2,
+      mix: [['Cash', 5000, 4, 'var(--brand)'], ['UPI', 3000, 3, 'var(--ok)']],
+      payments: [
+        ['RCPT-2026-0407','27 Jun 2026','Arjun Pillai','9876500021','Sketching Basics · Weekday Morning','cash','1,200'],
+        ['RCPT-2026-0406','20 Jun 2026','Harsh Gupta','9847322640','Perspective · Weekday Evening','upi','1,400'],
+        ['RCPT-2026-0405','13 Jun 2026','Ananya Das','9700488412','Watercolor · Weekend Evening','upi','1,100'],
+        ['RCPT-2026-0404','09 Jun 2026','Rohit Varma','9876501208','Watercolor · Weekend Evening','cash','1,200'],
+        ['RCPT-2026-0403','06 Jun 2026','Athuzhai','9176462333','Sketching Basics · Weekday Morning','cash','1,000'],
+        ['RCPT-2026-0402','05 Jun 2026','Diya Patel','9876501234','Varnam · No batch','cash','2,000'],
+        ['RCPT-2026-0401','05 Jun 2026','Aarav Sharma','9876543210','Varnam · No batch','cash','1,500'],
+      ],
+    },
+  };
+
+  const SID = {};
+  const sidCounter = { n: 100 };
+  for (const mk of Object.keys(DATA)) {
+    for (const row of DATA[mk].payments) {
+      if (!SID[row[2]]) SID[row[2]] = 'PAS-2026-' + String(++sidCounter.n) + '';
+    }
+  }
+
+  function render() {
+    const m = document.getElementById('monthSel').value;
+    const d = DATA[m];
+    const label = MONTH_LABEL[m];
+
+    document.getElementById('collected').textContent = d.collected;
+    document.getElementById('collectedSub').textContent = d.count + ' payments';
+    document.getElementById('duesMonth').textContent = label;
+    document.getElementById('duesSub').textContent = d.duesCount + ' students';
+    document.getElementById('mixMonth').textContent = label;
+    document.getElementById('tableTitle').textContent = 'Payments — ' + label;
+
+    // method split bars
+    const max = Math.max(...d.mix.map((m2) => m2[1]));
+    document.getElementById('mixList').innerHTML = d.mix.map(([name, amt, n, color]) => `
+      <div class="mix-row">
+        <span class="chip ${CHIP[name.toLowerCase()]}">${name}</span>
+        <div class="bar"><i style="width:${Math.round((amt / max) * 100)}%; background:${color};"></i></div>
+        <span class="amt">₹${amt.toLocaleString('en-IN')}<small>${n} payments</small></span>
+      </div>`).join('');
+
+    // table
+    const body = document.getElementById('payBody');
+    if (!d.payments.length) {
+      body.innerHTML = '';
+      document.getElementById('payTable').style.display = 'none';
+      document.getElementById('noRows').style.display = '';
+    } else {
+      document.getElementById('payTable').style.display = '';
+      document.getElementById('noRows').style.display = 'none';
+      const rcpt = (no, date, name, phone, course, method, amt, sid, monthKey) => {
+        const guard = GUARD[name] || ['', ''];
+        const p = new URLSearchParams({
+          no, date, name, phone,
+          course,
+          method,
+          amt: amt.replace(/,/g, ''),
+          month: MONTH_FULL[monthKey],
+          studentId: sid,
+          guardian: guard[0] || '—',
+        });
+        return 'design-receipt.html?' + p.toString();
+      };
+      let idx = 0;
+      body.innerHTML = d.payments.map(([receipt, date, name, phone, course, method, amt]) => {
+        const sid = SID[name];
+        return `
+        <tr>
+          <td><a class="link rno" target="_blank" rel="noopener" href="${rcpt(receipt, date, name, phone, course, method, amt, sid, m)}">${receipt}</a></td>
+          <td>${date}</td>
+          <td><a class="sidlink" target="_blank" rel="noopener" href="Mocks/Students_page_view.html">${sid}</a></td>
+          <td><b>${name}</b></td>
+          <td>${course.split(' ·')[0]}</td>
+          <td><span class="chip ${CHIP[method]}">${method === 'upi' ? 'UPI' : method.charAt(0).toUpperCase() + method.slice(1)}</span></td>
+          <td><b>₹${amt}</b></td>
+        </tr>`;
+      }).join('');
+    }
+  }
+
+  render();
+</script>
+</body>
+</html>

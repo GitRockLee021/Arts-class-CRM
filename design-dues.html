@@ -1,0 +1,626 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Dues — Design preview</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Syne:wght@600;700;800&display=swap');
+
+:root {
+  --bg: #f7f4fa; --bg-2: #e9e3f0; --surface: #fffdf8; --surface-2: #f1ebf3;
+  --ink: #2f2a36; --muted: #8b8590; --line: #e4dfec;
+  --brand: #7a5ba8; --brand-dark: #60438c; --brand-2: #c09ad8; --brand-soft: #ede6f5;
+  --ok: #2f8f6b; --ok-soft: #e4f2ec; --bad: #b04a6f; --bad-soft: #fbeaef;
+  --warn: #b0893f; --warn-soft: #f6efdd; --blue: #34559c; --blue-soft: #e7edf8;
+  --shadow: 0 2px 3px rgba(80,70,90,.06), 0 10px 26px rgba(80,70,90,.08);
+  --font-body: 'Inter', Arial, sans-serif; --font-accent: 'Syne', 'Inter', sans-serif;
+}
+* { box-sizing: border-box; }
+body { margin: 0; background: var(--bg); background-image: linear-gradient(160deg, var(--bg), var(--bg-2)); color: var(--ink); font-family: var(--font-body); font-size: 15px; -webkit-font-smoothing: antialiased; }
+button { font-family: inherit; }
+
+.app { display: flex; min-height: 100vh; }
+.sidebar { width: 236px; background: var(--surface); border-right: 1px solid var(--line); padding: 18px 14px; display: flex; flex-direction: column; gap: 18px; }
+.brand { display: flex; align-items: center; gap: 10px; padding: 4px 6px; }
+.brand-mark { width: 40px; height: 40px; border-radius: 10px; background: #fff; display: grid; place-items: center; overflow: hidden; box-shadow: 0 3px 8px rgba(90,80,140,.2); flex: none; }
+.brand-mark img { width: 100%; height: 100%; object-fit: cover; display: block; transform: scale(1.3); }
+.brand strong { font-family: var(--font-accent); font-size: 19px; display: block; line-height: 1; }
+.brand small { color: var(--muted); font-family: var(--font-body); font-size: 12px; }
+.nav { display: flex; flex-direction: column; gap: 4px; }
+.nav-item { display: flex; align-items: center; gap: 10px; padding: 9px 12px; border-radius: 14px 9px 15px 10px / 10px 15px 9px 14px; color: var(--muted); text-decoration: none; font-weight: 600; font-size: 16px; }
+.nav-item.active { background: var(--brand-soft); color: var(--brand-dark); }
+
+.main { flex: 1; }
+.content { max-width: 1000px; width: 100%; margin: 0 auto; padding: 24px 24px 90px; }
+h1 { font-family: var(--font-accent); font-size: 24px; margin: 0; font-weight: 700; }
+h2 { font-family: var(--font-accent); font-size: 17px; margin: 0; font-weight: 700; }
+p { margin: 0; }
+.muted { color: var(--muted); font-size: 13px; }
+.block { display: block; }
+.row { display: flex; align-items: center; gap: 8px; }
+.row.between { justify-content: space-between; }
+.card { background: var(--surface); border: 1px solid var(--line); border-radius: 26px 18px 28px 20px / 18px 26px 16px 22px; padding: 18px; box-shadow: var(--shadow); }
+
+/* Header */
+.page-head { display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; margin-bottom: 20px; }
+.page-head .asof { display: block; color: var(--muted); font-size: 13px; margin-top: 3px; }
+.head-actions { display: flex; gap: 8px; align-items: center; }
+
+.btn { border: none; cursor: pointer; font-size: 13px; font-weight: 600; padding: 9px 14px; border-radius: 12px; display: inline-flex; align-items: center; gap: 7px; text-decoration: none; }
+.btn svg { width: 15px; height: 15px; }
+.btn-primary { background: var(--brand-dark); color: #fff; }
+.btn-primary:hover { background: #4d3771; }
+.btn-ghost { background: var(--surface); color: var(--brand-dark); border: 1px solid var(--line); }
+.btn-ghost:hover { border-color: var(--brand); }
+.btn-sm { padding: 6px 11px; font-size: 12.5px; border-radius: 10px; }
+.btn-icon { padding: 6px 8px; }
+.btn-sm.btn-ghost { color: var(--muted); }
+.btn-sm.btn-ghost:hover { color: var(--bad); border-color: var(--bad); }
+.btn-dark { background: var(--bad); color: #fff; }
+.btn-dark:hover { background: #93405e; }
+
+/* Stat cards */
+.stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(230px, 1fr)); gap: 14px; margin-bottom: 22px; }
+.stat { display: flex; align-items: center; gap: 14px; padding: 15px 16px; margin: 0; }
+.stat-main { min-width: 0; }
+.stat-label { display: block; color: var(--muted); font-size: 12.5px; font-weight: 600; }
+.stat-value { font-size: 22px; line-height: 1.15; font-family: var(--font-body); font-weight: 800; font-variant-numeric: tabular-nums; letter-spacing: -0.3px; }
+.stat-sub { color: var(--muted); font-size: 12px; margin-top: 2px; }
+.stat-value.ok { color: var(--ok); }
+.stat-value.bad { color: var(--bad); }
+.ico { width: 44px; height: 44px; border-radius: 14px; display: grid; place-items: center; flex: none; }
+.ico svg { width: 21px; height: 21px; }
+.ico-ok { background: var(--ok-soft); color: var(--ok); }
+.ico-bad { background: var(--bad-soft); color: var(--bad); }
+.ico-purple { background: var(--brand-soft); color: var(--brand-dark); }
+
+/* Ring gauge */
+.ring-wrap { position: relative; width: 66px; height: 66px; flex: none; }
+.ring-wrap svg { transform: rotate(-90deg); }
+.ring-track { fill: none; stroke: var(--surface-2); stroke-width: 9; }
+.ring-val { fill: none; stroke: var(--brand); stroke-width: 9; stroke-linecap: round; stroke-dasharray: 251.2; stroke-dashoffset: 98; }
+.ring-amt { position: absolute; inset: 0; display: grid; place-items: center; font-size: 16px; font-weight: 800; color: var(--brand-dark); }
+
+/* Table */
+.section-head { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin: 0 0 12px; }
+.count-badge { background: var(--surface-2); color: var(--muted); border-radius: 99px; padding: 3px 12px; font-size: 12px; font-weight: 700; }
+
+.tablewrap { overflow-x: auto; }
+table { width: 100%; border-collapse: collapse; font-size: 14px; }
+thead th { text-align: left; color: var(--muted); font-size: 12px; text-transform: uppercase; letter-spacing: .04em; padding: 8px 12px; border-bottom: 1px solid var(--line); white-space: nowrap; }
+tbody td { padding: 12px; border-bottom: 1px solid var(--line); vertical-align: middle; }
+tbody tr:last-child td { border-bottom: none; }
+tbody tr { transition: background .12s ease; }
+tbody tr:hover { background: var(--surface-2); }
+
+.stu-cell { display: flex; align-items: center; gap: 11px; }
+.avatar { width: 38px; height: 38px; border-radius: 45% 55% 52% 48% / 52% 46% 54% 48%; font-family: var(--font-accent); font-size: 15px; font-weight: 700; display: inline-flex; align-items: center; justify-content: center; flex: none; box-shadow: inset 0 0 0 1px rgba(96,67,140,.08); }
+.stu-name { font-weight: 700; font-size: 14px; }
+
+.course-name { font-weight: 600; font-size: 13.5px; }
+.course-batch { color: var(--muted); font-size: 12px; }
+
+.due-chip { display: inline-flex; align-items: center; gap: 5px; padding: 3px 10px; border-radius: 99px; font-size: 11.5px; font-weight: 700; white-space: nowrap; }
+.due-chip svg { width: 11px; height: 11px; }
+.due-chip-overdue { background: var(--bad-soft); color: var(--bad); }
+.late-note { display: block; color: var(--bad); font-size: 11.5px; font-weight: 600; margin-top: 2px; }
+
+.amt { text-align: right; font-size: 15px; font-weight: 800; font-variant-numeric: tabular-nums; white-space: nowrap; }
+.amt.bad { color: var(--bad); }
+.actions-cell { text-align: right; white-space: nowrap; }
+
+.tfoot td { border-top: 1px solid var(--line); border-bottom: none; background: var(--surface-2); font-weight: 800; padding: 10px 12px; }
+
+.hint { display: flex; align-items: flex-start; gap: 9px; margin-top: 14px; font-size: 12.5px; color: var(--muted); line-height: 1.5; }
+.hint svg { width: 15px; height: 15px; flex: none; margin-top: 1px; color: var(--brand-dark); }
+
+/* Collect modal (demo) */
+.backdrop { position: fixed; inset: 0; background: rgba(47,42,54,.45); display: none; align-items: center; justify-content: center; padding: 18px; z-index: 50; }
+.backdrop.open { display: flex; }
+.dialog { background: var(--surface); width: 100%; max-width: 400px; border-radius: 24px 16px 26px 18px / 16px 24px 14px 20px; box-shadow: var(--shadow); padding: 20px; }
+.dialog h3 { font-family: var(--font-accent); margin: 0 0 4px; font-size: 18px; }
+.dialog .sub { color: var(--muted); font-size: 13px; margin: 0 0 14px; }
+.field { display: block; margin-bottom: 12px; }
+.field-label { display: block; font-size: 12px; font-weight: 700; color: var(--muted); text-transform: uppercase; letter-spacing: .04em; margin-bottom: 5px; }
+.dlg-actions { display: flex; justify-content: flex-end; gap: 8px; margin-top: 16px; }
+.link-note { display: none; align-items: flex-start; gap: 8px; background: var(--blue-soft); color: var(--blue); border-radius: 12px; padding: 10px 12px; font-size: 12.5px; line-height: 1.45; margin: 0 0 12px; }
+.link-note svg { width: 15px; height: 15px; flex: none; margin-top: 1px; }
+.sent-panel { display: none; text-align: center; padding: 4px 0 2px; }
+.sent-panel.open { display: block; }
+.sent-ico { width: 54px; height: 54px; border-radius: 50%; background: var(--ok-soft); color: var(--ok); display: grid; place-items: center; margin: 0 auto 12px; }
+.sent-ico svg { width: 27px; height: 27px; }
+.sent-panel .dlg-actions { justify-content: center; }
+
+/* WhatsApp reminder preview */
+.tpl-note { font-size: 12px; color: var(--muted); margin-bottom: 4px; }
+
+/* Delivery status list (preview) */
+.deliv-list { margin: 2px 0 10px; text-align: left; border: 1px solid var(--line); border-radius: 14px; overflow: hidden; }
+.deliv-row { display: flex; align-items: center; justify-content: space-between; gap: 8px; padding: 9px 12px; border-bottom: 1px solid var(--line); font-size: 13px; }
+.deliv-row:last-child { border-bottom: none; }
+.deliv-name { font-weight: 600; }
+.deliv-time { color: var(--muted); font-size: 11.5px; margin-left: 6px; }
+.dstat { display: inline-flex; align-items: center; gap: 5px; padding: 3px 9px; border-radius: 99px; font-size: 11.5px; font-weight: 700; white-space: nowrap; }
+.dstat svg { width: 12px; height: 12px; }
+.dstat-read { background: var(--blue-soft); color: var(--blue); }
+.dstat-delivered { background: var(--ok-soft); color: var(--ok); }
+.dstat-sent { background: var(--surface-2); color: var(--muted); }
+.dstat-failed { background: var(--bad-soft); color: var(--bad); }
+
+/* Roster picker (attendance-style) + history */
+.dialog.wide { max-width: 470px; }
+.roster-scroll { max-height: 220px; overflow-y: auto; margin-bottom: 12px; }
+.roster-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+.student-card { display: flex; align-items: center; gap: 10px; border: 1px solid var(--line); border-radius: 14px; padding: 8px 10px; background: var(--surface); cursor: pointer; transition: border-color .12s, background .12s; }
+.student-card.selected { border-color: var(--brand); background: var(--brand-soft); }
+.student-card .who { min-width: 0; flex: 1; }
+.student-card .who strong { display: block; font-size: 13px; }
+.student-card .who small { color: var(--muted); font-size: 11px; }
+.student-card .avatar { width: 30px; height: 30px; font-size: 12px; }
+.student-card .tick { width: 20px; height: 20px; border-radius: 50%; display: grid; place-items: center; font-size: 11px; font-weight: 800; flex: none; background: var(--surface-2); color: var(--muted); }
+.student-card.selected .tick { background: var(--brand); color: #fff; }
+.hist-group + .hist-group { margin-top: 14px; }
+.hist-date { font-size: 11.5px; font-weight: 800; text-transform: uppercase; letter-spacing: .05em; color: var(--muted); margin-bottom: 6px; }
+</style>
+</head>
+<body>
+<div class="app">
+  <aside class="sidebar">
+    <div class="brand">
+      <div class="brand-mark"><img src="Pravaha_logo.jpeg" alt="Pravaha Art Space" /></div>
+      <div><strong>Arts Class</strong><small>studio CRM</small></div>
+    </div>
+    <nav class="nav">
+      <a class="nav-item">Dashboard</a>
+      <a class="nav-item">Students</a>
+      <a class="nav-item">Attendance</a>
+      <a class="nav-item active">Dues</a>
+      <a class="nav-item">Billing</a>
+      <a class="nav-item">Courses</a>
+      <a class="nav-item">Batches</a>
+      <a class="nav-item">Users</a>
+      <a class="nav-item">Settings</a>
+    </nav>
+  </aside>
+
+  <main class="main">
+    <div class="content">
+
+      <div class="page-head">
+        <div>
+          <h1>Dues</h1>
+          <span class="asof">As of 21 Sep 2026 · month in progress</span>
+        </div>
+        <div class="head-actions">
+          <a class="btn btn-ghost" href="design-billing.html" target="_blank"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="5" width="20" height="14" rx="2"/><line x1="2" y1="10" x2="22" y2="10"/></svg>Billing</a>
+          <button class="btn btn-ghost" onclick="openHistory()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 2.6-6.4L3 8"/><path d="M3 3v5h5"/><path d="M12 7v5l3 2"/></svg>Reminder history</button>
+          <button class="btn btn-primary" onclick="openRemindAll()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 2L11 13"/><path d="M22 2l-7 20-4-9-9-4 20-7z"/></svg>Remind all</button>
+        </div>
+      </div>
+
+      <div class="stats">
+        <div class="card stat">
+          <div class="ring-wrap">
+            <svg width="66" height="66">
+              <circle class="ring-track" cx="33" cy="33" r="28" />
+              <circle class="ring-val" cx="33" cy="33" r="28" />
+            </svg>
+            <span class="ring-amt">61%</span>
+          </div>
+          <div class="stat-main">
+            <span class="stat-label">Collection — Sep 2026</span>
+            <span class="stat-value ok">₹8,720</span>
+            <span class="stat-sub">of ₹14,200 due · 6 of 9 payments</span>
+          </div>
+        </div>
+        <div class="card stat">
+          <span class="ico ico-bad"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 8v4l3 3"/><circle cx="12" cy="12" r="9"/></svg></span>
+          <div class="stat-main">
+            <span class="stat-label">Overdue</span>
+            <span class="stat-value bad">₹5,720</span>
+            <span class="stat-sub">3 students · oldest 14 days late</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="section-head">
+        <h2>Overdue students</h2>
+        <span class="count-badge">3 students</span>
+      </div>
+
+      <div class="card">
+        <div class="tablewrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Student</th>
+                <th>Course / batch</th>
+                <th>Status</th>
+                <th style="text-align:right">Due amount</th>
+                <th class="actions-cell">Actions</th>
+              </tr>
+            </thead>
+            <tbody id="rows"></tbody>
+            <tfoot>
+              <tr class="tfoot">
+                <td colspan="3">Total outstanding</td>
+                <td class="amt bad" style="text-align:right">₹5,720</td>
+                <td></td>
+              </tr>
+            </tfoot>
+          </table>
+        </div>
+      </div>
+
+      <p class="hint">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/></svg>
+        <span>Overdue = unpaid after the 7th (due on the 5th + 3-day grace) · Collect with Cash/UPI/Card records the payment immediately · Collect with <strong>Razorpay</strong> sends the parent a payment link and the row updates by itself once they pay.</span>
+      </p>
+
+    </div>
+  </main>
+</div>
+
+<div class="backdrop" id="collectBackdrop">
+  <div class="dialog">
+    <div id="formPanel">
+      <h3 id="dlgTitle">Collect payment</h3>
+      <p class="sub" id="dlgSub">—</p>
+      <label class="field">
+        <span class="field-label">Amount (₹)</span>
+        <input class="input" type="number" id="amt" value="0" />
+      </label>
+      <label class="field" id="dateField">
+        <span class="field-label">Payment date</span>
+        <input class="input" type="date" id="pdate" />
+      </label>
+      <label class="field">
+        <span class="field-label">Method</span>
+        <select class="input" id="pmethod" onchange="methodChanged()">
+          <option value="cash">Cash</option>
+          <option value="upi">UPI</option>
+          <option value="card">Card</option>
+          <option value="razorpay">Razorpay</option>
+          <option value="other">Other</option>
+        </select>
+      </label>
+      <p class="link-note" id="linkNote">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10 13a5 5 0 0 0 7.07 0l3-3a5 5 0 0 0-7.07-7.07L11 4"/><path d="M14 11a5 5 0 0 0-7.07 0l-3 3a5 5 0 0 0 7.07 7.07L13 20"/></svg>
+        <span id="linkNoteText">Parent gets a Razorpay payment link on WhatsApp. The payment is recorded and the receipt sent automatically once they pay — no manual entry.</span>
+      </p>
+      <label class="field">
+        <span class="field-label">Notes (optional)</span>
+        <input class="input" type="text" placeholder="e.g. Half fee — joined 20th" />
+      </label>
+      <div class="dlg-actions">
+        <button class="btn btn-ghost" onclick="closeCollect()">Cancel</button>
+        <button class="btn btn-primary" id="submitBtn" onclick="submitCollect()">Record payment</button>
+      </div>
+    </div>
+
+    <div class="sent-panel" id="sentPanel">
+      <div class="sent-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><path d="M22 4L12 14.01l-3-3"/></svg></div>
+      <h3>Payment link sent</h3>
+      <p class="sub" id="sentSub">—</p>
+      <div class="dlg-actions">
+        <button class="btn btn-primary" onclick="closeCollect()">Done</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="backdrop" id="remindBackdrop">
+  <div class="dialog wide">
+    <div id="remindPanel">
+      <h3 id="remindTitle">Send fee reminders</h3>
+      <p class="sub" id="remindSub">—</p>
+      <div class="roster-scroll">
+        <div class="roster-grid" id="remindRoster"></div>
+      </div>
+      <div class="dlg-actions">
+        <button class="btn btn-ghost" onclick="closeRemind()">Cancel</button>
+        <button class="btn btn-primary" id="remindSend" onclick="submitRemind()">Send</button>
+      </div>
+    </div>
+
+    <div class="sent-panel" id="remindDone">
+      <div class="sent-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><path d="M22 4L12 14.01l-3-3"/></svg></div>
+      <h3>Reminders sent</h3>
+      <p class="sub" id="remindDoneSub">—</p>
+      <div class="deliv-list" id="delivList"></div>
+      <p class="tpl-note" style="text-align:center">Delivery status updates arrive from WhatsApp webhooks (needs hosting) — shown here as a preview.</p>
+      <div class="dlg-actions">
+        <button class="btn btn-primary" onclick="closeRemind()">Done</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="backdrop" id="logBackdrop">
+  <div class="dialog">
+    <h3 id="logTitle">Reminder log</h3>
+    <p class="sub" id="logSub">—</p>
+    <div class="deliv-list" id="logList"></div>
+    <p class="tpl-note" style="text-align:center">Status arrives from WhatsApp webhooks (needs hosting) — shown here as a preview.</p>
+    <div class="dlg-actions">
+      <button class="btn btn-ghost" onclick="closeLog()">Close</button>
+    </div>
+  </div>
+</div>
+
+<div class="backdrop" id="historyBackdrop">
+  <div class="dialog wide">
+    <h3>Reminder history</h3>
+    <p class="sub">Reminders sent in September 2026 · newest first</p>
+    <div id="histBody" style="max-height:340px; overflow-y:auto"></div>
+    <p class="tpl-note" style="text-align:center">Status arrives from WhatsApp webhooks (needs hosting) — shown here as a preview.</p>
+    <div class="dlg-actions">
+      <button class="btn btn-ghost" onclick="closeHistory()">Close</button>
+    </div>
+  </div>
+</div>
+
+<script>
+  const rows = [
+    { inits: 'NI', name: 'Nithilan', notify: '6382680024', course: 'Arumbu', batch: 'Sunday batch', daysLate: 14, amt: '1,220', state: 'overdue', logs: [
+      { at: '21 Sep 2026 · 10:32', amt: '1,220', status: 'delivered' },
+      { at: '14 Sep 2026 · 09:15', amt: '1,220', status: 'read' },
+      { at: '07 Sep 2026 · 18:40', amt: '1,220', status: 'read' },
+    ] },
+    { inits: 'HA', name: 'Harsh Gupta', notify: '9412003344', course: 'Varnam', batch: 'Weekday Morning', daysLate: 14, amt: '3,000', state: 'overdue', logs: [
+      { at: '21 Sep 2026 · 10:32', amt: '3,000', status: 'failed' },
+      { at: '12 Sep 2026 · 11:05', amt: '3,000', status: 'read' },
+      { at: '12 Aug 2026 · 11:00', amt: '3,000', status: 'read' },
+      { at: '05 Jul 2026 · 09:40', amt: '3,000', status: 'read' },
+    ] },
+    { inits: 'AR', name: 'Athuzhai', notify: '9840012345', course: 'Sketching Basics', batch: 'Weekday Morning', daysLate: 14, amt: '1,500', state: 'link-sent', logs: [
+      { at: '21 Sep 2026 · 10:33', amt: '1,500', status: 'sent' },
+      { at: '09 Sep 2026 · 16:20', amt: '1,500', status: 'read' },
+    ] },
+  ];
+  const ICON_DOT = '<svg viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="12" r="6"/></svg>';
+  const TICK = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>';
+  const TICK2 = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12l5 5L15 8"/><path d="M9 17l1 1L23 7"/></svg>';
+  const ALERT = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 8v4M12 16h.01"/></svg>';
+  const ICON_LOG = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 2.6-6.4L3 8"/><path d="M3 3v5h5"/><path d="M12 7v5l3 2"/></svg>';
+  const STATUS_META = {
+    read: ['dstat-read', 'Read', TICK2],
+    delivered: ['dstat-delivered', 'Delivered', TICK2],
+    sent: ['dstat-sent', 'Sent', TICK],
+    failed: ['dstat-failed', 'Failed', ALERT],
+  };
+  function statusChip(kind) {
+    const [cls, label, icon] = STATUS_META[kind] || STATUS_META.sent;
+    return `<span class="dstat ${cls}">${icon}${label}</span>`;
+  }
+  const TODAY = '21 Sep';
+  let current = null;
+
+  function avatarBg(s) {
+    const colors = ['#ede6f5,#60438c', '#e4f2ec,#2f8f6b', '#f6efdd,#b0893f', '#fbeaef,#b04a6f'];
+    let h = 0; for (let i = 0; i < s.length; i++) h = (h * 31 + s.charCodeAt(i)) % 997;
+    return colors[h % colors.length].split(',');
+  }
+
+  function renderRows() {
+    document.getElementById('rows').innerHTML = rows.map((r, i) => {
+      const [bg, fg] = avatarBg(r.name);
+      const sent = r.state === 'link-sent';
+      const logBtn = `<button class="btn btn-sm btn-ghost btn-icon" title="Reminder log" onclick="openLog(${i})">${ICON_LOG}</button>`;
+      const actions = sent
+        ? `<button class="btn btn-sm btn-ghost" onclick="openCollect(${i})">Resend link</button>${logBtn}`
+        : `<button class="btn btn-sm btn-dark" onclick="openCollect(${i})">Collect</button>
+           <button class="btn btn-sm btn-ghost" onclick="openRemindOne(${i})">Remind</button>${logBtn}`;
+      return `<tr>
+        <td>
+          <div class="stu-cell">
+            <span class="avatar" style="background:${bg}; color:${fg}">${r.inits}</span>
+            <span class="stu-name">${r.name}</span>
+          </div>
+        </td>
+        <td>
+          <div><span class="course-name">${r.course}</span><small class="muted block">${r.batch}</small></div>
+        </td>
+        <td>
+          <div>
+            <span class="due-chip due-chip-overdue">${ICON_DOT}Overdue</span>
+            <small class="late-note">${r.daysLate} days late</small>
+          </div>
+        </td>
+        <td class="amt bad">₹${r.amt}</td>
+        <td class="actions-cell">${actions}</td>
+      </tr>`;
+    }).join('');
+  }
+
+  function methodChanged() {
+    const rzp = document.getElementById('pmethod').value === 'razorpay';
+    document.getElementById('dateField').style.display = rzp ? 'none' : '';
+    document.getElementById('linkNote').style.display = rzp ? 'flex' : 'none';
+    document.getElementById('submitBtn').textContent = rzp ? 'Send payment link' : 'Record payment';
+  }
+
+  function openCollect(idx) {
+    const r = rows[idx];
+    const sent = r.state === 'link-sent';
+    current = idx;
+    document.getElementById('dlgTitle').textContent = (sent ? 'Resend payment link — ' : 'Collect payment — ') + r.name;
+    document.getElementById('dlgSub').textContent = sent
+      ? `Due ₹${r.amt} · previously sent to +91 ${r.notify}`
+      : `Due ₹${r.amt} · receipt goes to the parent on confirm`;
+    document.getElementById('linkNoteText').textContent =
+      `Razorpay payment link goes to +91 ${r.notify} on WhatsApp. The payment is recorded and the receipt sent automatically once they pay — no manual entry.`;
+    document.getElementById('amt').value = r.amt.replace(/[^\d]/g, '');
+    document.getElementById('pdate').value = new Date().toISOString().slice(0, 10);
+    document.getElementById('pmethod').value = sent ? 'razorpay' : 'cash';
+    methodChanged();
+    document.getElementById('formPanel').style.display = '';
+    document.getElementById('sentPanel').classList.remove('open');
+    document.getElementById('collectBackdrop').classList.add('open');
+  }
+
+  function submitCollect() {
+    const r = rows[current];
+    if (document.getElementById('pmethod').value === 'razorpay') {
+      r.state = 'link-sent';
+      r.sentOn = TODAY;
+      renderRows();
+      document.getElementById('formPanel').style.display = 'none';
+      document.getElementById('sentPanel').classList.add('open');
+      document.getElementById('sentSub').textContent =
+        `Razorpay link for ₹${r.amt} sent to +91 ${r.notify} (${r.name}'s parent) on WhatsApp. The row updates automatically once they pay.`;
+    } else {
+      closeCollect();
+    }
+  }
+
+  function closeCollect() {
+    document.getElementById('collectBackdrop').classList.remove('open');
+    document.getElementById('formPanel').style.display = '';
+    document.getElementById('sentPanel').classList.remove('open');
+  }
+
+  document.getElementById('collectBackdrop').addEventListener('click', (e) => {
+    if (e.target === e.currentTarget) closeCollect();
+  });
+
+  /* ---- Reminder (roster picker) ---- */
+  let remindSel = new Set();
+  let remindMode = 'all';
+
+  function renderRemind() {
+    const shown = remindMode === 'one' ? [...remindSel] : rows.map((r, i) => i);
+    document.getElementById('remindRoster').innerHTML = shown.map((i) => {
+      const r = rows[i];
+      const on = remindSel.has(i);
+      return `<div class="student-card ${on ? 'selected' : ''}"${remindMode === 'one' ? '' : ` onclick="toggleRemind(${i})"`}>
+        <span class="avatar">${r.inits}</span>
+        <span class="who"><strong>${r.name}</strong><small>₹${r.amt} due · +91 ${r.notify}</small></span>
+        <span class="tick">${on ? '✓' : ''}</span>
+      </div>`;
+    }).join('');
+
+    const first = [...remindSel][0];
+    const sample = rows[first];
+    document.getElementById('remindSub').textContent = remindMode === 'one'
+      ? `Sending to ${sample.name}'s parent (+91 ${sample.notify})`
+      : `Pick who gets a reminder · ${remindSel.size} of ${rows.length} selected`;
+    const send = document.getElementById('remindSend');
+    send.textContent = `Send to ${remindSel.size} student${remindSel.size === 1 ? '' : 's'}`;
+    send.disabled = remindSel.size === 0;
+    send.style.opacity = remindSel.size === 0 ? 0.55 : '';
+  }
+
+  function showRemind() {
+    renderRemind();
+    document.getElementById('remindPanel').style.display = '';
+    document.getElementById('remindDone').classList.remove('open');
+    document.getElementById('remindBackdrop').classList.add('open');
+  }
+
+  function openRemindAll() {
+    remindMode = 'all';
+    remindSel = new Set(rows.map((r, i) => i));
+    document.getElementById('remindTitle').textContent = 'Send fee reminders';
+    showRemind();
+  }
+
+  function openRemindOne(i) {
+    remindMode = 'one';
+    remindSel = new Set([i]);
+    document.getElementById('remindTitle').textContent = `Remind — ${rows[i].name}`;
+    showRemind();
+  }
+
+  function toggleRemind(i) {
+    if (remindSel.has(i)) remindSel.delete(i);
+    else remindSel.add(i);
+    renderRemind();
+  }
+
+  function submitRemind() {
+    const targets = [...remindSel].sort((a, b) => a - b);
+    if (!targets.length) return;
+    document.getElementById('remindPanel').style.display = 'none';
+    document.getElementById('remindDone').classList.add('open');
+    document.getElementById('remindDoneSub').textContent = targets.length === 1
+      ? `Reminder sent to ${rows[targets[0]].name}'s parent on WhatsApp.`
+      : `Reminders sent to ${targets.length} parents on WhatsApp.`;
+    const kinds = ['read', 'delivered', 'sent'];
+    document.getElementById('delivList').innerHTML = targets.map((idx, n) => {
+      const r = rows[idx];
+      const kind = targets.length === 1 ? 'delivered' : kinds[n % kinds.length];
+      return `<div class="deliv-row">
+        <span><span class="deliv-name">${r.name}</span><span class="deliv-time">+91 ${r.notify} · 10:32</span></span>
+        ${statusChip(kind)}
+      </div>`;
+    }).join('');
+  }
+
+  function closeRemind() {
+    document.getElementById('remindBackdrop').classList.remove('open');
+    document.getElementById('remindPanel').style.display = '';
+    document.getElementById('remindDone').classList.remove('open');
+  }
+
+  document.getElementById('remindBackdrop').addEventListener('click', (e) => {
+    if (e.target === e.currentTarget) closeRemind();
+  });
+
+  /* ---- Reminder history (current month, datewise) ---- */
+  const CURRENT_MONTH = 'Sep 2026';
+
+  function openHistory() {
+    const map = new Map();
+    rows.forEach((r) => r.logs.forEach((l) => {
+      if (!l.at.includes(CURRENT_MONTH)) return;
+      const [date, time] = l.at.split(' · ');
+      if (!map.has(date)) map.set(date, []);
+      map.get(date).push({ name: r.name, time, amt: l.amt, status: l.status });
+    }));
+    const groups = [...map.entries()].sort((a, b) => new Date(b[0]) - new Date(a[0]));
+    document.getElementById('histBody').innerHTML = groups.length
+      ? groups.map(([date, entries]) => `<div class="hist-group">
+          <div class="hist-date">${date}</div>
+          <div class="deliv-list">
+            ${entries.map((e) => `<div class="deliv-row">
+              <span><span class="deliv-name">${e.name}</span><span class="deliv-time">${e.time} · Fee reminder · ₹${e.amt}</span></span>
+              ${statusChip(e.status)}
+            </div>`).join('')}
+          </div>
+        </div>`).join('')
+      : '<div class="deliv-row"><span class="muted">No reminders sent this month yet.</span></div>';
+    document.getElementById('historyBackdrop').classList.add('open');
+  }
+  function closeHistory() {
+    document.getElementById('historyBackdrop').classList.remove('open');
+  }
+  document.getElementById('historyBackdrop').addEventListener('click', (e) => {
+    if (e.target === e.currentTarget) closeHistory();
+  });
+
+  /* ---- Reminder log (per student) ---- */
+  function openLog(i) {
+    const r = rows[i];
+    document.getElementById('logTitle').textContent = `Reminder log — ${r.name}`;
+    document.getElementById('logSub').textContent = `+91 ${r.notify} · ${r.logs.length} reminder${r.logs.length === 1 ? '' : 's'} sent`;
+    document.getElementById('logList').innerHTML = r.logs.length
+      ? r.logs.map((l) => `<div class="deliv-row">
+          <span><span class="deliv-name">${l.at}</span><span class="deliv-time">Fee reminder · ₹${l.amt}</span></span>
+          ${statusChip(l.status)}
+        </div>`).join('')
+      : '<div class="deliv-row"><span class="muted">No reminders sent yet.</span></div>';
+    document.getElementById('logBackdrop').classList.add('open');
+  }
+  function closeLog() {
+    document.getElementById('logBackdrop').classList.remove('open');
+  }
+  document.getElementById('logBackdrop').addEventListener('click', (e) => {
+    if (e.target === e.currentTarget) closeLog();
+  });
+
+  renderRows();
+</script>
+</body>
+</html>

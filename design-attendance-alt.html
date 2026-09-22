@@ -1,0 +1,473 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Attendance — Design preview (alt: list of unlogged days)</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Syne:wght@600;700;800&display=swap');
+
+:root {
+  --bg: #f7f4fa; --bg-2: #e9e3f0; --surface: #fffdf8; --surface-2: #f1ebf3;
+  --ink: #2f2a36; --muted: #8b8590; --line: #e4dfec;
+  --brand: #7a5ba8; --brand-dark: #60438c; --brand-2: #c09ad8; --brand-soft: #ede6f5;
+  --ok: #2f8f6b; --ok-soft: #e4f2ec; --bad: #b04a6f; --bad-soft: #fbeaef;
+  --warn: #b0893f; --warn-soft: #f6efdd;
+  --shadow: 0 2px 3px rgba(80,70,90,.06), 0 10px 26px rgba(80,70,90,.08);
+  --font-body: 'Inter', Arial, sans-serif; --font-accent: 'Syne', 'Inter', sans-serif;
+}
+* { box-sizing: border-box; }
+body { margin: 0; background: var(--bg); background-image: linear-gradient(160deg, var(--bg), var(--bg-2)); color: var(--ink); font-family: var(--font-body); font-size: 15px; -webkit-font-smoothing: antialiased; }
+
+.app { display: flex; min-height: 100vh; }
+
+.sidebar { width: 236px; background: var(--surface); border-right: 1px solid var(--line); padding: 18px 14px; display: flex; flex-direction: column; gap: 18px; }
+.brand { display: flex; align-items: center; gap: 10px; padding: 4px 6px; }
+.brand-mark { width: 40px; height: 40px; border-radius: 45% 55% 50% 50% / 55% 45% 55% 45%; background: linear-gradient(135deg, var(--brand), var(--brand-2)); color: #fff; display: grid; place-items: center; font-weight: 800; font-size: 41px; font-family: var(--font-accent); transform: rotate(-5deg); box-shadow: 0 3px 8px rgba(90,80,140,.22); }
+.brand strong { font-family: var(--font-accent); font-size: 19px; display: block; line-height: 1; }
+.brand small { color: var(--muted); font-family: var(--font-body); font-size: 12px; }
+.nav { display: flex; flex-direction: column; gap: 4px; }
+.nav-item { display: flex; align-items: center; gap: 10px; padding: 9px 12px; border-radius: 14px 9px 15px 10px / 10px 15px 9px 14px; color: var(--muted); text-decoration: none; font-weight: 600; font-size: 16px; }
+.nav-item.active { background: var(--brand-soft); color: var(--brand-dark); }
+
+.main { flex: 1; }
+.content { max-width: 960px; width: 100%; margin: 0 auto; padding: 22px 22px 90px; }
+
+h1 { font-family: var(--font-accent); font-size: 24px; margin: 0; font-weight: 700; }
+h2 { font-family: var(--font-accent); font-size: 18px; margin: 0 0 12px; font-weight: 700; }
+h3 { font-family: var(--font-accent); font-size: 15px; margin: 0; font-weight: 700; }
+.muted { color: var(--muted); font-size: 13px; }
+.block { display: block; }
+
+.card { background: var(--surface); border: 1px solid var(--line); border-radius: 26px 18px 28px 20px / 18px 26px 16px 22px; padding: 18px; box-shadow: var(--shadow); margin-bottom: 16px; }
+.tablewrap { overflow-x: auto; }
+table { width: 100%; border-collapse: collapse; font-size: 14px; }
+thead th { text-align: left; color: var(--muted); font-size: 12px; text-transform: uppercase; letter-spacing: .03em; padding: 8px 12px; border-bottom: 1px solid var(--line); white-space: nowrap; }
+tbody td { padding: 11px 12px; border-bottom: 1px solid var(--line); vertical-align: middle; }
+tbody tr:last-child td { border-bottom: none; }
+
+.badge { display: inline-flex; align-items: center; padding: 3px 11px; border-radius: 13px 9px 15px 10px / 10px 14px 9px 13px; font-size: 13px; font-weight: 600; white-space: nowrap; }
+.check { display: inline-flex; align-items: center; gap: 7px; font-size: 14px; font-weight: 600; cursor: pointer; }
+.check input { width: 16px; height: 16px; accent-color: var(--brand); cursor: pointer; }
+.badge-ok { background: var(--ok-soft); color: var(--ok); }
+.badge-warn { background: var(--warn-soft); color: var(--warn); }
+.badge-brand { background: var(--brand-soft); color: var(--brand-dark); }
+
+.btn { display: inline-flex; align-items: center; gap: 6px; padding: 9px 16px; border: 1px solid transparent; border-radius: 20px 12px 22px 13px / 13px 20px 11px 19px; font-size: 16px; font-weight: 600; cursor: pointer; background: var(--surface-2); color: var(--ink); text-decoration: none; font-family: inherit; }
+.btn-primary { background: linear-gradient(135deg, var(--brand), var(--brand-2)); color: #fff; box-shadow: 0 4px 12px rgba(90,90,150,.22); }
+.btn-ghost { background: transparent; border-color: var(--line); }
+.btn-sm { padding: 6px 11px; font-size: 14px; }
+
+.field { display: flex; flex-direction: column; gap: 5px; }
+.field-label { font-size: 15px; font-weight: 600; }
+.input { width: 100%; padding: 9px 12px; border: 1px solid var(--line); border-radius: 10px; font-size: 14px; background: var(--surface); color: var(--ink); font-family: inherit; }
+.input:focus { outline: 2px solid var(--brand-soft); border-color: var(--brand); }
+
+.page-head { display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; margin-bottom: 10px; }
+.datefield { display: flex; align-items: center; gap: 8px; }
+.datefield .input { width: 170px; }
+
+/* Unmarked list */
+.list-head { display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; margin-bottom: 14px; }
+.link { color: var(--brand-dark); font-weight: 600; font-size: 14px; cursor: pointer; text-decoration: underline; text-underline-offset: 3px; }
+.list-filters { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+.list-filters .input { width: 230px; }
+.list-filters .field { min-width: 220px; }
+.status { display: inline-flex; align-items: center; gap: 8px; white-space: nowrap; }
+.date-big { font-weight: 700; white-space: nowrap; }
+.date-big small { display: block; color: var(--muted); font-weight: 500; font-size: 12px; }
+.empty-state { padding: 28px 12px; text-align: center; color: var(--muted); }
+.empty-state b { color: var(--ok); font-size: 30px; display: block; line-height: 1; margin-bottom: 6px; }
+
+/* Modal */
+.modal-backdrop { position: fixed; inset: 0; background: rgba(23,22,31,.55); z-index: 50; display: none; align-items: center; justify-content: center; padding: 16px; }
+.modal-backdrop.open { display: flex; }
+.modal { background: var(--surface); border-radius: 26px 18px 28px 20px / 18px 26px 16px 22px; box-shadow: var(--shadow); width: 100%; max-width: 620px; max-height: 92vh; display: flex; flex-direction: column; overflow: hidden; }
+.modal-head { display: flex; align-items: flex-start; justify-content: space-between; padding: 18px 18px 10px; }
+.close { border: none; background: transparent; color: var(--muted); font-size: 22px; cursor: pointer; line-height: 1; padding: 4px 8px; }
+.modal-sub { display: flex; align-items: center; justify-content: space-between; gap: 8px; flex-wrap: wrap; padding: 0 18px 8px; }
+
+.roster-scroll { overflow-y: auto; padding: 6px 18px; flex: 1; }
+.roster { display: grid; grid-template-columns: repeat(auto-fill, minmax(230px, 1fr)); gap: 10px; }
+.student { display: flex; align-items: center; gap: 11px; padding: 10px 12px; border: 1px solid var(--line); border-radius: 18px 12px 20px 13px / 13px 20px 12px 18px; background: var(--surface); cursor: pointer; user-select: none; }
+.student .avatar { width: 34px; height: 34px; border-radius: 50%; background: var(--surface-2); color: var(--muted); display: grid; place-items: center; font-weight: 700; font-size: 14px; flex: none; }
+.student .who { line-height: 1.25; min-width: 0; }
+.student .who strong { font-size: 14px; display: block; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.student .who small { color: var(--muted); font-size: 12px; }
+.student .tick { margin-left: auto; width: 24px; height: 24px; border-radius: 8px; border: 2px solid var(--line); display: grid; place-items: center; font-size: 14px; color: transparent; flex: none; }
+.student.ro { cursor: default; }
+.student.present .tick { background: var(--ok); border-color: var(--ok); color: #fff; }
+.student.absent { background: var(--bad-soft); border-color: var(--bad); }
+.student.absent .avatar { background: var(--surface); color: var(--bad); text-decoration: line-through; }
+.student.absent .who strong { color: var(--bad); }
+.student.absent .tick { background: var(--bad); border-color: var(--bad); color: #fff; }
+
+.modal-foot { display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; border-top: 1px solid var(--line); padding: 12px 18px; }
+.modal-foot .counts { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; font-size: 14px; font-weight: 600; }
+.n-ok { color: var(--ok); }
+.n-bad { color: var(--bad); }
+
+.hint { border: 1px dashed var(--line); border-radius: 12px; padding: 10px 14px; background: var(--surface); color: var(--muted); font-size: 13px; margin-top: 12px; }
+.hint b { color: var(--ink); }
+.hint ul { margin: 6px 0 0; padding-left: 18px; }
+.hint li { margin: 3px 0; }
+</style>
+</head>
+<body>
+<div class="app">
+  <aside class="sidebar">
+    <div class="brand">
+      <div class="brand-mark">A</div>
+      <div><strong>Arts Class</strong><small>studio CRM</small></div>
+    </div>
+    <nav class="nav">
+      <a class="nav-item">Dashboard</a>
+      <a class="nav-item">Students</a>
+      <a class="nav-item">Courses</a>
+      <a class="nav-item">Batches</a>
+      <a class="nav-item">Fees &amp; Dues</a>
+      <a class="nav-item">Enrollments</a>
+      <a class="nav-item">Reminders</a>
+      <a class="nav-item active">Attendance</a>
+      <a class="nav-item">Settings</a>
+    </nav>
+  </aside>
+
+  <main class="main">
+    <div class="content">
+
+      <div id="mainView">
+
+      <div class="page-head">
+        <h1>Attendance</h1>
+        <div class="datefield">
+          <span class="muted">Date</span>
+          <input class="input" type="date" id="dateSel" value="2026-09-21" onchange="render()" />
+        </div>
+      </div>
+
+      <div class="list-head">
+        <h2>Today's batches <span class="badge badge-brand" id="todayCount"></span></h2>
+        <a class="link" id="pastToggle" onclick="togglePast()">View past attendance</a>
+      </div>
+      <div class="card">
+        <div class="tablewrap">
+          <table>
+            <thead>
+              <tr><th>Date</th><th>Batch</th><th>Timing</th><th>Course</th><th>Students</th><th></th></tr>
+            </thead>
+            <tbody id="todayBody"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="list-head">
+        <h2>Unlogged days <span class="badge badge-warn" id="pendingCount"></span></h2>
+        <div class="list-filters">
+          <label class="field">
+            <span class="field-label">Batch</span>
+            <select class="input" id="fBatch" onchange="renderList()">
+              <option value="all">All batches</option>
+              <option value="a">Weekday Morning — Mon, Wed, Fri &amp; Sun</option>
+              <option value="b">Weekend Evening — Sat &amp; Sun</option>
+              <option value="c">Weekday Evening — Tue, Thu &amp; Sun</option>
+              <option value="d">Saturday Kids — Sat</option>
+              <option value="e">Monday Evening — Mon</option>
+            </select>
+          </label>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="tablewrap">
+          <table>
+            <thead>
+              <tr><th>Date</th><th>Batch</th><th>Timing</th><th>Course</th><th>Students</th><th></th></tr>
+            </thead>
+            <tbody id="listBody"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="hint">
+        <b>How it works:</b>
+        <ul>
+          <li>Top table lists <b>only the day's batches</b> — change the date to see another day. <b>Log attendance</b> opens the roster modal.</li>
+          <li>Below is a <b>flat list of past class days with no attendance record yet</b>, oldest first (most overdue on top). Use the <b>batch filter</b> to narrow it down.</li>
+          <li>In the modal all students start <b>marked present</b>; tap to mark absent. Save shows <b>N present · M absent</b> and moves the row out of the list.</li>
+          <li>Use <b>View past attendance</b> to see earlier recorded days — each opens <b>read-only</b>; hit <b>Edit record</b> to correct it.</li>
+        </ul>
+      </div>
+
+    </div>
+
+    <div id="pastView" style="display:none;">
+
+      <div class="page-head">
+        <h1>Past attendance <span class="badge badge-brand" id="pastCount"></span></h1>
+        <a class="link" id="pastBack" onclick="togglePast()">← Back to attendance</a>
+      </div>
+      <div class="card">
+        <div class="tablewrap">
+          <table>
+            <thead>
+              <tr><th>Date</th><th>Batch</th><th>Timing</th><th>Logged</th><th></th></tr>
+            </thead>
+            <tbody id="pastBody"></tbody>
+          </table>
+        </div>
+      </div>
+
+    </div>
+
+    </div>
+  </main>
+</div>
+
+<div class="modal-backdrop" id="attModal">
+  <div class="modal">
+    <div class="modal-head">
+      <div>
+        <h2 style="margin-bottom:2px;" id="mName">Weekday Morning</h2>
+        <span class="muted" id="mSub">Sketching Basics · 9 students</span>
+      </div>
+      <button class="close" onclick="closeModal()">×</button>
+    </div>
+
+    <div class="modal-sub">
+      <span class="badge badge-brand" id="mDate">Mon 21 Sep 2026</span>
+      <label class="check" id="mAllWrap" style="display:none;"><input type="checkbox" id="mAll" onchange="toggleAllMark()" /> Mark all present</label>
+    </div>
+
+    <div class="roster-scroll">
+      <div class="roster" id="mRoster"></div>
+    </div>
+
+    <div class="modal-foot">
+      <div class="counts"><span class="n-ok" id="mOk">0 present</span><span style="opacity:.55">·</span><span class="n-bad" id="mBad">0 absent</span></div>
+      <div class="counts" style="gap:10px;">
+        <button class="btn btn-ghost" id="mEdit" onclick="startEdit()" style="display:none;">Edit record</button>
+        <button class="btn btn-primary" id="mSave" onclick="saveAttendance()" style="display:none;">Save attendance</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  const BATCHES = {
+    a: { key: 'a', name: 'Weekday Morning', course: 'Sketching Basics', days: 'Mon, Wed, Fri & Sun', time: '9:30 AM', dayCodes: ['Mon','Wed','Fri','Sun'],
+      students: [['Aarav Sharma','9876543210'],['Athuzhai','9176462333'],['Riya Nair','9876502468'],['Vivaan Iyer','9822335544'],['Diya Menon','9880145002'],['Kavin Raj','9841022833'],['Nila Devi','9840011223'],['Arjun Pillai','9876500021'],['Meera Krishnan','9962034451']] },
+    b: { key: 'b', name: 'Weekend Evening', course: 'Watercolor Painting', days: 'Sat & Sun', time: '5:00 PM', dayCodes: ['Sat','Sun'],
+      students: [['Sara Mathew','9847056090'],['Rohit Varma','9876501208'],['Ananya Das','9700488412']] },
+    c: { key: 'c', name: 'Weekday Evening', course: 'Perspective Drawing', days: 'Tue, Thu & Sun', time: '6:30 PM', dayCodes: ['Tue','Thu','Sun'],
+      students: [['Harsh Gupta','9847322640'],['Tanvi Shetty','9902030012'],['Aaditya K','9150289403']] },
+    d: { key: 'd', name: 'Saturday Kids', course: 'No course', days: 'Sat', time: '11:00 AM', dayCodes: ['Sat'],
+      students: [['Riyaan Ali','9884120030'],['Zoya Khan','9600307845']] },
+    e: { key: 'e', name: 'Monday Evening', course: 'Portrait Studio', days: 'Mon', time: '4:00 PM', dayCodes: ['Mon'],
+      students: [['Sai Kumar','9845010011'],['Priya Raman','9845010012'],['Aditya Rao','9845010013'],['Kavya Menon','9845010014'],['Rohan Das','9845010015'],['Ishita Sen','9845010016'],['Vikram Joshi','9845010017'],['Anjali Pillai','9845010018'],['Karthik Nair','9845010019'],['Divya Bhat','9845010020'],['Rahul Iyer','9845010021'],['Sneha Kulkarni','9845010022'],['Manoj Verma','9845010023'],['Pooja Desai','9845010024'],['Arjun Mehta','9845010025'],['Lakshmi Rao','9845010026'],['Naveen Reddy','9845010027'],['Tanu Gupta','9845010028'],['Sameer Khan','9845010029'],['Ritika Singh','9845010030'],['Deepak Chawla','9845010031'],['Shreya Hegde','9845010032'],['Varun Sharma','9845010033'],['Nandini Bose','9845010034'],['Harish Pillai','9845010035']] },
+  };
+
+  const saved = {}; // "batchKey|YYYY-MM-DD" -> [absent student names]
+  const DAYS = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+  const MONTHS = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+const today = new Date(2026, 8, 21); // mock "today" so the seeded Sept 2026 data renders
+
+  const todayISO = '2026-09-21';
+  // pre-seed a few logged days for the mock (this week mostly logged, last week sparse)
+  saved['a|2026-09-09'] = ['Athuzhai']; saved['a|2026-09-11'] = []; saved['a|2026-09-14'] = ['Riya Nair','Diya Menon']; saved['a|2026-09-16'] = []; saved['a|2026-09-18'] = ['Arjun Pillai'];
+  saved['b|2026-09-13'] = []; saved['b|2026-09-19'] = ['Rohit Varma'];
+  saved['c|2026-09-08'] = []; saved['c|2026-09-10'] = ['Tanvi Shetty']; saved['c|2026-09-15'] = []; saved['c|2026-09-17'] = ['Harsh Gupta','Aaditya K'];
+  saved['d|2026-09-12'] = []; saved['d|2026-09-19'] = [];
+
+  function initials(n) { return n.split(' ').map((w) => w[0]).slice(0, 2).join('').toUpperCase(); }
+  function pad(n) { return String(n).padStart(2, '0'); }
+  function toISO(d) { return d.getFullYear() + '-' + pad(d.getMonth() + 1) + '-' + pad(d.getDate()); }
+  function fmtDay(dateStr) {
+    const d = new Date(dateStr + 'T00:00:00');
+    return DAYS[d.getDay()] + ', ' + d.toLocaleDateString('en-IN', { day: 'numeric', month: 'short' });
+  }
+
+  function rowToday(b) {
+    const date = document.getElementById('dateSel').value;
+    const key = b.key + '|' + date;
+    const rec = saved[key];
+    const tr = document.createElement('tr');
+    const todayMark = date === todayISO ? '<span class="badge badge-brand" style="margin-left:6px;">today</span>' : '';
+    tr.innerHTML = `
+      <td><span class="date-big">${fmtDay(date)}${todayMark}<small>${new Date(date + 'T00:00:00').toLocaleDateString('en-IN', { year: 'numeric' })}</small></span></td>
+      <td><strong>${b.name}</strong></td>
+      <td>${b.time}</td>
+      <td>${b.course}</td>
+      <td>${b.students.length}</td>
+      <td style="text-align:right; white-space:nowrap;">
+        ${rec !== undefined ? `<span class="badge badge-ok" style="margin-right:8px;">✓ ${b.students.length - rec.length}/${b.students.length}</span>` : ''}
+        <button class="btn btn-sm ${rec !== undefined ? 'btn-ghost' : 'btn-primary'}">${rec !== undefined ? 'View' : 'Log attendance'}</button>
+      </td>`;
+    tr.querySelector('button').onclick = () => openModal(b, date);
+    return tr;
+  }
+
+  function render() {
+    const date = document.getElementById('dateSel').value;
+    const day = DAYS[new Date(date + 'T00:00:00').getDay()];
+    const todays = Object.values(BATCHES).filter((b) => b.dayCodes.includes(day));
+    document.getElementById('todayCount').textContent = todays.length ? todays.length + ' batch(es)' : 'none';
+    const tb = document.getElementById('todayBody'); tb.innerHTML = '';
+    if (!todays.length) tb.innerHTML = '<tr><td colspan="5" class="muted" style="padding:16px 12px;">No batch is scheduled today. Pick another date.</td></tr>';
+    todays.forEach((b) => tb.appendChild(rowToday(b)));
+    renderList();
+    renderPast();
+  }
+
+  // Build every (batch, class-day) session in the recent window (last 10 days, incl. today) in date order.
+  function allSessions() {
+    const out = [];
+    const anchor = new Date(today);
+    for (let i = 9; i >= 0; i--) {
+      const d = new Date(anchor.getFullYear(), anchor.getMonth(), anchor.getDate() - i);
+      const dateStr = toISO(d);
+      const dayName = DAYS[d.getDay()];
+      Object.values(BATCHES).forEach((b) => {
+        if (b.dayCodes.includes(dayName)) out.push({ b, dateStr, logged: saved[b.key + '|' + dateStr] !== undefined });
+      });
+    }
+    return out;
+  }
+
+function renderList() {
+    const fBatch = document.getElementById('fBatch').value;
+    const rows = allSessions().filter((s) => !s.logged && (fBatch === 'all' || s.b.key === fBatch));
+    document.getElementById('pendingCount').textContent = rows.length ? rows.length + ' pending' : 'all logged';
+
+    const tb = document.getElementById('listBody'); tb.innerHTML = '';
+
+    if (!rows.length) {
+      tb.innerHTML = `<tr><td colspan="6"><div class="empty-state"><b>✓</b>Nothing pending — all recent class days are logged.</div></td></tr>`;
+      return;
+    }
+
+    rows.forEach(({ b, dateStr }) => {
+      const n = b.students.length;
+      const tr = document.createElement('tr');
+      tr.innerHTML = `
+        <td><span class="date-big">${fmtDay(dateStr)}<small>${new Date(dateStr + 'T00:00:00').toLocaleDateString('en-IN', { year: 'numeric' })}</small></span></td>
+        <td><strong>${b.name}</strong></td>
+        <td>${b.time}</td>
+        <td>${b.course}</td>
+        <td>${n}</td>
+        <td style="text-align:right; white-space:nowrap;">
+          <button class="btn btn-sm btn-primary">Log attendance</button>
+        </td>`;
+      tr.querySelector('button').onclick = () => openModal(b, dateStr);
+      tb.appendChild(tr);
+    });
+  }
+
+  let pastOpen = false;
+  function togglePast() {
+    pastOpen = !pastOpen;
+    document.getElementById('mainView').style.display = pastOpen ? 'none' : '';
+    document.getElementById('pastView').style.display = pastOpen ? '' : 'none';
+    if (pastOpen) renderPast();
+  }
+
+  function renderPast() {
+    const rows = allSessions().filter((s) => s.logged && s.dateStr < todayISO).reverse();
+    document.getElementById('pastCount').textContent = rows.length + ' day(s)';
+
+    const tb = document.getElementById('pastBody'); tb.innerHTML = '';
+    if (!rows.length) return;
+
+    rows.forEach(({ b, dateStr }) => {
+      const rec = saved[b.key + '|' + dateStr] || [];
+      const present = b.students.length - rec.length;
+      const tr = document.createElement('tr');
+      tr.innerHTML = `
+        <td><span class="date-big">${fmtDay(dateStr)}<small>${new Date(dateStr + 'T00:00:00').toLocaleDateString('en-IN', { year: 'numeric' })}</small></span></td>
+        <td><strong>${b.name}</strong></td>
+        <td>${b.time}</td>
+        <td><span class="badge badge-ok">${present}/${b.students.length} present</span></td>
+        <td style="text-align:right; white-space:nowrap;">
+          <button class="btn btn-sm btn-ghost">View</button>
+        </td>`;
+      tr.querySelector('button').onclick = () => openModal(b, dateStr);
+      tb.appendChild(tr);
+    });
+  }
+
+  const mState = { batch: null, date: null, absent: new Set(), mode: 'edit' };
+
+  function openModal(b, dateStr) {
+    mState.batch = b;
+    mState.date = dateStr;
+    const key = b.key + '|' + dateStr;
+    const rec = saved[key];
+    mState.mode = rec !== undefined ? 'view' : 'edit';
+    mState.absent = new Set(rec || []);
+    document.getElementById('mName').textContent = b.name;
+    document.getElementById('mSub').textContent = b.course + ' · ' + b.students.length + ' students';
+    const d = new Date(dateStr + 'T00:00:00');
+    document.getElementById('mDate').textContent = DAYS[d.getDay()] + ' ' + d.toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' });
+    document.getElementById('mAllWrap').style.display = mState.mode === 'edit' ? '' : 'none';
+    document.getElementById('mEdit').style.display = mState.mode === 'view' ? '' : 'none';
+    document.getElementById('mSave').style.display = mState.mode === 'edit' ? '' : 'none';
+    renderRoster();
+    document.getElementById('attModal').classList.add('open');
+  }
+
+  function startEdit() {
+    mState.mode = 'edit';
+    document.getElementById('mAllWrap').style.display = '';
+    document.getElementById('mEdit').style.display = 'none';
+    document.getElementById('mSave').style.display = '';
+    renderRoster();
+  }
+
+  function renderRoster() {
+    const box = document.getElementById('mRoster');
+    box.innerHTML = '';
+    const ro = mState.mode === 'view';
+    mState.batch.students.forEach(([name, phone]) => {
+      const absent = mState.absent.has(name);
+      const el = document.createElement('div');
+      el.className = 'student ' + (absent ? 'absent' : 'present') + (ro ? ' ro' : '');
+      el.innerHTML = `<span class="avatar">${initials(name)}</span>
+        <span class="who"><strong>${name}</strong><small>${phone}</small></span>
+        <span class="tick">${absent ? '✕' : '✓'}</span>`;
+      if (!ro) el.onclick = () => {
+        if (mState.absent.has(name)) mState.absent.delete(name); else mState.absent.add(name);
+        renderRoster();
+      };
+      box.appendChild(el);
+    });
+    const n = mState.batch.students.length;
+    document.getElementById('mOk').textContent = (n - mState.absent.size) + ' present';
+    document.getElementById('mBad').textContent = mState.absent.size + ' absent';
+    if (mState.mode === 'edit' && !ro) document.getElementById('mAll').checked = mState.absent.size === 0;
+    if (mState.mode === 'edit') {
+      const key = mState.batch.key + '|' + mState.date;
+      const done = JSON.stringify([...mState.absent].sort()) === JSON.stringify((saved[key] || []).sort());
+      document.getElementById('mSave').textContent = done ? 'Saved ✓' : 'Save attendance';
+      document.getElementById('mSave').style.opacity = done ? .55 : 1;
+    }
+  }
+
+  function toggleAllMark() {
+    mState.absent = document.getElementById('mAll').checked ? new Set() : new Set(mState.batch.students.map((s) => s[0]));
+    renderRoster();
+  }
+
+  function saveAttendance() {
+    const key = mState.batch.key + '|' + mState.date;
+    saved[key] = [...mState.absent];
+    renderRoster();
+    closeModal();
+    render();
+  }
+
+  function closeModal() { document.getElementById('attModal').classList.remove('open'); }
+
+  render();
+</script>
+</body>
+</html>

@@ -1,0 +1,117 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Rotating stat cards — prototype</title>
+<style>
+  * { box-sizing: border-box; }
+  body { margin: 0; padding: 34px 26px; background: #f7f4fa; color: #2f2a36; font-family: Inter, Arial, sans-serif; }
+  h1 { margin: 0 0 4px; font-size: 21px; }
+  p.muted { color: #8b8590; font-size: 13.5px; margin: 0 0 20px; max-width: 720px; }
+
+  .rotor { position: relative; background: #fff; border: 1px solid #e4dfec; border-radius: 18px; padding: 20px; box-shadow: 0 4px 14px rgba(80,70,90,.05); overflow: hidden; }
+  .set { display: none; grid-template-columns: repeat(auto-fit, minmax(165px, 1fr)); gap: 14px; }
+  .set.on { display: grid; animation: fadein .35s ease; }
+  @keyframes fadein { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
+
+  .tile {
+    border-radius: 16px; padding: 14px 16px; color: #fff; box-shadow: 0 8px 20px rgba(80,70,90,.14);
+    position: relative; overflow: hidden; min-height: 96px;
+    display: flex; flex-direction: column; justify-content: space-between;
+  }
+  .tile .deco { position: absolute; right: -18px; top: -18px; width: 78px; height: 78px; border-radius: 50%; background: rgba(255,255,255,.14); }
+  .tile .l { position: relative; font-size: 10px; font-weight: 700; letter-spacing: 1.2px; text-transform: uppercase; opacity: .85; }
+  .tile .n { position: relative; font-size: 27px; font-weight: 800; letter-spacing: -1px; line-height: 1; }
+  .tile .n .cur { font-size: .7em; font-weight: 600; opacity: .8; }
+  .tile .s { position: relative; font-size: 11px; opacity: .8; margin-top: 6px; }
+
+  .t-dark { background: linear-gradient(135deg, #241f31, #454059); }
+  .t-green { background: linear-gradient(135deg, #2f8f6b, #50a886); }
+  .t-gray { background: linear-gradient(135deg, #5b6570, #7e8892); }
+  .t-red { background: linear-gradient(135deg, #d96a5a, #b94444); }
+  .t-purple { background: linear-gradient(135deg, #6b4fa0, #9a7cc4); }
+  .t-teal { background: linear-gradient(135deg, #1e7f8e, #3fa9b4); }
+  .t-blue { background: linear-gradient(135deg, #3a62c4, #6d8be0); }
+  .t-amber { background: linear-gradient(135deg, #c8932e, #e0a13a); }
+
+  .controls { display: flex; align-items: center; gap: 10px; margin-top: 16px; flex-wrap: wrap; }
+  .dots { display: flex; gap: 8px; }
+  .dot { width: 9px; height: 9px; border-radius: 50%; border: none; background: #c9c2d4; cursor: pointer; padding: 0; transition: all .15s ease; }
+  .dot.on { background: #6b4fa0; transform: scale(1.35); }
+  .auto {
+    margin-left: auto; font-size: 12px; font-weight: 700; color: #6b4fa0;
+    background: #ede6f5; border: none; border-radius: 99px; padding: 7px 14px; cursor: pointer;
+  }
+  .auto.off { background: #ece9f0; color: #8b8590; }
+  .tag { font-size: 11px; font-weight: 800; letter-spacing: 1.2px; text-transform: uppercase; color: #8b8590; margin-bottom: 12px; }
+</style>
+</head>
+<body>
+  <h1>Rotating stat cards — live prototype</h1>
+  <p class="muted">Four card sets cycle. Leave auto on to preview the drama; turn it off + click dots for the calmer "you pick" version (what I'd recommend for a CRM).</p>
+
+  <div class="rotor" id="rotor">
+    <div class="set on" data-i="0">
+      <div class="tile t-dark"><div class="deco"></div><div class="l">Total students</div><div class="n">32</div><div class="s">all time</div></div>
+      <div class="tile t-green"><div class="deco"></div><div class="l">Active</div><div class="n">27</div><div class="s">84% of total</div></div>
+      <div class="tile t-gray"><div class="deco"></div><div class="l">Inactive / left</div><div class="n">5</div><div class="s">16% of total</div></div>
+      <div class="tile t-blue"><div class="deco"></div><div class="l">New this month</div><div class="n">3</div><div class="s">joined in Sept</div></div>
+    </div>
+    <div class="set" data-i="1">
+      <div class="tile t-purple"><div class="deco"></div><div class="l">Total students</div><div class="n">32</div><div class="s">all time</div></div>
+      <div class="tile t-red"><div class="deco"></div><div class="l">Outstanding dues</div><div class="n"><span class="cur">₹</span>2,150</div><div class="s">6 students with dues</div></div>
+      <div class="tile t-red"><div class="deco"></div><div class="l">Overdue</div><div class="n"><span class="cur">₹</span>1,250</div><div class="s">3 students · oldest 9d</div></div>
+      <div class="tile t-green"><div class="deco"></div><div class="l">Collected this month</div><div class="n"><span class="cur">₹</span>5,600</div><div class="s">from 18 students</div></div>
+    </div>
+    <div class="set" data-i="2">
+      <div class="tile t-purple"><div class="deco"></div><div class="l">In a batch</div><div class="n">24</div><div class="s">assigned to classes</div></div>
+      <div class="tile t-gray"><div class="deco"></div><div class="l">Without a batch</div><div class="n">8</div><div class="s">need scheduling</div></div>
+      <div class="tile t-teal"><div class="deco"></div><div class="l">Avg age</div><div class="n">14.5</div><div class="s">min 4 · max 38</div></div>
+      <div class="tile t-purple"><div class="deco"></div><div class="l">Active levels</div><div class="n">4</div><div class="s">Varnam…Kani</div></div>
+    </div>
+    <div class="set" data-i="3">
+      <div class="tile t-dark"><div class="deco"></div><div class="l">Total students</div><div class="n">32</div><div class="s">all time</div></div>
+      <div class="tile t-amber"><div class="deco"></div><div class="l">Under 18</div><div class="n">21</div><div class="s">of 32 · min age 4</div></div>
+      <div class="tile t-green"><div class="deco"></div><div class="l">Adults 18+</div><div class="n">11</div><div class="s">34% of total</div></div>
+      <div class="tile t-blue"><div class="deco"></div><div class="l">Birthdays this month</div><div class="n">1</div><div class="s">from DOB field</div></div>
+    </div>
+  </div>
+
+  <div class="controls">
+    <div class="dots" id="dots"></div>
+    <button class="auto" id="auto" title="Toggle auto-rotate">Auto: ON</button>
+  </div>
+
+<script>
+  var sets = Array.prototype.slice.call(document.querySelectorAll('.set'));
+  var dotsBox = document.getElementById('dots');
+  var autoBtn = document.getElementById('auto');
+  var current = 0, timer = null, auto = true;
+  sets.forEach(function (s, i) {
+    var d = document.createElement('button');
+    d.className = 'dot' + (i === 0 ? ' on' : '');
+    d.addEventListener('click', function () { go(i); restart(); });
+    dotsBox.appendChild(d);
+  });
+  var dots = Array.prototype.slice.call(dotsBox.children);
+  function go(i) {
+    sets[current].classList.remove('on');
+    current = i;
+    sets[current].classList.add('on');
+    dots.forEach(function (d, k) { d.classList.toggle('on', k === current); });
+  }
+  function restart() { stop(); if (auto) timer = setInterval(function () { go((current + 1) % sets.length); }, 4200); }
+  function stop() { if (timer) { clearInterval(timer); timer = null; } }
+  autoBtn.addEventListener('click', function () {
+    auto = !auto; stop();
+    autoBtn.textContent = 'Auto: ' + (auto ? 'ON' : 'OFF');
+    autoBtn.classList.toggle('off', !auto);
+    if (auto) restart();
+  });
+  var rotor = document.getElementById('rotor');
+  rotor.addEventListener('mouseenter', stop);
+  rotor.addEventListener('mouseleave', restart);
+  restart();
+</script>
+</body>
+</html>

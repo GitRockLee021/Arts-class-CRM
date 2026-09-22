@@ -1,0 +1,56 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>4 · Accent chips</title>
+<style>
+  * { box-sizing: border-box; }
+  body { margin: 0; padding: 24px; background: #f7f4fa; color: #2f2a36; font-family: Inter, Arial, sans-serif; }
+  .row { display: grid; grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); gap: 14px; }
+  .card {
+    background: #fffdf8; border: 1px solid #e4dfec; border-radius: 16px; padding: 16px 18px;
+    box-shadow: 0 6px 18px rgba(80,70,90,.08);
+    display: flex; flex-direction: column; gap: 10px; align-items: flex-start;
+  }
+  .chip { width: 40px; height: 40px; border-radius: 12px; display: grid; place-items: center; font-size: 16px; color: #fff; box-shadow: 0 6px 14px rgba(80,70,90,.22); }
+  .c-total { background: linear-gradient(135deg, #241f31, #454059); }
+  .c-active { background: linear-gradient(135deg, #2f8f6b, #50a886); }
+  .c-inactive { background: linear-gradient(135deg, #5b6570, #7e8892); }
+  .c-due { background: linear-gradient(135deg, #d96a5a, #b94444); }
+  .label { font-size: 11px; font-weight: 700; letter-spacing: 1.2px; text-transform: uppercase; color: #8b8590; }
+  .num { font-size: 28px; font-weight: 800; letter-spacing: -1px; line-height: 1; }
+  .num.due { color: #c14a3d; }
+  .num .cur { font-size: .7em; font-weight: 600; color: #8b8590; }
+  .sub { font-size: 11.5px; color: #8b8590; }
+  .card .side { display: flex; justify-content: space-between; width: 100%; align-items: center; }
+</style>
+</head>
+<body>
+  <div class="row">
+    <div class="card">
+      <div class="chip c-total">Σ</div>
+      <div class="label">Total students</div>
+      <div class="num">32</div>
+      <div class="sub">since signup</div>
+    </div>
+    <div class="card">
+      <div class="chip c-active">●</div>
+      <div class="label">Active</div>
+      <div class="num">27</div>
+      <div class="sub">84% of total</div>
+    </div>
+    <div class="card">
+      <div class="chip c-inactive">○</div>
+      <div class="label">Inactive</div>
+      <div class="num">5</div>
+      <div class="sub">16% of total</div>
+    </div>
+    <div class="card">
+      <div class="chip c-due">₹</div>
+      <div class="side"><span class="label">Outstanding</span></div>
+      <div class="num due"><span class="cur">₹</span>2,150</div>
+      <div class="sub">6 students with dues</div>
+    </div>
+  </div>
+</body>
+</html>

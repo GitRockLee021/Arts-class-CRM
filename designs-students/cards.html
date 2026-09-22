@@ -1,0 +1,94 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Students — card style gallery</title>
+<style>
+  * { box-sizing: border-box; }
+  body { margin: 0; padding: 40px 28px; background: #f7f4fa; color: #2f2a36; font-family: Inter, Arial, sans-serif; }
+  h1 { margin: 0 0 6px; font-size: 22px; }
+  p.muted { color: #8b8590; margin: 0 0 26px; font-size: 14px; max-width: 720px; }
+
+  .gallery { display: grid; grid-template-columns: repeat(auto-fill, minmax(230px, 1fr)); gap: 22px; }
+  .frame { background: #fff; border: 1px solid #e4dfec; border-radius: 14px; padding: 12px; }
+  .frame .tag { font-size: 10px; font-weight: 800; letter-spacing: 1.2px; text-transform: uppercase; color: #9a93a4; margin: 2px 4px 10px; }
+  .stage { display: grid; place-items: center; min-height: 150px; border-radius: 10px; background: #fbf9fd; padding: 14px; }
+  .card { width: 180px; }
+
+  /* A. Solid gradient tile */
+  .a { border-radius: 16px; padding: 14px 16px; color: #fff; position: relative; overflow: hidden; box-shadow: 0 8px 20px rgba(80,70,90,.14); background: linear-gradient(135deg, #2f8f6b, #50a886); }
+  .a .deco { position: absolute; right: -18px; top: -18px; width: 76px; height: 76px; border-radius: 50%; background: rgba(255,255,255,.14); }
+  .a .l { font-size: 10px; font-weight: 700; letter-spacing: 1.3px; text-transform: uppercase; opacity: .85; }
+  .a .n { font-size: 28px; font-weight: 800; letter-spacing: -1px; margin-top: 10px; }
+  .a .s { font-size: 11px; opacity: .8; }
+
+  /* B. Gradient tile + icon chip */
+  .b { border-radius: 16px; background: linear-gradient(135deg, #5b6570, #7e8892); color: #fff; padding: 12px 14px; box-shadow: 0 8px 20px rgba(80,70,90,.14); }
+  .b .icon { width: 30px; height: 30px; border-radius: 9px; background: rgba(255,255,255,.22); display: grid; place-items: center; font-size: 13px; margin-bottom: 8px; }
+  .b .l { font-size: 10px; font-weight: 700; letter-spacing: 1.3px; text-transform: uppercase; opacity: .85; }
+  .b .row2 { display: flex; align-items: baseline; justify-content: space-between; margin-top: 8px; }
+  .b .n { font-size: 26px; font-weight: 800; letter-spacing: -1px; }
+  .b .s { font-size: 11px; opacity: .8; }
+
+  /* C. White card + gradient chip */
+  .c { background: #fffdf8; border: 1px solid #e4dfec; border-radius: 16px; padding: 14px; box-shadow: 0 6px 18px rgba(80,70,90,.08); display: flex; flex-direction: column; gap: 8px; align-items: flex-start; }
+  .c .chip { width: 38px; height: 38px; border-radius: 12px; display: grid; place-items: center; font-size: 15px; color: #fff; background: linear-gradient(135deg, #d96a5a, #b94444); box-shadow: 0 6px 14px rgba(80,70,90,.22); }
+  .c .l { font-size: 10px; font-weight: 700; letter-spacing: 1.3px; text-transform: uppercase; color: #8b8590; }
+  .c .n { font-size: 26px; font-weight: 800; letter-spacing: -1px; }
+  .c .s { font-size: 11px; color: #8b8590; }
+
+  /* D. White card + gradient ring right */
+  .d { background: #fffdf8; border: 1px solid #e4dfec; border-radius: 16px; padding: 14px; box-shadow: 0 6px 18px rgba(80,70,90,.08); display: flex; align-items: center; justify-content: space-between; gap: 10px; }
+  .d .l { font-size: 10px; font-weight: 700; letter-spacing: 1.3px; text-transform: uppercase; color: #8b8590; }
+  .d .n { font-size: 26px; font-weight: 800; letter-spacing: -1px; margin-top: 4px; }
+  .d .s { font-size: 11px; color: #8b8590; }
+  .d .ring { width: 44px; height: 44px; border-radius: 50%; display: grid; place-items: center; font-size: 11px; font-weight: 800; color: #fff; background: conic-gradient(#2f8f6b 84%, #e4f2ec 0); position: relative; }
+  .d .ring::before { content: ""; position: absolute; inset: 4px; background: #fffdf8; border-radius: 50%; }
+  .d .ring b { position: relative; }
+
+  /* E. Gradient top edge bar */
+  .e { background: #fffdf8; border: 1px solid #e4dfec; border-radius: 14px; overflow: hidden; box-shadow: 0 6px 18px rgba(80,70,90,.08); }
+  .e .bar { height: 8px; background: linear-gradient(90deg, #241f31, #6b4fa0); }
+  .e .body { padding: 12px 14px; }
+  .e .l { font-size: 10px; font-weight: 700; letter-spacing: 1.3px; text-transform: uppercase; color: #8b8590; }
+  .e .n { font-size: 26px; font-weight: 800; letter-spacing: -1px; margin-top: 8px; }
+  .e .s { font-size: 11px; color: #8b8590; margin-top: 2px; }
+
+  /* F. Pastel tint + gradient number */
+  .f { border-radius: 16px; padding: 14px 16px; background: linear-gradient(160deg, #eef4f0, #e9f4ef); border: 1px solid #d8ebdf; }
+  .f .l { font-size: 10px; font-weight: 700; letter-spacing: 1.3px; text-transform: uppercase; color: #3f7d62; }
+  .f .n { font-size: 28px; font-weight: 800; letter-spacing: -1px; margin-top: 8px; background: linear-gradient(135deg, #2f8f6b, #1f6b4e); -webkit-background-clip: text; background-clip: text; color: transparent; }
+  .f .s { font-size: 11px; color: #5f8070; }
+
+  /* G. Gradient border white card */
+  .g { border-radius: 16px; padding: 3px; background: linear-gradient(135deg, #7a5ba8, #9a7cc4); box-shadow: 0 8px 20px rgba(80,70,90,.12); }
+  .g .in { background: #fffdf8; border-radius: 13px; padding: 13px 15px; }
+  .g .l { font-size: 10px; font-weight: 700; letter-spacing: 1.3px; text-transform: uppercase; color: #8b8590; }
+  .g .n { font-size: 26px; font-weight: 800; letter-spacing: -1px; margin-top: 8px; color: #60438c; }
+  .g .s { font-size: 11px; color: #8b8590; }
+
+  /* H. Horizontal pill */
+  .h { display: flex; align-items: center; gap: 12px; background: #fffdf8; border: 1px solid #e4dfec; border-radius: 99px; padding: 9px 16px; box-shadow: 0 6px 18px rgba(80,70,90,.08); }
+  .h .dot { width: 34px; height: 34px; border-radius: 50%; display: grid; place-items: center; color: #fff; font-size: 13px; background: linear-gradient(135deg, #5b6570, #7e8892); flex: none; }
+  .h .l { font-size: 10px; font-weight: 700; letter-spacing: 1.1px; text-transform: uppercase; color: #8b8590; }
+  .h .n { font-size: 20px; font-weight: 800; letter-spacing: -.5px; }
+  .h .s { font-size: 11px; color: #8b8590; }
+</style>
+</head>
+<body>
+  <h1>Students page — card style options</h1>
+  <p class="muted">Eight ways the same stat card can look. All were drawn at 180px with sample data (Active · 27 · 84%). The gradient palette maps to the real meanings: green = active, gray/slate = inactive/paused, red = outstanding dues, purple = brand.</p>
+
+  <div class="gallery">
+    <div class="frame"><div class="tag">A · Solid gradient tile</div><div class="stage"><div class="card a"><div class="deco"></div><div class="l">Active</div><div class="n">27</div><div class="s">84% of total</div></div></div></div>
+    <div class="frame"><div class="tag">B · Gradient + icon</div><div class="stage"><div class="card b"><div class="icon">◉</div><div class="l">Inactive</div><div class="row2"><span class="n">5</span><span class="s">16%</span></div></div></div></div>
+    <div class="frame"><div class="tag">C · White + gradient chip</div><div class="stage"><div class="card c"><div class="chip">₹</div><div class="l">Outstanding</div><div class="n">2,150</div><div class="s">6 students with dues</div></div></div></div>
+    <div class="frame"><div class="tag">D · White + % ring</div><div class="stage"><div class="card d"><div><div class="l">Active</div><div class="n">27</div><div class="s">of 32 total</div></div><div class="ring"><b>84%</b></div></div></div></div>
+    <div class="frame"><div class="tag">E · Top-edge gradient bar</div><div class="stage"><div class="card e"><div class="bar"></div><div class="body"><div class="l">Total students</div><div class="n">32</div><div class="s">since signup</div></div></div></div></div>
+    <div class="frame"><div class="tag">F · Pastel tint</div><div class="stage"><div class="card f"><div class="l">Active</div><div class="n">27</div><div class="s">84% of total</div></div></div></div>
+    <div class="frame"><div class="tag">G · Gradient border</div><div class="stage"><div class="card g"><div class="in"><div class="l">Total students</div><div class="n">32</div><div class="s">since signup</div></div></div></div></div>
+    <div class="frame"><div class="tag">H · Horizontal pill</div><div class="stage"><div class="card h"><div class="dot">○</div><div><div class="l">Inactive</div><div class="n">5</div></div><div class="s">16%</div></div></div></div>
+  </div>
+  <p class="muted" style="margin-top:26px">Tip: you can also mix two styles — e.g. gradient tiles for Active/Inactive and a white card with red accent for Outstanding, so money values sit quieter.</p>
+</body>
+</html>

@@ -1,0 +1,61 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>2 · Leader + stacked</title>
+<style>
+  * { box-sizing: border-box; }
+  body { margin: 0; padding: 24px; background: #f7f4fa; color: #fff; font-family: Inter, Arial, sans-serif; }
+  .wrap { display: grid; grid-template-columns: 2fr 1fr; gap: 14px; }
+  @media (max-width: 720px) { .wrap { grid-template-columns: 1fr; } }
+  .hero {
+    border-radius: 18px; padding: 22px 24px; position: relative; overflow: hidden;
+    background: linear-gradient(135deg, #2a2440, #6b4fa0);
+    box-shadow: 0 10px 26px rgba(80,70,90,.18);
+    display: flex; flex-direction: column; justify-content: space-between; gap: 16px;
+  }
+  .hero .deco { position: absolute; right: -40px; top: -40px; width: 180px; height: 180px; border-radius: 50%; background: rgba(255,255,255,.1); }
+  .hero .deco2 { position: absolute; right: 60px; bottom: -50px; width: 130px; height: 130px; border-radius: 50%; background: rgba(255,255,255,.07); }
+  .hero .label { font-size: 11px; font-weight: 700; letter-spacing: 1.6px; text-transform: uppercase; opacity: .85; }
+  .hero .num { font-size: 52px; font-weight: 800; letter-spacing: -2px; line-height: 1; }
+  .split { display: flex; gap: 8px; }
+  .split .seg {
+    flex: 1; background: rgba(255,255,255,.14); border: 1px solid rgba(255,255,255,.22);
+    border-radius: 12px; padding: 10px 12px; display: flex; flex-direction: column; gap: 2px;
+  }
+  .split .seg b { font-size: 20px; font-weight: 800; }
+  .split .seg span { font-size: 10.5px; text-transform: uppercase; letter-spacing: 1px; opacity: .8; font-weight: 700; }
+  .stack { display: flex; flex-direction: column; gap: 14px; }
+  .mini {
+    border-radius: 18px; padding: 14px 18px; position: relative; overflow: hidden;
+    box-shadow: 0 8px 20px rgba(80,70,90,.14); flex: 1;
+    display: flex; align-items: center; gap: 14px;
+  }
+  .mini .deco { position: absolute; right: -16px; bottom: -22px; width: 80px; height: 80px; border-radius: 50%; background: rgba(255,255,255,.14); }
+  .mini .ico { width: 40px; height: 40px; border-radius: 12px; background: rgba(255,255,255,.22); display: grid; place-items: center; font-size: 17px; }
+  .mini .m-label { font-size: 10.5px; font-weight: 700; letter-spacing: 1.2px; text-transform: uppercase; opacity: .85; }
+  .mini .m-num { font-size: 24px; font-weight: 800; letter-spacing: -.6px; line-height: 1.1; }
+  .m-active { background: linear-gradient(135deg, #2f8f6b, #50a886); }
+  .m-inactive { background: linear-gradient(135deg, #5b6570, #7e8892); }
+  .m-due { background: linear-gradient(135deg, #d96a5a, #b94444); }
+</style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="hero">
+      <div class="deco"></div><div class="deco2"></div>
+      <span class="label">Total students</span>
+      <div class="num">32</div>
+      <div class="split">
+        <div class="seg"><span>Active</span><b>27</b></div>
+        <div class="seg"><span>Inactive</span><b>5</b></div>
+      </div>
+    </div>
+    <div class="stack">
+      <div class="mini m-active"><div class="deco"></div><div class="ico">●</div><div><div class="m-label">Active</div><div class="m-num">27</div></div></div>
+      <div class="mini m-inactive"><div class="deco"></div><div class="ico">○</div><div><div class="m-label">Inactive</div><div class="m-num">5</div></div></div>
+      <div class="mini m-due"><div class="deco"></div><div class="ico">₹</div><div><div class="m-label">Outstanding</div><div class="m-num">2,150</div></div></div>
+    </div>
+  </div>
+</body>
+</html>
