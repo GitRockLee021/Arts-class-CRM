@@ -10,14 +10,14 @@ import { sendReceipt } from './whatsapp.js';
  * @returns {Promise<{status, message, payload}>}
  */
 export async function sendPaymentReceiptForPayment(payment) {
-  const r = paymentReceiptPayload(payment);
+  const r = await paymentReceiptPayload(payment);
   if (!r) return { status: 'error', message: 'Payment not found.', payload: null };
 
   const phone = payment.guardian_phone || payment.student_phone;
   if (!phone) {
-    run(
+    await run(
       `INSERT INTO reminder_logs (enrollment_id, student_id, amount_due, channel, status, message, error)
-       VALUES (?, ?, ?, 'whatsapp', 'failed', ?, ?)`,
+       VALUES ($1, $2, $3, 'whatsapp', 'failed', $4, $5)`,
       payment.enrollment_id,
       payment.student_id,
       r.amount,
@@ -36,9 +36,9 @@ export async function sendPaymentReceiptForPayment(payment) {
   });
   const ok = result.status === 'sent';
 
-  run(
+  await run(
     `INSERT INTO reminder_logs (enrollment_id, student_id, amount_due, channel, status, message, error)
-     VALUES (?, ?, ?, 'whatsapp', ?, ?, ?)`,
+     VALUES ($1, $2, $3, 'whatsapp', $4, $5, $6)`,
     payment.enrollment_id,
     payment.student_id,
     r.amount,

@@ -48,11 +48,11 @@ const SAMPLE = [
   },
 ];
 
-export function seed() {
+export async function seed() {
   for (const item of SAMPLE) {
-    const { lastInsertRowid: studentId } = run(
+    const { lastInsertRowid: studentId } = await run(
       `INSERT INTO students (name, phone, email, age, guardian_name, guardian_phone, address, date_of_birth, notes, status)
-       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+       VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10)`,
       item.student.name,
       item.student.phone,
       item.student.email || null,
@@ -65,17 +65,17 @@ export function seed() {
       item.student.status || 'active',
     );
 
-    const { lastInsertRowid: courseId } = run(
+    const { lastInsertRowid: courseId } = await run(
       `INSERT INTO courses (name, fee_mode, monthly_fee, duration_months, description)
-       VALUES (?, 'monthly', ?, ?, NULL)`,
+       VALUES ($1, 'monthly', $2, $3, NULL)`,
       item.course.name,
       item.course.monthly_fee,
       item.course.duration_months,
     );
 
-    const { lastInsertRowid: enrollmentId } = run(
+    const { lastInsertRowid: enrollmentId } = await run(
       `INSERT INTO enrollments (student_id, course_id, batch, start_date, status, notes)
-       VALUES (?, ?, ?, ?, ?, NULL)`,
+       VALUES ($1, $2, $3, $4, $5, NULL)`,
       studentId,
       courseId,
       item.enrollment.batch || null,
@@ -84,9 +84,9 @@ export function seed() {
     );
 
     for (const p of item.payments) {
-      run(
+      await run(
         `INSERT INTO fee_payments (enrollment_id, amount, payment_date, method, notes)
-         VALUES (?, ?, ?, 'cash', NULL)`,
+         VALUES ($1, $2, $3, 'cash', NULL)`,
         enrollmentId,
         p.amount,
         p.payment_date,
@@ -96,4 +96,9 @@ export function seed() {
   console.log('Seed data added.');
 }
 
-seed();
+seed()
+  .then(() => process.exit(0))
+  .catch((err) => {
+    console.error(err);
+    process.exit(1);
+  });

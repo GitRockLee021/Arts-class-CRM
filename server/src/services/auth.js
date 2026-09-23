@@ -38,34 +38,34 @@ export function generateRecoveryKey() {
   return `RLLA-${body.slice(0, 4)}-${body.slice(4, 8)}-${body.slice(8, 12)}`;
 }
 
-export function issueSession(userId) {
+export async function issueSession(userId) {
   const token = crypto.randomBytes(32).toString('hex');
   const tokenHash = hashToken(token);
   const expiresAt = new Date(Date.now() + SESSION_TTL_MS).toISOString();
-  run('INSERT INTO sessions (token_hash, user_id, expires_at, last_seen_at) VALUES (?, ?, ?, ?)', tokenHash, userId, expiresAt, new Date().toISOString());
+  await run('INSERT INTO sessions (token_hash, user_id, expires_at, last_seen_at) VALUES ($1, $2, $3, $4)', tokenHash, userId, expiresAt, new Date().toISOString());
   return token;
 }
 
-export function destroySession(token) {
+export async function destroySession(token) {
   if (!token) return;
-  run('DELETE FROM sessions WHERE token_hash = ?', hashToken(token));
+  await run('DELETE FROM sessions WHERE token_hash = $1', hashToken(token));
 }
 
-export function clearExpiredSessions() {
-  run('DELETE FROM sessions WHERE expires_at <= ?', new Date().toISOString());
+export async function clearExpiredSessions() {
+  await run('DELETE FROM sessions WHERE expires_at <= $1', new Date().toISOString());
 }
 
-export function getUserFromToken(token) {
+export async function getUserFromToken(token) {
   if (!token) return null;
-  const row = get(
+  const row = await get(
     `SELECT u.id, u.email, u.name, u.role, u.active
      FROM sessions s JOIN users u ON u.id = s.user_id
-     WHERE s.token_hash = ?`,
+     WHERE s.token_hash = $1`,
     hashToken(token),
   );
   if (!row) return null;
   if (!row.active) return null;
-  run('UPDATE sessions SET last_seen_at = ? WHERE token_hash = ?', new Date().toISOString(), hashToken(token));
+  await run('UPDATE sessions SET last_seen_at = $1 WHERE token_hash = $2', new Date().toISOString(), hashToken(token));
   return row;
 }
 
@@ -93,15 +93,19 @@ export function clearSessionCookie() {
   return sessionCookie('', 0);
 }
 
-export function requireAuth(req, res, next) {
-  const token = parseCookies(req.headers.cookie)[SESSION_COOKIE];
-  const user = token ? getUserFromToken(token) : null;
-  if (!user) {
-    return res.status(401).json({ error: 'Authentication required' });
+export async function requireAuth(req, res, next) {
+  try {
+    const token = parseCookies(req.headers.cookie)[SESSION_COOKIE];
+    const user = token ? await getUserFromToken(token) : null;
+    if (!user) {
+      return res.status(401).json({ error: 'Authentication required' });
+    }
+    req.user = user;
+    req.sessionToken = token;
+    return next();
+  } catch (err) {
+    return next(err);
   }
-  req.user = user;
-  req.sessionToken = token;
-  return next();
 }
 
 export function requireRole(role) {

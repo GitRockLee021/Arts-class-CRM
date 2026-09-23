@@ -17,12 +17,12 @@ JOIN enrollments e ON e.id = fp.enrollment_id
 JOIN students s ON s.id = e.student_id
 LEFT JOIN courses c ON c.id = e.course_id`;
 
-export function getPaymentRow(id) {
-  return get(`${PAYMENT_SQL} WHERE fp.id = ?`, id);
+export async function getPaymentRow(id) {
+  return get(`${PAYMENT_SQL} WHERE fp.id = $1`, id);
 }
 
-export function getPaymentRowByToken(token) {
-  return get(`${PAYMENT_SQL} WHERE fp.share_token = ?`, token);
+export async function getPaymentRowByToken(token) {
+  return get(`${PAYMENT_SQL} WHERE fp.share_token = $1`, token);
 }
 
 function lineTitle(feeType, courseName) {
@@ -42,11 +42,11 @@ function lineSub(line, payment) {
 }
 
 /** All fee_payment rows in the same admission collection group, or null. */
-function groupLines(payment) {
+export async function groupLines(payment) {
   if (!payment.admission_group) return null;
-  const group = query(
+  const group = await query(
     `SELECT * FROM fee_payments fp
-     WHERE fp.enrollment_id = ? AND fp.admission_group = ?
+     WHERE fp.enrollment_id = $1 AND fp.admission_group = $2
      ORDER BY fp.id ASC`,
     payment.enrollment_id,
     payment.admission_group,
@@ -66,19 +66,20 @@ function groupLines(payment) {
  * Rows that belong to an admission collection group produce one multi-line
  * receipt covering all the fees collected together that day.
  */
-export function paymentReceiptPayload(payment) {
+export async function paymentReceiptPayload(payment) {
   if (!payment) return null;
 
   const ym = String(payment.payment_date || '').slice(0, 7);
   const ymObj = parseYm(ym);
   let outstanding = 0;
   if (ymObj) {
-    const paidInMonth = get(
+    const row = await get(
       `SELECT COALESCE(SUM(amount), 0) AS paid FROM fee_payments
-       WHERE enrollment_id = ? AND substr(payment_date, 1, 7) = ? AND fee_type = 'tuition'`,
+       WHERE enrollment_id = $1 AND substr(payment_date, 1, 7) = $2 AND fee_type = 'tuition'`,
       payment.enrollment_id,
       ym,
-    ).paid;
+    );
+    const paidInMonth = Number(row?.paid || 0);
     outstanding = Math.max(expectedForMonth(payment, ymObj) - paidInMonth, 0);
   }
 
@@ -105,7 +106,7 @@ export function paymentReceiptPayload(payment) {
     halfCourseMonth: false,
   };
 
-  const lines = groupLines(payment);
+  const lines = await groupLines(payment);
   if (!lines) {
     return { ...base, amount: Number(payment.amount), amountWords: amountWords(payment.amount) };
   }

@@ -5,15 +5,15 @@ import { computeFeeStatus } from './fees.js';
  * Fetch enrollments joined with student + course info and computed fee status.
  * @param {{student_id?: string, status?: string, due_only?: boolean}} filters
  */
-export function fetchEnrollments(filters = {}) {
+export async function fetchEnrollments(filters = {}) {
   const conds = [];
   const params = [];
   if (filters.student_id) {
-    conds.push('e.student_id = ?');
+    conds.push('e.student_id = $' + (params.length + 1));
     params.push(filters.student_id);
   }
   if (filters.status && filters.status !== 'all') {
-    conds.push('e.status = ?');
+    conds.push('e.status = $' + (params.length + 1));
     params.push(filters.status);
   }
   if (filters.due_only) {
@@ -21,8 +21,8 @@ export function fetchEnrollments(filters = {}) {
   }
   const where = conds.length ? `WHERE ${conds.join(' AND ')}` : '';
 
-  const rows = query(
-     `SELECT e.*,
+  const rows = await query(
+    `SELECT e.*,
             s.name AS student_name,
             s.phone AS student_phone,
             s.guardian_phone,
@@ -48,9 +48,9 @@ export function fetchEnrollments(filters = {}) {
   return all;
 }
 
-export function getEnrollmentWithFees(id) {
-  const row = query(
-     `SELECT e.*,
+export async function getEnrollmentWithFees(id) {
+  const rows = await query(
+    `SELECT e.*,
             s.name AS student_name,
             s.phone AS student_phone,
             s.guardian_phone,
@@ -66,9 +66,10 @@ export function getEnrollmentWithFees(id) {
      JOIN students s ON s.id = e.student_id
      LEFT JOIN courses c ON c.id = e.course_id
      LEFT JOIN batches b ON b.id = e.batch_id
-     WHERE e.id = ?`,
+     WHERE e.id = $1`,
     id,
-  )[0];
+  );
+  const row = rows[0];
   if (!row) return null;
   return { ...row, fee: computeFeeStatus(row, row.paid) };
 }

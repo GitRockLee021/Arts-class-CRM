@@ -1,5 +1,6 @@
 import { Router } from 'express';
-import { db, get, query, run } from '../db.js';
+import { get, query, run, begin, commit, rollback } from '../db.js';
+import { ah } from '../lib/asyncHandler.js';
 
 const router = Router();
 
@@ -38,10 +39,10 @@ function addDays(dateStr, n) {
   return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
 }
 
-function activeBatches() {
+async function activeBatches() {
   return query(
     `SELECT b.id, b.name, b.days, b.time, b.course_id, c.name AS course_name,
-            (SELECT COUNT(DISTINCT e.student_id) FROM enrollments e
+            (SELECT COUNT(DISTINCT e.student_id)::int FROM enrollments e
               WHERE e.batch_id = b.id AND e.status = 'active') AS students
      FROM batches b
      LEFT JOIN courses c ON c.id = b.course_id
@@ -50,21 +51,21 @@ function activeBatches() {
   );
 }
 
-function recordSummary(batchId, date) {
+async function recordSummary(batchId, date) {
   return get(
-    `SELECT COUNT(*) AS total,
-            COALESCE(SUM(ae.status = 'present'), 0) AS present,
-            COALESCE(SUM(ae.status = 'absent'), 0) AS absent
+    `SELECT COUNT(*)::int AS total,
+            COALESCE(SUM((ae.status = 'present')::int), 0)::int AS present,
+            COALESCE(SUM((ae.status = 'absent')::int), 0)::int AS absent
      FROM attendance_logs al
      JOIN attendance_entries ae ON ae.attendance_id = al.id
-     WHERE al.batch_id = ? AND al.batch_date = ?`,
+     WHERE al.batch_id = $1 AND al.batch_date = $2`,
     batchId,
     date,
   );
 }
 
-function withRecord(r, date) {
-  const rec = recordSummary(r.id, date);
+async function withRecord(r, date) {
+  const rec = await recordSummary(r.id, date);
   const logged = Boolean(rec && rec.total > 0);
   return {
     ...r,
@@ -76,12 +77,12 @@ function withRecord(r, date) {
   };
 }
 
-function rosterForBatch(batchId) {
-  const rows = query(
+async function rosterForBatch(batchId) {
+  const rows = await query(
     `SELECT e.id AS enrollment_id, e.student_id, s.name, s.phone
      FROM enrollments e
      JOIN students s ON s.id = e.student_id
-     WHERE e.batch_id = ? AND e.status = 'active'
+     WHERE e.batch_id = $1 AND e.status = 'active'
      ORDER BY s.name`,
     batchId,
   );
@@ -94,97 +95,116 @@ function rosterForBatch(batchId) {
 }
 
 // Batches scheduled on a specific day (powers the "Today's batches" table)
-router.get('/day', (req, res) => {
-  const date = String(req.query.date || '').slice(0, 10);
-  if (!/^\d{4}-\d{2}-\d{2}$/.test(date)) return res.status(400).json({ error: 'date is required (YYYY-MM-DD).' });
-  const wd = weekdayOf(date);
-  const rows = activeBatches()
-    .filter((b) => parseWeekdays(b.days).has(wd))
-    .map((b) => withRecord(b, date));
-  res.json({ date, batches: rows });
-});
+router.get(
+  '/day',
+  ah(async (req, res) => {
+    const date = String(req.query.date || '').slice(0, 10);
+    if (!/^\d{4}-\d{2}-\d{2}$/.test(date)) return res.status(400).json({ error: 'date is required (YYYY-MM-DD).' });
+    const wd = weekdayOf(date);
+    const batches = await activeBatches();
+    const rows = await Promise.all(
+      batches
+        .filter((b) => parseWeekdays(b.days).has(wd))
+        .map((b) => withRecord(b, date)),
+    );
+    res.json({ date, batches: rows });
+  }),
+);
 
 // Recent class-day sessions across active batches (powers Unlogged + Past lists)
-router.get('/sessions', (req, res) => {
-  const days = Math.min(31, Math.max(1, Number(req.query.days) || 14));
-  const today = localToday();
-  const from = addDays(today, -days + 1);
-  const batches = activeBatches().map((b) => ({ ...b, weekdays: parseWeekdays(b.days) }));
-  const sessions = [];
-  for (let d = from; d <= today; ) {
-    const wd = weekdayOf(d);
-    for (const b of batches) {
-      if (b.weekdays.has(wd)) sessions.push(withRecord(b, d));
+router.get(
+  '/sessions',
+  ah(async (req, res) => {
+    const days = Math.min(31, Math.max(1, Number(req.query.days) || 14));
+    const today = localToday();
+    const from = addDays(today, -days + 1);
+    const batches = (await activeBatches()).map((b) => ({ ...b, weekdays: parseWeekdays(b.days) }));
+    const sessions = [];
+    for (let d = from; d <= today; ) {
+      const wd = weekdayOf(d);
+      for (const b of batches) {
+        if (b.weekdays.has(wd)) sessions.push(withRecord(b, d));
+      }
+      d = addDays(d, 1);
     }
-    d = addDays(d, 1);
-  }
-  res.json({ sessions });
-});
+    const resolved = await Promise.all(sessions);
+    res.json({ sessions: resolved });
+  }),
+);
 
 // Roster for a batch + existing record for a date
-router.get('/batch/:id', (req, res) => {
-  const batch = get('SELECT b.*, c.name AS course_name FROM batches b LEFT JOIN courses c ON c.id = b.course_id WHERE b.id = ?', req.params.id);
-  if (!batch) return res.status(404).json({ error: 'Batch not found.' });
-  const date = String(req.query.date || '').slice(0, 10);
-  if (!/^\d{4}-\d{2}-\d{2}$/.test(date)) return res.status(400).json({ error: 'date is required (YYYY-MM-DD).' });
-  const roster = rosterForBatch(batch.id);
-  const rec = recordSummary(batch.id, date);
-  const absentRows = rec && rec.total > 0
-    ? query(
-        `SELECT student_id FROM attendance_entries ae
-         JOIN attendance_logs al ON al.id = ae.attendance_id
-         WHERE al.batch_id = ? AND al.batch_date = ? AND ae.status = 'absent'`,
-        batch.id,
-        date,
-      ).map((r) => r.student_id)
-    : [];
-  res.json({ batch, date, roster, logged: Boolean(rec && rec.total > 0), absent: absentRows });
-});
+router.get(
+  '/batch/:id',
+  ah(async (req, res) => {
+    const batch = await get('SELECT b.*, c.name AS course_name FROM batches b LEFT JOIN courses c ON c.id = b.course_id WHERE b.id = $1', req.params.id);
+    if (!batch) return res.status(404).json({ error: 'Batch not found.' });
+    const date = String(req.query.date || '').slice(0, 10);
+    if (!/^\d{4}-\d{2}-\d{2}$/.test(date)) return res.status(400).json({ error: 'date is required (YYYY-MM-DD).' });
+    const roster = await rosterForBatch(batch.id);
+    const rec = await recordSummary(batch.id, date);
+    const absentRows =
+      rec && rec.total > 0
+        ? (
+            await query(
+              `SELECT student_id FROM attendance_entries ae
+               JOIN attendance_logs al ON al.id = ae.attendance_id
+               WHERE al.batch_id = $1 AND al.batch_date = $2 AND ae.status = 'absent'`,
+              batch.id,
+              date,
+            )
+          ).map((r) => r.student_id)
+        : [];
+    res.json({ batch, date, roster, logged: Boolean(rec && rec.total > 0), absent: absentRows });
+  }),
+);
 
 // Create / replace an attendance record for a batch-day
-router.post('/', (req, res) => {
-  const b = req.body || {};
-  const batchId = Number(b.batch_id);
-  const date = String(b.batch_date || '').slice(0, 10);
-  if (!batchId) return res.status(400).json({ error: 'batch_id is required.' });
-  if (!/^\d{4}-\d{2}-\d{2}$/.test(date)) return res.status(400).json({ error: 'batch_date is required (YYYY-MM-DD).' });
-  if (date > localToday()) return res.status(400).json({ error: 'Cannot save attendance for a future date.' });
+router.post(
+  '/',
+  ah(async (req, res) => {
+    const b = req.body || {};
+    const batchId = Number(b.batch_id);
+    const date = String(b.batch_date || '').slice(0, 10);
+    if (!batchId) return res.status(400).json({ error: 'batch_id is required.' });
+    if (!/^\d{4}-\d{2}-\d{2}$/.test(date)) return res.status(400).json({ error: 'batch_date is required (YYYY-MM-DD).' });
+    if (date > localToday()) return res.status(400).json({ error: 'Cannot save attendance for a future date.' });
 
-  const batch = get('SELECT id FROM batches WHERE id = ?', batchId);
-  if (!batch) return res.status(404).json({ error: 'Batch not found.' });
+    const batch = await get('SELECT id FROM batches WHERE id = $1', batchId);
+    if (!batch) return res.status(404).json({ error: 'Batch not found.' });
 
-  const roster = rosterForBatch(batchId);
-  if (roster.length === 0) return res.status(400).json({ error: 'Batch has no enrolled students.' });
+    const roster = await rosterForBatch(batchId);
+    if (roster.length === 0) return res.status(400).json({ error: 'Batch has no enrolled students.' });
 
-  const allowed = new Set(roster.map((r) => r.student_id));
-  const absent = [...new Set((Array.isArray(b.absent) ? b.absent : []).map(Number))];
-  for (const sid of absent) {
-    if (!allowed.has(sid)) return res.status(400).json({ error: 'absent contains a student not in this batch.' });
-  }
-  const present = roster.filter((r) => !absent.includes(r.student_id)).map((r) => r.student_id);
-
-  db.exec('BEGIN');
-  try {
-    run('DELETE FROM attendance_logs WHERE batch_id = ? AND batch_date = ?', batchId, date);
-    const { lastInsertRowid } = run(
-      'INSERT INTO attendance_logs (batch_id, batch_date, created_by) VALUES (?, ?, ?)',
-      batchId,
-      date,
-      req.user?.id || null,
-    );
-    for (const sid of present) {
-      run('INSERT INTO attendance_entries (attendance_id, student_id, status) VALUES (?, ?, ?)', lastInsertRowid, sid, 'present');
-    }
+    const allowed = new Set(roster.map((r) => r.student_id));
+    const absent = [...new Set((Array.isArray(b.absent) ? b.absent : []).map(Number))];
     for (const sid of absent) {
-      run('INSERT INTO attendance_entries (attendance_id, student_id, status) VALUES (?, ?, ?)', lastInsertRowid, sid, 'absent');
+      if (!allowed.has(sid)) return res.status(400).json({ error: 'absent contains a student not in this batch.' });
     }
-    db.exec('COMMIT');
-  } catch (err) {
-    db.exec('ROLLBACK');
-    throw err;
-  }
+    const present = roster.filter((r) => !absent.includes(r.student_id)).map((r) => r.student_id);
 
-  res.status(201).json({ ok: true, batch_id: batchId, batch_date: date, present, absent });
-});
+    await begin();
+    try {
+      await run('DELETE FROM attendance_logs WHERE batch_id = $1 AND batch_date = $2', batchId, date);
+      const { lastInsertRowid } = await run(
+        'INSERT INTO attendance_logs (batch_id, batch_date, created_by) VALUES ($1, $2, $3)',
+        batchId,
+        date,
+        req.user?.id || null,
+      );
+      for (const sid of present) {
+        await run('INSERT INTO attendance_entries (attendance_id, student_id, status) VALUES ($1, $2, $3)', lastInsertRowid, sid, 'present');
+      }
+      for (const sid of absent) {
+        await run('INSERT INTO attendance_entries (attendance_id, student_id, status) VALUES ($1, $2, $3)', lastInsertRowid, sid, 'absent');
+      }
+      await commit();
+    } catch (err) {
+      await rollback();
+      throw err;
+    }
+
+    res.status(201).json({ ok: true, batch_id: batchId, batch_date: date, present, absent });
+  }),
+);
 
 export default router;

@@ -29,12 +29,12 @@ async function main() {
     process.exit(1);
   }
 
-  const existing = get('SELECT id FROM users WHERE email = ? COLLATE NOCASE', email);
+  const existing = await get('SELECT id FROM users WHERE LOWER(email) = LOWER($1)', email);
   const recoveryKey = generateRecoveryKey();
 
   if (existing) {
-    run(
-      'UPDATE users SET name = ?, password_hash = ?, recovery_key_hash = ?, role = ?, active = 1 WHERE id = ?',
+    await run(
+      'UPDATE users SET name = $1, password_hash = $2, recovery_key_hash = $3, role = $4, active = 1 WHERE id = $5',
       name,
       hashPassword(password),
       hashToken(recoveryKey),
@@ -43,8 +43,8 @@ async function main() {
     );
     console.log('Admin updated:', email);
   } else {
-    run(
-      'INSERT INTO users (email, name, password_hash, recovery_key_hash, role, active) VALUES (?, ?, ?, ?, ?, 1)',
+    await run(
+      'INSERT INTO users (email, name, password_hash, recovery_key_hash, role, active) VALUES ($1, $2, $3, $4, $5, 1)',
       email,
       name,
       hashPassword(password),

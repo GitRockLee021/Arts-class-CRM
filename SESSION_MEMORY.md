@@ -4,9 +4,9 @@ Last updated: 2026-09-21
 
 ## Project
 Client-server CRM for Pravaha Art Space / Right & Left Learning Academy (arts class).
-- `server/` — Node (ESM), Express, `node:sqlite`, zero-external deps for auth.
+- `server/` — Node (ESM), Express, PostgreSQL via `pg` (hosted on Supabase), custom scrypt+session auth.
 - `client/` — React 18 + Vite, react-router-dom v6, no UI framework (hand-rolled CSS).
-- DB: `server/data/crm.db` (auto-created + migrated on boot).
+- DB: PostgreSQL (Supabase) via `DATABASE_URL` in `server/.env`; schema auto-created on boot from `server/src/db.js` (was SQLite `server/data/crm.db` pre-migration).
 
 ## Important environment quirks
 - Server runs as plain `node src/index.js` from `server/` — manual restart after every server-side change.
@@ -33,7 +33,7 @@ User has asked to change admin credentials (was mid-decision). Login identifier 
 - Fee rules: due day 5th, prorate after 15th. Courses: Varnam ₹1000, Arumbu ₹1200, Malar ₹1500.
 
 ## Known open items (deferred, unresolved)
-- Live deployment deferred: user has no access to hosting (WordPress on Hostinger shared) / DNS (GoDaddy). Plan: Hostinger Node web app on same account (Node ≥22.13 needed for node:sqlite) on a subdomain, or VPS. `COOKIE_SECURE=true` + tight CORS at deploy.
+- Live deployment deferred: user has no access to hosting (WordPress on Hostinger shared) / DNS (GoDaddy). Plan: Hostinger Node web app on same account (or VPS) on a subdomain, pointing `DATABASE_URL` at the existing Supabase Postgres. `COOKIE_SECURE=true` + tight CORS at deploy.
 - `server/src/seed.js` recreates sample courses; purge question unanswered.
 - Course basic/advanced level field — clarify.
 - Mail service optional later (recovery key suffices now).

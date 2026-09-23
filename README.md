@@ -14,19 +14,22 @@ A mobile-friendly web app to manage students, course enrollments, fees, and What
 
 ## Tech stack
 
-- Backend: Node.js (Express), SQLite via built-in `node:sqlite` (zero compile steps)
+- Backend: Node.js (Express), PostgreSQL via `pg` (hosted on Supabase)
 - Frontend: React (Vite) — mobile-first, no heavy UI framework
 - WhatsApp: Meta WhatsApp Business Cloud API
 
 ## Quick start
 
-Requires Node.js **22.5+** (Node 24 recommended).
+Requires Node.js **18+** (Node 22 LTS recommended).
 
 ```bash
 npm run setup      # installs root, server, and client dependencies
 npm run seed       # add sample students/courses/payments
 npm run dev        # start API (http://localhost:5001) + web app (http://localhost:5173)
 ```
+
+The server connects to PostgreSQL via `DATABASE_URL` (set in `server/.env`, see
+`server/.env.example`). Without it, the server exits with a clear message.
 
 Open http://localhost:5173.
 
@@ -39,9 +42,8 @@ http://localhost:5001 — the built app is served from the same port as the API.
 
 ```
 server/
-  data/crm.db          SQLite database (auto-created)
   src/
-    db.js              connection + schema
+    db.js              Postgres pool + schema (auto-created on boot)
     lib/fees.js        monthly-fee due calculation
     lib/enrollments.js enrollment + fee queries
     routes/            students, courses, enrollments, payments, reminders, stats

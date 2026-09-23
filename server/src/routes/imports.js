@@ -2,6 +2,7 @@ import { Router } from 'express';
 import { Readable } from 'node:stream';
 import ExcelJS from 'exceljs';
 import { query, get, run } from '../db.js';
+import { ah } from '../lib/asyncHandler.js';
 
 const router = Router();
 
@@ -13,9 +14,10 @@ const COLUMNS = [
   { header: 'Course', key: 'course', width: 24 },
 ];
 
-router.get('/template.xlsx', async (_req, res, next) => {
-  try {
-    const courses = query('SELECT id, name FROM courses ORDER BY name');
+router.get(
+  '/template.xlsx',
+  ah(async (req, res) => {
+    const courses = await query('SELECT id, name FROM courses ORDER BY name');
     const workbook = new ExcelJS.Workbook();
 
     const ws = workbook.addWorksheet('Import');
@@ -64,10 +66,8 @@ router.get('/template.xlsx', async (_req, res, next) => {
     res.setHeader('Content-Disposition', 'attachment; filename="students-template.xlsx"');
     res.setHeader('Cache-Control', 'no-store');
     res.send(Buffer.from(buf));
-  } catch (err) {
-    next(err);
-  }
-});
+  }),
+);
 
 function normalizePhone(raw) {
   const digits = String(raw ?? '').replace(/\D/g, '');
@@ -92,9 +92,8 @@ router.post('/students', async (req, res, next) => {
     const buffer = Buffer.from(fileBase64, 'base64');
     const ws = await readWorksheet(buffer, filename);
 
-    const courseByName = new Map(
-      query('SELECT id, name FROM courses').map((c) => [String(c.name).trim().toLowerCase(), c.id]),
-    );
+    const courseRows = await query('SELECT id, name FROM courses');
+    const courseByName = new Map(courseRows.map((c) => [String(c.name).trim().toLowerCase(), c.id]));
 
     const rows = [];
     ws.eachRow((row, n) => {
@@ -138,9 +137,9 @@ router.post('/students', async (req, res, next) => {
         continue;
       }
 
-      const { lastInsertRowid: studentId } = run(
+      const { lastInsertRowid: studentId } = await run(
         `INSERT INTO students (name, phone, age, guardian_name, status)
-         VALUES (?, ?, ?, ?, ?)`,
+         VALUES ($1, $2, $3, $4, $5)`,
         r.name,
         r.phone,
         age,
@@ -149,9 +148,9 @@ router.post('/students', async (req, res, next) => {
       );
 
       if (courseId) {
-        run(
+        await run(
           `INSERT INTO enrollments (student_id, course_id, start_date, status)
-           VALUES (?, ?, date('now'), 'active')`,
+           VALUES ($1, $2, CURRENT_DATE, 'active')`,
           studentId,
           courseId,
         );
