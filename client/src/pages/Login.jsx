@@ -32,14 +32,14 @@ export default function Login({ onForgot }) {
         <p className="muted center">Sign in to manage students, fees and reminders.</p>
         <form className="auth-form" onSubmit={submit}>
           <label className="field">
-            <span className="field-label">Email</span>
+            <span className="field-label">User ID</span>
             <input
               className="input"
-              type="email"
-              autoComplete="email"
+              type="text"
+              autoComplete="username"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              placeholder="admin@rlla.app"
+              placeholder="Radhakannan"
               required
             />
           </label>
