@@ -10,8 +10,12 @@ Client-server CRM for Pravaha Art Space / Right & Left Learning Academy (arts cl
 
 ## Important environment quirks
 - Server runs as plain `node src/index.js` from `server/` — manual restart after every server-side change.
-- PowerShell blocks `npm.ps1` → always build client with `cmd /c "npm run build"` from `client/`.
+- PowerShell blocks `npm.ps1` → always build client with `cmd /c "npm run build"` from `client/`. Also use `railway.cmd` (not `railway`) for the Railway CLI.
 - API bound to `http://localhost:5001`.
+- **Hosting: Railway** — project `soothing-ambition` / service `pravaha-crm-demo`, repo `GitRockLee021/Arts-class-CRM`.
+  - **Live URL: https://pravaha-crm-demo-production.up.railway.app**
+  - Checking status: `railway.cmd status` from repo root.
+  - Railway builds the repo itself.
 
 ## What's implemented (Login + Roles — Phase 1, DONE)
 - **Auth**: email+password, scrypt hashing (node:crypto), HttpOnly SameSite=Lax cookie session, 30-day sliding TTL.
@@ -32,8 +36,12 @@ User has asked to change admin credentials (was mid-decision). Login identifier 
 - WhatsApp template `payment_reminder_test`, language `en`, awaiting Meta-side bold edit / re-approval (reminders pause while in review). Real test recipient: Athuzhai (enroll. 7, `9176462333`).
 - Fee rules: due day 5th, prorate after 15th. Courses: Varnam ₹1000, Arumbu ₹1200, Malar ₹1500.
 
+## Before go-live checklist
+- **REVERT demo login (commit `b2f5c88`, 2026-09-24)**: login was switched to "User ID / name" (placeholder `Radhakannan`, `type="text"`, `autoComplete="username"`) so the demo could sign in by name. Before going live, restore the previous email-based login in `client/src/pages/Login.jsx` (label `Email`, `type="email"`, `autoComplete="email"`, placeholder `admin@rlla.app`). Server route (`server/src/routes/auth.js` `/auth/login`) is already email-based — only the client field needs reverting.
+- Also confirm admin credentials (see open items) and `COOKIE_SECURE=true` before launch.
+
 ## Known open items (deferred, unresolved)
-- Live deployment deferred: user has no access to hosting (WordPress on Hostinger shared) / DNS (GoDaddy). Plan: Hostinger Node web app on same account (or VPS) on a subdomain, pointing `DATABASE_URL` at the existing Supabase Postgres. `COOKIE_SECURE=true` + tight CORS at deploy.
+- Live hosting now on **Railway** (see "Important environment quirks"). Supabase Postgres already in use as the DB; no other host in play.
 - `server/src/seed.js` recreates sample courses; purge question unanswered.
 - Course basic/advanced level field — clarify.
 - Mail service optional later (recovery key suffices now).
