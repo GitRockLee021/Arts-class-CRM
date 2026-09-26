@@ -102,6 +102,20 @@ npm run dev        # API on http://localhost:5001 + web app on http://localhost:
   - Check status with `railway.cmd status` from the repo root. Railway builds the repo itself.
 - DB is PostgreSQL (Supabase) via `DATABASE_URL`; the schema is auto-created on boot from
   `server/src/db.js`. (Was SQLite `server/data/crm.db` pre-migration.)
+- **`DATABASE_URL` must use the pooler host and a project-qualified username**:
+  `postgresql://postgres.<project-ref>:<password>@aws-0-<region>.pooler.supabase.com:5432/postgres`
+  (currently ref `zvflqcmshacrvaqoioye`, region `ap-south-1`). Two traps, both of which have
+  bitten this project:
+  - Supabase's **direct** host `db.<project-ref>.supabase.co` resolves to **AAAA only** (IPv6) on
+    newer projects, so it can never connect from Railway's IPv4-only containers — it fails with
+    `ENOTFOUND`, and the Supabase dashboard's connection string offers it as if it were valid.
+  - The pooler needs the **project ref in the username** (`postgres.<ref>`, not `postgres`).
+    Plain `postgres` gets `no tenant identifier provided (external_id or sni_hostname required)`.
+  - The project ref is baked into Railway's `DATABASE_URL`, so moving to a different Supabase
+    project means rebuilding the URL. Also note that resetting the Supabase **password**
+    invalidates the URL everywhere (Railway + `server/.env`) and the server crash-loops at boot
+    with `28P01 password authentication failed`, so every route returns 502 - the app cannot boot
+    without the DB, there is no degraded mode.
 
 ---
 
