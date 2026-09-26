@@ -1,6 +1,7 @@
 import { Router } from 'express';
 import { query, get, run } from '../db.js';
 import { ah } from '../lib/asyncHandler.js';
+import { requireIntId } from '../lib/validate.js';
 
 const router = Router();
 
@@ -58,6 +59,7 @@ router.post(
 
 router.put(
   '/:id',
+  requireIntId,
   ah(async (req, res) => {
     const exists = await get('SELECT id FROM courses WHERE id = $1', req.params.id);
     if (!exists) return res.status(404).json({ error: 'Course not found.' });
@@ -83,6 +85,7 @@ router.put(
 
 router.delete(
   '/:id',
+  requireIntId,
   ah(async (req, res) => {
     const used = await get('SELECT COUNT(*)::int AS n FROM enrollments WHERE course_id = $1', req.params.id);
     if (used.n > 0) {

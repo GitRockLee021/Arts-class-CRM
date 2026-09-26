@@ -2,6 +2,8 @@ import { Router } from 'express';
 
 import { get, run } from '../db.js';
 import { ah } from '../lib/asyncHandler.js';
+import { loginLimiter, recoveryLimiter } from '../lib/rateLimit.js';
+import { isEmail } from '../lib/validate.js';
 import {
   hashPassword,
   verifyPassword,
@@ -25,8 +27,12 @@ async function findUserByEmail(email) {
 
 router.post(
   '/login',
+  loginLimiter,
   ah(async (req, res) => {
     const { email, password } = req.body || {};
+    if (!isEmail(email)) {
+      return res.status(400).json({ error: 'Enter a valid email address' });
+    }
     const user = await findUserByEmail(email);
     const ok = !!user && !!user.active && verifyPassword(password, user.password_hash);
     if (!ok) {
@@ -86,11 +92,16 @@ router.post(
 
 router.post(
   '/forgot-password',
+  recoveryLimiter,
   ah(async (req, res) => {
     const { email, recovery_key: recoveryKey, new_password: newPassword } = req.body || {};
     if (typeof newPassword !== 'string' || newPassword.length < 8) {
       await sleep(600);
       return res.status(400).json({ error: 'New password must be at least 8 characters' });
+    }
+    if (!isEmail(email)) {
+      await sleep(600);
+      return res.status(400).json({ error: 'Could not reset with the provided details' });
     }
     const user = await findUserByEmail(email);
     const withKey = user?.recovery_key_hash && typeof recoveryKey === 'string' && recoveryKey.trim();

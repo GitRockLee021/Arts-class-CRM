@@ -2,6 +2,7 @@ import { Router } from 'express';
 import { randomUUID } from 'node:crypto';
 import { query, get, run } from '../db.js';
 import { ah } from '../lib/asyncHandler.js';
+import { requireIntId } from '../lib/validate.js';
 import { fetchEnrollments, getEnrollmentWithFees } from '../lib/enrollments.js';
 import { generateCertificate, defaultCertNumber } from '../services/certificate.js';
 import { sendImage, normalizeNumber } from '../services/whatsapp.js';
@@ -26,6 +27,7 @@ router.get(
 
 router.get(
   '/:id',
+  requireIntId,
   ah(async (req, res) => {
     const enrollment = await getEnrollmentWithFees(req.params.id);
     if (!enrollment) return res.status(404).json({ error: 'Enrollment not found.' });
@@ -80,6 +82,7 @@ router.post(
 
 router.put(
   '/:id',
+  requireIntId,
   ah(async (req, res) => {
     const existing = await get('SELECT * FROM enrollments WHERE id = $1', req.params.id);
     if (!existing) return res.status(404).json({ error: 'Enrollment not found.' });
@@ -128,6 +131,7 @@ router.put(
 
 router.delete(
   '/:id',
+  requireIntId,
   ah(async (req, res) => {
     await run('DELETE FROM enrollments WHERE id = $1', req.params.id);
     res.json({ ok: true });
@@ -170,7 +174,7 @@ async function buildCert(enrollmentId) {
   return { enrollment, fromCourse, toCourse, certNumber, dateLabel, cert };
 }
 
-router.get('/:id/certificate', async (req, res) => {
+router.get('/:id/certificate', requireIntId, async (req, res) => {
   try {
     const data = await buildCert(req.params.id);
     if (!data) return res.status(404).json({ error: 'Enrollment not found.' });
@@ -189,11 +193,11 @@ router.get('/:id/certificate', async (req, res) => {
     });
   } catch (err) {
     console.error('[certificate preview]', err);
-    res.status(500).json({ error: err.message });
+    res.status(500).json({ error: 'Failed to preview certificate' });
   }
 });
 
-router.post('/:id/certificate', async (req, res) => {
+router.post('/:id/certificate', requireIntId, async (req, res) => {
   try {
     const data = await buildCert(req.params.id);
     if (!data) return res.status(404).json({ error: 'Enrollment not found.' });
@@ -226,12 +230,13 @@ router.post('/:id/certificate', async (req, res) => {
     res.json({ ok: true, certificate: { certNumber, fromCourse, toCourse, dateLabel: data.dateLabel, filename: cert.filename }, delivery: result });
   } catch (err) {
     console.error('[certificate]', err);
-    res.status(500).json({ error: err.message });
+    res.status(500).json({ error: 'Failed to send certificate' });
   }
 });
 
 router.get(
   '/:id/payments',
+  requireIntId,
   ah(async (req, res) => {
     const payments = await query(
       'SELECT * FROM fee_payments WHERE enrollment_id = $1 ORDER BY payment_date DESC, id DESC',
@@ -243,6 +248,7 @@ router.get(
 
 router.post(
   '/:id/payments',
+  requireIntId,
   ah(async (req, res) => {
     const enrollment = await get('SELECT id FROM enrollments WHERE id = $1', req.params.id);
     if (!enrollment) return res.status(404).json({ error: 'Enrollment not found.' });
@@ -278,6 +284,7 @@ router.post(
  */
 router.post(
   '/:id/admission',
+  requireIntId,
   ah(async (req, res) => {
     const enrollment = await get('SELECT id FROM enrollments WHERE id = $1', req.params.id);
     if (!enrollment) return res.status(404).json({ error: 'Enrollment not found.' });

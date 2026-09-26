@@ -6,6 +6,7 @@ import { enrollmentOverdue } from '../lib/monthly.js';
 import { sendFeeReminder, sendTestMessage, waStatus } from '../services/whatsapp.js';
 import { createPaymentLink, isRazorpayConfigured, isWebhookConfigured } from '../services/razorpay.js';
 import { requireRole } from '../services/auth.js';
+import { toInt } from '../lib/validate.js';
 
 const router = Router();
 
@@ -131,8 +132,20 @@ async function sendForEnrollment(enrollment) {
 router.post('/send', async (req, res) => {
   try {
     let targets;
-    const ids = (req.body?.enrollmentIds || []).map((x) => Number(x)).filter(Boolean);
-    if (ids.length) {
+    const requested = req.body?.enrollmentIds;
+    let ids = null;
+    if (requested !== undefined && requested !== null) {
+      // An explicit id list must be a non-empty array of valid ids. Anything else (wrong type,
+      // empty, all-invalid) is a 400 — never a fall-through to "remind every student with dues".
+      if (!Array.isArray(requested)) {
+        return res.status(400).json({ error: 'enrollmentIds must be an array of ids' });
+      }
+      ids = requested.map(toInt);
+      if (ids.some((x) => x === null) || ids.length === 0) {
+        return res.status(400).json({ error: 'enrollmentIds must contain at least one valid id' });
+      }
+    }
+    if (ids) {
       const fetched = [];
       for (const id of ids) {
         const e = await getEnrollmentWithFees(id);
@@ -151,7 +164,7 @@ router.post('/send', async (req, res) => {
     res.json({ results });
   } catch (err) {
     console.error(err);
-    res.status(500).json({ error: err.message });
+    res.status(500).json({ error: 'Failed to send reminders' });
   }
 });
 
@@ -164,8 +177,8 @@ router.get('/logs', async (req, res, next) => {
       conds.push('substr(rl.sent_at::text, 1, 7) = $' + (params.length + 1));
       params.push(month);
     }
-    const enrollmentId = Number(req.query.enrollment_id);
-    if (enrollmentId) {
+    const enrollmentId = toInt(req.query.enrollment_id);
+    if (enrollmentId !== null) {
       conds.push('rl.enrollment_id = $' + (params.length + 1));
       params.push(enrollmentId);
     }
@@ -202,7 +215,7 @@ router.post('/test', requireRole('admin'), async (req, res) => {
     res.json({ ...result, payment_link: payment.short_url, rzp_status: payment.status });
   } catch (err) {
     console.error(err);
-    res.status(500).json({ error: err.message });
+    res.status(500).json({ error: 'Failed to send test message' });
   }
 });
 

@@ -2,6 +2,7 @@ import { Router } from 'express';
 import { query, get, run } from '../db.js';
 import { fetchEnrollments } from '../lib/enrollments.js';
 import { ah } from '../lib/asyncHandler.js';
+import { requireIntId, isEmailOrEmpty } from '../lib/validate.js';
 
 const router = Router();
 
@@ -22,12 +23,15 @@ function studentBody(body) {
   };
 }
 
-function validatePhone(b) {
+function validateContact(b) {
   if (!/^\d{10}$/.test(b.phone || '')) {
     return 'Phone must be exactly 10 digits.';
   }
   if (b.guardian_phone && !/^\d{10}$/.test(b.guardian_phone)) {
     return 'Parent phone must be exactly 10 digits.';
+  }
+  if (!isEmailOrEmpty(b.email)) {
+    return 'Email is not a valid address.';
   }
   return null;
 }
@@ -123,9 +127,9 @@ router.post(
     if (!b.date_of_admission) {
       return res.status(400).json({ error: 'Date of admission is required.' });
     }
-    const phoneError = validatePhone(b);
-    if (phoneError) {
-      return res.status(400).json({ error: phoneError });
+    const contactError = validateContact(b);
+    if (contactError) {
+      return res.status(400).json({ error: contactError });
     }
     const { lastInsertRowid } = await run(
       `INSERT INTO students (name, phone, email, age, guardian_name, guardian_phone, address, date_of_birth, date_of_admission, notes, status)
@@ -148,6 +152,7 @@ router.post(
 
 router.get(
   '/:id',
+  requireIntId,
   ah(async (req, res) => {
     const student = await get('SELECT * FROM students WHERE id = $1', req.params.id);
     if (!student) return res.status(404).json({ error: 'Student not found.' });
@@ -203,6 +208,7 @@ router.get(
 
 router.put(
   '/:id',
+  requireIntId,
   ah(async (req, res) => {
     const existing = await get('SELECT * FROM students WHERE id = $1', req.params.id);
     if (!existing) return res.status(404).json({ error: 'Student not found.' });
@@ -210,9 +216,9 @@ router.put(
     if (!b.name || !b.phone) {
       return res.status(400).json({ error: 'Name and phone are required.' });
     }
-    const phoneError = validatePhone(b);
-    if (phoneError) {
-      return res.status(400).json({ error: phoneError });
+    const contactError = validateContact(b);
+    if (contactError) {
+      return res.status(400).json({ error: contactError });
     }
     await run(
       `UPDATE students SET name=$1, phone=$2, email=$3, age=$4, guardian_name=$5, guardian_phone=$6, address=$7,
@@ -260,6 +266,7 @@ router.put(
 
 router.delete(
   '/:id',
+  requireIntId,
   ah(async (req, res) => {
     await run('DELETE FROM students WHERE id = $1', req.params.id);
     res.json({ ok: true });

@@ -3,6 +3,7 @@ import { Router } from 'express';
 import { query, get, run } from '../db.js';
 import { hashPassword, hashToken, generateRecoveryKey, publicUser, requireAuth, requireRole } from '../services/auth.js';
 import { ah } from '../lib/asyncHandler.js';
+import { requireIntId, isEmail } from '../lib/validate.js';
 
 const router = Router();
 
@@ -20,6 +21,7 @@ router.post(
   ah(async (req, res) => {
     const { email, name, role, password } = req.body || {};
     if (!email || !name) return res.status(400).json({ error: 'Email and name are required' });
+    if (!isEmail(email)) return res.status(400).json({ error: 'Enter a valid email address' });
     const finalRole = role === 'faculty' ? 'faculty' : 'admin';
     const finalPassword = typeof password === 'string' && password.length >= 8 ? password : null;
     if (!finalPassword) {
@@ -44,6 +46,7 @@ router.post(
 
 router.patch(
   '/:id',
+  requireIntId,
   ah(async (req, res) => {
     const target = await get('SELECT * FROM users WHERE id = $1', req.params.id);
     if (!target) return res.status(404).json({ error: 'User not found' });
@@ -66,6 +69,7 @@ router.patch(
 
 router.post(
   '/:id/reset-password',
+  requireIntId,
   ah(async (req, res) => {
     const target = await get('SELECT id FROM users WHERE id = $1', req.params.id);
     if (!target) return res.status(404).json({ error: 'User not found' });
@@ -81,6 +85,7 @@ router.post(
 
 router.post(
   '/:id/regenerate-recovery-key',
+  requireIntId,
   ah(async (req, res) => {
     const target = await get('SELECT id FROM users WHERE id = $1', req.params.id);
     if (!target) return res.status(404).json({ error: 'User not found' });
@@ -92,6 +97,7 @@ router.post(
 
 router.delete(
   '/:id',
+  requireIntId,
   ah(async (req, res) => {
     const target = await get('SELECT id FROM users WHERE id = $1', req.params.id);
     if (!target) return res.status(404).json({ error: 'User not found' });

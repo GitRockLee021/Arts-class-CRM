@@ -1,6 +1,7 @@
 import { Router } from 'express';
 import { get, query, run, begin, commit, rollback } from '../db.js';
 import { ah } from '../lib/asyncHandler.js';
+import { requireIntId, toInt } from '../lib/validate.js';
 
 const router = Router();
 
@@ -135,6 +136,7 @@ router.get(
 // Roster for a batch + existing record for a date
 router.get(
   '/batch/:id',
+  requireIntId,
   ah(async (req, res) => {
     const batch = await get('SELECT b.*, c.name AS course_name FROM batches b LEFT JOIN courses c ON c.id = b.course_id WHERE b.id = $1', req.params.id);
     if (!batch) return res.status(404).json({ error: 'Batch not found.' });
@@ -163,9 +165,9 @@ router.post(
   '/',
   ah(async (req, res) => {
     const b = req.body || {};
-    const batchId = Number(b.batch_id);
+    const batchId = toInt(b.batch_id);
     const date = String(b.batch_date || '').slice(0, 10);
-    if (!batchId) return res.status(400).json({ error: 'batch_id is required.' });
+    if (batchId === null) return res.status(400).json({ error: 'batch_id is required.' });
     if (!/^\d{4}-\d{2}-\d{2}$/.test(date)) return res.status(400).json({ error: 'batch_date is required (YYYY-MM-DD).' });
     if (date > localToday()) return res.status(400).json({ error: 'Cannot save attendance for a future date.' });
 

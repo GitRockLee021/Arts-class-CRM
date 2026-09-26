@@ -85,7 +85,7 @@ router.post('/razorpay', async (req, res) => {
     res.json({ ok: true, ignored: event.event });
   } catch (err) {
     console.error('[razorpay:webhook]', err);
-    res.status(500).json({ error: err.message });
+    res.status(500).json({ error: 'Webhook processing failed' });
   }
 });
 

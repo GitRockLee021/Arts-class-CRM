@@ -4,6 +4,7 @@ import { monthReport, parseYm } from '../lib/monthly.js';
 import { receiptHtml, receiptNumber, studentRef } from '../lib/receipts.js';
 import { getPaymentRow, paymentReceiptPayload, shareBase } from '../lib/paymentReceipt.js';
 import { ah } from '../lib/asyncHandler.js';
+import { requireIntId, toInt } from '../lib/validate.js';
 
 const router = Router();
 
@@ -14,7 +15,7 @@ router.get(
     const month = parseYm(req.query.month);
     let from = String(req.query.from || '').slice(0, 10);
     let to = String(req.query.to || '').slice(0, 10);
-    const courseId = Number(req.query.course_id) || null;
+    const courseId = toInt(req.query.course_id);
 
     if (month) {
       from = `${month.key}-01`;
@@ -90,6 +91,7 @@ router.get(
 // Printable receipt page for one payment (prints to PDF, WhatsApp share).
 router.get(
   '/:id/receipt',
+  requireIntId,
   ah(async (req, res) => {
     const payment = await getPaymentRow(req.params.id);
     if (!payment) return res.status(404).json({ error: 'Payment not found.' });
@@ -101,6 +103,7 @@ router.get(
 
 router.delete(
   '/:id',
+  requireIntId,
   ah(async (req, res) => {
     await run('DELETE FROM fee_payments WHERE id = $1', req.params.id);
     res.json({ ok: true });
