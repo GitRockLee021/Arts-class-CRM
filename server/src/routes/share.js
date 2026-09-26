@@ -19,7 +19,7 @@ router.get('/r/:token', async (req, res, next) => {
         );
     }
 
-    const r = paymentReceiptPayload(payment);
+    const r = await paymentReceiptPayload(payment);
     res.type('html').send(receiptHtml(r, { shared: true }));
   } catch (err) {
     next(err);
