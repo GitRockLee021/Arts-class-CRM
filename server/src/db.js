@@ -222,7 +222,12 @@ CREATE UNIQUE INDEX IF NOT EXISTS idx_fee_payments_gateway_ref
 CREATE OR REPLACE FUNCTION fee_payments_set_share_token() RETURNS trigger AS $fn$
 BEGIN
   IF NEW.share_token IS NULL THEN
-    NEW.share_token := lower(substr(md5(random()::text || clock_timestamp()::text), 1, 24));
+    -- gen_random_bytes(12) = 96 bits from the DB's CSPRNG. Previously this was
+    -- substr(md5(random()::text || clock_timestamp()::text), 1, 24): random() is a float PRNG,
+    -- not a CSPRNG, so the token only carried ~50 bits of real entropy even though it looked
+    -- like 24 hex chars. These tokens are the only thing guarding the unauthenticated
+    -- /share/r/:token receipt route, so keep this a real CSPRNG.
+    NEW.share_token := encode(gen_random_bytes(12), 'hex');
   END IF;
   RETURN NEW;
 END;

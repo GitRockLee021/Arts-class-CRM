@@ -1,11 +1,12 @@
 import { Router } from 'express';
 import { getPaymentRowByToken, paymentReceiptPayload } from '../lib/paymentReceipt.js';
 import { receiptHtml } from '../lib/receipts.js';
+import { shareLimiter } from '../lib/rateLimit.js';
 
 const router = Router();
 
 // Public, parent-facing receipt link: /share/r/<token>
-router.get('/r/:token', async (req, res, next) => {
+router.get('/r/:token', shareLimiter, async (req, res, next) => {
   try {
     const payment = await getPaymentRowByToken(req.params.token);
     if (!payment) {

@@ -41,3 +41,17 @@ export const recoveryLimiter = rateLimit({
   limit: RECOVERY_MAX,
   message: { error: 'Too many password-reset attempts. Please wait a few minutes and try again.' },
 });
+
+/**
+ * Public receipt links (`/share/r/:token`). Unauthenticated, so the share token is the only
+ * thing protecting the receipt; this stops an attacker turning the route into a free oracle for
+ * guessing tokens. Generous because a parent may open the link, print it, and reopen it, and
+ * several receipts can be opened from one family - a wrong token costs the same as a right one.
+ */
+export const shareLimiter = rateLimit({
+  windowMs: positive(process.env.SHARE_RATE_WINDOW_MIN, 15) * 60 * 1000,
+  limit: positive(process.env.SHARE_RATE_MAX, 60),
+  standardHeaders: 'draft-7',
+  legacyHeaders: false,
+  message: { error: 'Too many receipt views. Please wait a few minutes and try again.' },
+});

@@ -1,6 +1,7 @@
 import 'dotenv/config';
 import express from 'express';
 import cors from 'cors';
+import helmet from 'helmet';
 import path from 'node:path';
 import fs from 'node:fs';
 import { fileURLToPath } from 'node:url';
@@ -33,6 +34,25 @@ const trustProxy = process.env.TRUST_PROXY ?? '1';
 if (trustProxy !== 'false' && trustProxy !== '0') {
   app.set('trust proxy', trustProxy === 'true' ? 1 : Number(trustProxy) || trustProxy);
 }
+
+// Security headers (helmet). Notable choices:
+// - `contentSecurityPolicy: false` - the receipt page ships a large inline <style> block plus an
+//   inline `onclick` print handler, and the Vite bundle inlines assets, so a strict CSP would
+//   break printing and fonts. Worth adding later with 'unsafe-inline' scoped deliberately.
+// - `strictTransportSecurity` matters now that COOKIE_SECURE=true: without HSTS a browser can
+//   still be downgraded to http:// and the session cookie sent in the clear.
+// - `frameguard` denies framing, which stops clickjacking the admin UI.
+// - `noSniff` plus removing `X-Powered-By` avoids advertising the stack and MIME-sniffing files.
+app.use(
+  helmet({
+    contentSecurityPolicy: false,
+    strictTransportSecurity: { maxAge: 31536000, includeSubDomains: true },
+    frameguard: { action: 'deny' },
+    referrerPolicy: { policy: 'no-referrer' },
+  }),
+);
+
+app.disable('x-powered-by');
 
 app.use(cors());
 app.use(express.json({ limit: '5mb', verify: (req, res, buf) => { req.rawBody = buf; } }));

@@ -41,7 +41,7 @@ server/
       paymentReceipt.js   shared row fetch + receipt payload builder (staff + share routes)
       asyncHandler.js
     validate.js           requireIntId (all /:id routes), isEmail, toInt
-    rateLimit.js          loginLimiter, recoveryLimiter (express-rate-limit, in-memory)
+    rateLimit.js          loginLimiter, recoveryLimiter, shareLimiter (express-rate-limit, in-memory)
     routes/               students, courses, batches, enrollments, payments, reminders,
                           attendance, stats, imports, users, auth, webhooks, share
     services/
@@ -124,8 +124,10 @@ npm run dev        # API on http://localhost:5001 + web app on http://localhost:
 - Email + password, **scrypt** hashing (`node:crypto`), HttpOnly `SameSite=Lax` cookie session,
   30-day sliding TTL (`SESSION_TTL_DAYS`).
 - **Roles**: `admin` (everything) vs `faculty` (everything **except** Users / roles /
-  permissions, Settings, and reminder status+test). Faculty can use students, courses, batches,
-  payments, imports, reminders, attendance, and certificates.
+  permissions, Settings, reminder status+test, and **sending** reminders). Faculty can use
+  students, courses, batches, payments, imports, attendance, and certificates, and can *read*
+  dues and the reminder send log. Mass send is admin-only because an empty `enrollmentIds`
+  messages every parent with dues and each send is a billable WhatsApp conversation.
 - **Recovery key** (chosen instead of a mail service): one-time key `RLLA-XXXX-XXXX-XXXX` shown
   once at user creation. "Forgot password?" = email + recovery key + new password. Admins can
   regenerate any key.
@@ -273,10 +275,11 @@ Designs `design-billing.html` / `design-receipt.html` are approved and implement
   by `app.use('/assets', express.static(...))` in `server/src/index.js` (mounted **before** the
   `/api` auth guard). Displayed in a white square tile with
   `object-fit: cover; transform: scale(1.3)` (1.3 was signed off; 1.65 fills fully).
-- **Public share link** — every payment gets a `share_token` (24-hex random, generated in
-  `db.js`, applies to all inserts including imports/seed) → parent page at `GET /share/r/:token`
-  (public, no auth; missing token → 404 page). Shared page omits staff chrome (no
-  "Back to Billing", no "Share on WhatsApp") but keeps "Download PDF".
+- **Public share link** — every payment gets a `share_token` (24 hex chars = 96 bits from
+  `gen_random_bytes(12)`, generated in `db.js`, applies to all inserts including imports/seed) →
+  parent page at `GET /share/r/:token` (public, no auth, rate limited 60/15 min per IP; missing
+  token → 404 page). Shared page omits staff chrome (no "Back to Billing", no "Share on WhatsApp")
+  but keeps "Download PDF".
   Base URL from `WHATSAPP_RECEIPT_SHARE_BASE` else `APP_URL` else `http://localhost:5001`.
 
 ---
@@ -441,6 +444,23 @@ after"** — build and get sign-off on a mock before wiring backend/frontend.
 | 1 | Secrets in git history | Clean — `.env` is gitignored, all secrets come from `process.env`, no hardcoded `rzp_*` / `sk_*` / connection URLs in tracked code. |
 | 7 | Upload validation | N/A — no logo upload endpoint (logo is a static asset); CSV/XLSX import validates rows and is capped by the 5MB body limit. |
 
+### Second pass (2026-09-26)
+
+| # | Item | Verdict |
+| - | ---- | ------- |
+| 2 | Low-entropy public share token | **Fixed** — the `fee_payments_set_share_token` trigger built the token as `substr(md5(random()::text \|\| clock_timestamp()::text), 1, 24)`. `random()` is Postgres' float PRNG, not a CSPRNG, so the token carried roughly 50 bits of real entropy while *looking* like 24 hex chars (96 bits), and the MD5 output is not stretched, so `clock_timestamp()` added little. It is now `encode(gen_random_bytes(12), 'hex')` — 96 bits from the DB's CSPRNG, same 24-hex shape so existing links and the Meta template keep working. Defence in depth: `GET /share/r/:token` is now rate limited (60 / 15 min / IP) so it cannot be used as a cheap token oracle. **Existing tokens are deliberately not rotated** — that would break every receipt link already sent to parents. Config: `SHARE_RATE_MAX`, `SHARE_RATE_WINDOW_MIN`. |
+| 3 | No security headers | **Fixed** — `helmet` 8 added in `server/src/index.js`, so every response now carries HSTS (`max-age=31536000; includeSubDomains`), `X-Frame-Options: DENY` (clickjacking), `X-Content-Type-Options: nosniff`, `Referrer-Policy: no-referrer`, `X-DNS-Prefetch-Control: off`, `Cross-Origin-Opener-Policy: same-origin`, and no `X-Powered-By`. **CSP is deliberately off**: the receipt page ships a large inline `<style>` block plus an inline `onclick` print handler, so a strict policy would break printing. Add a CSP later with `unsafe-inline` scoped on purpose, not by accident. HSTS matters most because `COOKIE_SECURE=true` alone still allows one http:// downgrade. |
+| 4 | Any role could mass-send WhatsApp | **Fixed** — `POST /api/reminders/send` now requires `requireRole('admin')`, matching `/status` and `/test`. Omitting `enrollmentIds` messages *every* parent with dues and each send is a billable Meta conversation, so a faculty account could message the whole school. Faculty keep read access to dues and the send log. |
+
+**Still open (deliberately, not forgotten)**
+
+- **The admin password is `Radhakannan`** — the same as the user ID, on a publicly reachable URL.
+  Leaving it was an explicit request; it is the weakest thing in the deployment and should be
+  changed before real student data goes in.
+- `npm audit` reports 4 moderate advisories, all from `exceljs` → `uuid` (a buffer-bounds check
+  in `uuid` v3/v5/v6). Only the CSV import path touches it, and the offered fix is a breaking
+  downgrade to `exceljs@3.4.0`, so it is deferred rather than forced.
+
 ---
 
 ## Before go-live checklist
@@ -456,6 +476,8 @@ after"** — build and get sign-off on a mock before wiring backend/frontend.
 - [x] Confirm the final admin credentials and re-apply with `npm run create-admin`.
 - [x] Set `COOKIE_SECURE=true` in the live `.env` (was `false`; set on Railway 2026-09-26).
 - [x] Commit the security-audit fixes (#6 error leakage, #2 rate limiting, #4 input validation).
+- [x] Second audit pass: CSPRNG share tokens, `helmet` security headers, admin-only mass send
+      (see the table above). The weak admin password was left as-is on request.
 - [ ] Submit the `payment_receipt` template to Meta using the Railway URL (no domain
   verification - see the template spec above).
 

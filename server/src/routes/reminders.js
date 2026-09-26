@@ -128,8 +128,13 @@ async function sendForEnrollment(enrollment) {
  * Send reminders. Body:
  *   { enrollmentIds: [...] }  → specific enrollments, or
  *   {}                        → all students with dues
+ *
+ * Admin-only, like /status and /test. Omitting `enrollmentIds` messages *every* parent with dues,
+ * and each send is a billable WhatsApp conversation, so this was reachable by any faculty login:
+ * a compromised or careless faculty account could message the whole school and run up Meta's
+ * per-conversation fees. Faculty can still see dues and the send log (read-only).
  */
-router.post('/send', async (req, res) => {
+router.post('/send', requireRole('admin'), async (req, res) => {
   try {
     let targets;
     const requested = req.body?.enrollmentIds;
