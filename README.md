@@ -319,15 +319,24 @@ Env `WHATSAPP_TEMPLATE_NAME`; **code default `fee_reminder`**, but the live `.en
 - **Body** (3 params, order = name → amount → date, matching `sendReceipt()`):
   `Hello {{1}}, your payment of {{2}} received on {{3}} is confirmed. Thank you! Open your
   receipt using the button below.`
-- **Button**: Website URL, text `View Receipt`, URL `<SHARE_BASE>/share/r/{{1}}` where `{{1}}`
-  is the payment's 24-hex `share_token`. The **domain must be verified with Meta** (connected to
-  the WhatsApp Business account) and the template approved before parents get real messages.
-- Sample values: `Nithilan`, `₹1,220`, `06 Sep 2026`; `{{1}}` button sample `9f3a1b7c2d4e`.
-- If the template is not approved, the **payment is still recorded** and the failed receipt send
-  is logged, so it can be retried later.
-- **Status: unblocked now that the app is hosted on Railway** — submit the template and verify
-  the domain. (This was previously gated on hosting; the earlier decision was not to burn an
-  approval attempt while the button URL could not load.)
+- **Button**: Website URL, text `View Receipt`, and this exact URL:
+  `https://pravaha-crm-demo-production.up.railway.app/share/r/{{1}}`
+  The host is fixed in the template and only the 24-hex `share_token` varies, so `sendReceipt()`
+  sends the **bare token** as the button parameter (see `sendReceipt()` in `services/whatsapp.js`).
+- Sample values: body `Nithilan`, `₹1,220`, `6 Sept 2026`. The button sample must be a **full
+  URL** — Meta's editor requires that even though the API takes only the suffix — e.g.
+  `https://pravaha-crm-demo-production.up.railway.app/share/r/9f3a1b7c2d4e5f6a8b0c1d2e`.
+- **When the business subdomain replaces the Railway URL, update two things together**: the
+  button URL in this Meta template *and* `WHATSAPP_RECEIPT_SHARE_BASE`. Missing either one means
+  the button keeps pointing at the old host, since the template's host is frozen at creation.
+- If the template is not approved, the **payment is still recorded** and the failed receipt send is
+  written to `reminder_logs`. Note there is **no resend button** - receipts only fire when a
+  payment is created (`routes/enrollments.js`) or the Razorpay webhook confirms one
+  (`routes/webhooks.js`), so a failed send means messaging that parent manually.
+- **Status: using the Railway URL for now.** The Railway host is a shared `*.up.railway.app`
+  domain, so it *cannot* be verified with Meta — submitting anyway to avoid burning an approval
+  attempt. If Meta rejects the template over the domain, the fix is the business subdomain
+  (verify it in Meta Business Manager → Brand safety → Domains), not a code change.
 - For a real PDF/image receipt you'd send a **document message** instead (media upload +
   document header, or an open 24h window) — not implemented.
 
@@ -425,7 +434,8 @@ after"** — build and get sign-off on a mock before wiring backend/frontend.
 - [ ] Confirm the final admin credentials and re-apply with `npm run create-admin`.
 - [ ] Set `COOKIE_SECURE=true` in the live `.env` (currently `false`).
 - [x] Commit the security-audit fixes (#6 error leakage, #2 rate limiting, #4 input validation).
-- [ ] Submit the `payment_receipt` template to Meta + verify the Railway domain.
+- [ ] Submit the `payment_receipt` template to Meta using the Railway URL (no domain
+  verification - see the template spec above).
 
 ---
 
