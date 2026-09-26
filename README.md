@@ -136,12 +136,18 @@ npm run dev        # API on http://localhost:5001 + web app on http://localhost:
 
 ### Test accounts (local/dev only)
 
-| Role | Login | Password |
-| ---- | ----- | -------- |
-| Admin | `admin@rlla.app` | `admin12345` (reset via `npm run create-admin`) |
-| Faculty | `faculty@rlla.app` | `faculty12345` |
+| Role | Login (user ID) | Password |
+| ---- | --------------- | -------- |
+| Admin | `Radhakannan` | `Radhakannan` (reset via `npm run create-admin`) |
 
-Login identifier is **email only**; the Name field is display-only.
+Login identifier is a **user ID**, not necessarily an email - the demo signs in by name. The
+server validates it with `isLoginId` (non-empty, no control chars, <=120 chars) in
+`POST /api/auth/login`, `POST /api/auth/forgot-password` and `POST /api/users`, so it accepts
+`Radhakannan` as well as a real address. `isEmail` is still used for the optional **student**
+email, which must be a real address.
+
+> These accounts live in the shared Supabase database, so they are the **same on local and on the
+> live Railway site** - changing a password changes both.
 
 ---
 
@@ -439,13 +445,15 @@ after"** — build and get sign-off on a mock before wiring backend/frontend.
 
 ## Before go-live checklist
 
-- [ ] **Revert the demo login.** Commit `c7deb79` ("Login: accept any user ID") changed
+- [x] **Revert the demo login.** Commit `c7deb79` ("Login: accept any user ID") changed
       `client/src/pages/Login.jsx` to a "User ID" field (`type="text"`,
       `autoComplete="username"`, placeholder `Radhakannan`) so the demo could sign in by name.
-      Restore the email field (label `Email`, `type="email"`, `autoComplete="email"`,
-      placeholder `admin@rlla.app`). The server route `POST /api/auth/login` is **already**
-      email-based — only the client field needs reverting.
-- [ ] Confirm the final admin credentials and re-apply with `npm run create-admin`.
+      The client field is correct as-is. The **server** also had to change: the security audit
+      (`4fff287`) added `isEmail(email)` to `POST /api/auth/login`, which rejected `Radhakannan`
+      with a 400 and locked *everyone* out. Replaced with `isLoginId` in `lib/validate.js`,
+      applied to login, forgot-password and user creation. The DB row is `Radhakannan` (the
+      `users.email` column holds a user ID, email or not).
+- [x] Confirm the final admin credentials and re-apply with `npm run create-admin`.
 - [ ] Set `COOKIE_SECURE=true` in the live `.env` (currently `false`).
 - [x] Commit the security-audit fixes (#6 error leakage, #2 rate limiting, #4 input validation).
 - [ ] Submit the `payment_receipt` template to Meta using the Railway URL (no domain

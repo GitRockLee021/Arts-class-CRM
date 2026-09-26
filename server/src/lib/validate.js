@@ -18,6 +18,23 @@ export function isEmail(value) {
   return typeof value === 'string' && EMAIL_RE.test(value.trim());
 }
 
+/**
+ * Login identifier. The demo signs in by user ID, which may be a display name
+ * (e.g. "Radhakannan") rather than an email, so only shape is enforced: non-empty after
+ * trimming, no control characters, and within the 120-char budget of `users.email`.
+ * Empty or malformed input is still rejected with a 400 before any query runs.
+ */
+export function isLoginId(value) {
+  if (typeof value !== 'string') return false;
+  const trimmed = value.trim();
+  if (!trimmed || trimmed.length > 120) return false;
+  for (let i = 0; i < trimmed.length; i++) {
+    const code = trimmed.charCodeAt(i);
+    if (code < 32 || code === 127) return false;
+  }
+  return true;
+}
+
 /** Optional email: null/undefined/'' pass through, anything present must look like an email. */
 export function isEmailOrEmpty(value) {
   if (value === null || value === undefined || value === '') return true;

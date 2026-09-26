@@ -3,7 +3,7 @@ import { Router } from 'express';
 import { query, get, run } from '../db.js';
 import { hashPassword, hashToken, generateRecoveryKey, publicUser, requireAuth, requireRole } from '../services/auth.js';
 import { ah } from '../lib/asyncHandler.js';
-import { requireIntId, isEmail } from '../lib/validate.js';
+import { requireIntId, isLoginId } from '../lib/validate.js';
 
 const router = Router();
 
@@ -20,15 +20,15 @@ router.post(
   '/',
   ah(async (req, res) => {
     const { email, name, role, password } = req.body || {};
-    if (!email || !name) return res.status(400).json({ error: 'Email and name are required' });
-    if (!isEmail(email)) return res.status(400).json({ error: 'Enter a valid email address' });
+    if (!email || !name) return res.status(400).json({ error: 'User ID and name are required' });
+    if (!isLoginId(email)) return res.status(400).json({ error: 'Enter a valid user ID' });
     const finalRole = role === 'faculty' ? 'faculty' : 'admin';
     const finalPassword = typeof password === 'string' && password.length >= 8 ? password : null;
     if (!finalPassword) {
       return res.status(400).json({ error: 'Password must be at least 8 characters' });
     }
     const exists = await get('SELECT id FROM users WHERE LOWER(email) = LOWER($1)', email.trim());
-    if (exists) return res.status(409).json({ error: 'A user with this email already exists' });
+    if (exists) return res.status(409).json({ error: 'A user with this ID already exists' });
 
     const recoveryKey = generateRecoveryKey();
     const result = await run(

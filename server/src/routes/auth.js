@@ -3,7 +3,7 @@ import { Router } from 'express';
 import { get, run } from '../db.js';
 import { ah } from '../lib/asyncHandler.js';
 import { loginLimiter, recoveryLimiter } from '../lib/rateLimit.js';
-import { isEmail } from '../lib/validate.js';
+import { isLoginId } from '../lib/validate.js';
 import {
   hashPassword,
   verifyPassword,
@@ -30,8 +30,8 @@ router.post(
   loginLimiter,
   ah(async (req, res) => {
     const { email, password } = req.body || {};
-    if (!isEmail(email)) {
-      return res.status(400).json({ error: 'Enter a valid email address' });
+    if (!isLoginId(email)) {
+      return res.status(400).json({ error: 'Enter your user ID' });
     }
     const user = await findUserByEmail(email);
     const ok = !!user && !!user.active && verifyPassword(password, user.password_hash);
@@ -99,7 +99,7 @@ router.post(
       await sleep(600);
       return res.status(400).json({ error: 'New password must be at least 8 characters' });
     }
-    if (!isEmail(email)) {
+    if (!isLoginId(email)) {
       await sleep(600);
       return res.status(400).json({ error: 'Could not reset with the provided details' });
     }
