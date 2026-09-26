@@ -454,7 +454,7 @@ after"** — build and get sign-off on a mock before wiring backend/frontend.
       applied to login, forgot-password and user creation. The DB row is `Radhakannan` (the
       `users.email` column holds a user ID, email or not).
 - [x] Confirm the final admin credentials and re-apply with `npm run create-admin`.
-- [ ] Set `COOKIE_SECURE=true` in the live `.env` (currently `false`).
+- [x] Set `COOKIE_SECURE=true` in the live `.env` (was `false`; set on Railway 2026-09-26).
 - [x] Commit the security-audit fixes (#6 error leakage, #2 rate limiting, #4 input validation).
 - [ ] Submit the `payment_receipt` template to Meta using the Railway URL (no domain
   verification - see the template spec above).
