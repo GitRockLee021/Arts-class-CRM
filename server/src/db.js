@@ -204,6 +204,17 @@ CREATE TABLE IF NOT EXISTS student_events (
   created_at TIMESTAMPTZ DEFAULT now()
 );
 
+-- Additive migrations for tables that predate these columns. ADD COLUMN IF NOT EXISTS makes
+-- them safe to re-run on every boot, so this file stays the single source of schema truth.
+--
+-- demo_run tags rows created by seed.js so "npm run seed -- --reset" can delete exactly the
+-- demo dataset and nothing else. NULL means "not demo data".
+--
+-- Deliberately NOT added to the courses table: the seed reuses the studio's real courses by
+-- name and must never be able to delete them. Same reasoning keeps users and sessions untouched.
+ALTER TABLE students ADD COLUMN IF NOT EXISTS demo_run INTEGER;
+ALTER TABLE batches ADD COLUMN IF NOT EXISTS demo_run INTEGER;
+
 CREATE INDEX IF NOT EXISTS idx_sessions_user_id ON sessions(user_id);
 CREATE INDEX IF NOT EXISTS idx_sessions_expires_at ON sessions(expires_at);
 CREATE INDEX IF NOT EXISTS idx_student_events_student_id ON student_events(student_id);
@@ -218,6 +229,10 @@ CREATE INDEX IF NOT EXISTS idx_fee_payments_admission_group
   ON fee_payments(admission_group) WHERE admission_group IS NOT NULL;
 CREATE UNIQUE INDEX IF NOT EXISTS idx_fee_payments_gateway_ref
   ON fee_payments(gateway_ref) WHERE gateway_ref IS NOT NULL;
+CREATE INDEX IF NOT EXISTS idx_students_demo_run
+  ON students(demo_run) WHERE demo_run IS NOT NULL;
+CREATE INDEX IF NOT EXISTS idx_batches_demo_run
+  ON batches(demo_run) WHERE demo_run IS NOT NULL;
 
 CREATE OR REPLACE FUNCTION fee_payments_set_share_token() RETURNS trigger AS $fn$
 BEGIN

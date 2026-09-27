@@ -32,7 +32,7 @@ server/
   src/
     index.js              Express app, middleware order, route mounting, static client
     db.js                 Postgres pool + schema (auto-created on boot)
-    seed.js               sample data
+    seed.js               demo dataset (4 batches, 20 students); --reset rebuilds it
     lib/
       fees.js             monthly-fee due calculation (MONTHLY_DUE_DAY, PRO_RATE_AFTER_DAY)
       monthly.js          per-calendar-month dues, monthReport, enrollmentOverdue
@@ -73,9 +73,45 @@ Routes: `/`, `/students`, `/students/:id`, `/enrollments`, `/fees` (Dues), `/bil
 
 ```bash
 npm run setup      # installs root, server, and client dependencies
-npm run seed       # add sample students/courses/payments
+npm run seed       # add the demo dataset (4 batches, 20 students)
 npm run dev        # API on http://localhost:5001 + web app on http://localhost:5173
 ```
+
+### Demo dataset
+
+`npm run seed` builds a self-contained demo world. It **reuses the studio's real courses by
+name and never creates or deletes them**, so it is safe to run against live data.
+
+- **4 batches**, each meeting **twice a week** so the "8 classes a month" rule is reachable —
+  a once-weekly slot only yields 4:
+
+  | Batch | Course | Days | Time |
+  | ----- | ------ | ---- | ---- |
+  | Varnam - Morning | Varnam | Sat & Wed | 10:00 AM - 11:30 AM |
+  | Varnam - Evening | Varnam | Tue & Thu | 6:00 PM - 7:30 PM |
+  | Malar - Afternoon | Malar | Sat & Sun | 4:00 PM - 5:30 PM |
+  | Thulir - Evening | Thulir | Mon & Wed | 6:00 PM - 7:30 PM |
+
+  Varnam deliberately has two slots on **non-overlapping days**, which is what the compensation
+  feature needs: a Varnam student can attend either one.
+- **20 students**, one enrollment each, 5 per batch, all names/phones/emails unique by
+  construction (`9876501001`-`9876501020` student, `9812501001`-`9812501020` guardian).
+- Everyone starts `2026-09-27`, which is after `PRO_RATE_AFTER_DAY` (15), so the first month is
+  prorated to 50%: Varnam ₹475, Thulir ₹700, Malar ₹900.
+- **15 pay, 5 are left owing** (Kabir Khan, Isha Kulkarni, Karthik Subramanian, Nikhil Joshi,
+  Dhanush Reddy) so the dues page has real content. They are not *overdue* until 8 Oct
+  (`OVERDUE_DAY`), so the overdue list is legitimately empty.
+
+`npm run seed -- --reset` deletes the previous demo set first, so re-seeding is idempotent
+instead of duplicating. It deletes by `demo_run`, which exists on `students` and `batches` but
+**deliberately not on `courses`** — the seed must never be able to delete a real course. Reset
+also refuses to run if a non-demo student is enrolled in a demo batch, since
+`enrollments.batch_id` is `ON DELETE SET NULL` and would silently strip their schedule.
+
+`server/scripts/purge-legacy-demo.js` was the one-time cleanup of the old dataset (the previous
+`seed.js` had been run twice, so it produced two of every student and course, and the
+`Sketching Basics` / `Watercolor Painting` / `Perspective Drawing` courses are gone). It is dry-run
+by default; `--yes` applies. Kept for reference — it is not part of the normal workflow.
 
 - The server needs `DATABASE_URL` in `server/.env` (copy from `server/.env.example`);
   without it the server exits with a clear message.
@@ -487,7 +523,12 @@ after"** — build and get sign-off on a mock before wiring backend/frontend.
 
 - Confirm the new admin credentials and the **Name-field decision** (drop the Name field vs keep
   it optional), then apply via `npm run create-admin`.
-- `server/src/seed.js` recreates sample courses; whether to purge them is unanswered.
+- ~~Sample-course purge~~ **Done (2026-09-26).** The duplicated demo data is gone, `seed.js` now
+  reuses the real courses and supports `--reset`, and 4 real time slots exist with all 20 students
+  assigned. Attendance is therefore usable for the first time.
+- **Replace the demo schedule with the real one.** The 4 batches are a placeholder
+  (2×/week, invented times) built so the compensation feature has a sandbox. Vidhai, Arumbu and
+  Kani still have no batch.
 - Course **basic/advanced level** field — needs clarification.
 - Mail service — optional later; the recovery key covers password recovery for now.
 - **Batch timing-change intimation** (planned, not started): notify parents of a *temporary*
