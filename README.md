@@ -98,9 +98,11 @@ name and never creates or deletes them**, so it is safe to run against live data
   construction (`9876501001`-`9876501020` student, `9812501001`-`9812501020` guardian).
 - Everyone starts `2026-09-27`, which is after `PRO_RATE_AFTER_DAY` (15), so the first month is
   prorated to 50%: Varnam ₹475, Thulir ₹700, Malar ₹900.
-- **15 pay, 5 are left owing** (Kabir Khan, Isha Kulkarni, Karthik Subramanian, Nikhil Joshi,
-  Dhanush Reddy) so the dues page has real content. They are not *overdue* until 8 Oct
-  (`OVERDUE_DAY`), so the overdue list is legitimately empty.
+- **15 pay, 5 are left owing** — Kabir Khan and Isha Kulkarni (₹900 each), Karthik
+  Subramanian, Nikhil Joshi and Dhanush Reddy (₹475 each). Fees are due on the 7th with grace
+  until `OVERDUE_DAY` (8), so as the start date is already the 27th these five correctly show up
+  on the **Overdue** page as 20 days late. That is deliberate: it gives that page real content,
+  and the reminder flow something to act on.
 
 `npm run seed -- --reset` deletes the previous demo set first, so re-seeding is idempotent
 instead of duplicating. It deletes by `demo_run`, which exists on `students` and `batches` but

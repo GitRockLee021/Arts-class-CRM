@@ -76,7 +76,7 @@ router.get(
               s.name AS student_name,
               c.monthly_fee, c.fee_mode, c.duration_months,
               (SELECT COALESCE(SUM(fp.amount), 0) FROM fee_payments fp
-               WHERE fp.enrollment_id = e.id AND substr(fp.payment_date, 1, 7) = $1 AND fp.fee_type = 'tuition') AS paidInMonth
+               WHERE fp.enrollment_id = e.id AND substr(fp.payment_date, 1, 7) = $1 AND fp.fee_type = 'tuition') AS paid_in_month
        FROM enrollments e
        JOIN students s ON s.id = e.student_id
        LEFT JOIN courses c ON c.id = e.course_id

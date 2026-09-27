@@ -103,7 +103,7 @@ export function enrollmentOverdue(enrollment, paidByMonth, now = new Date()) {
 
 /**
  * Month-level fee report over a list of enrollments (each carrying
- * monthly_fee / fee_mode / duration_months / start_date / paidInMonth).
+ * monthly_fee / fee_mode / duration_months / start_date / paid_in_month).
  * Returns paid = what was recorded for the month, outstanding = unpaid remainder.
  */
 export function monthReport(enrollments, ymInput) {
@@ -119,7 +119,7 @@ export function monthReport(enrollments, ymInput) {
 
   for (const e of enrollments) {
     const exp = expectedForMonth(e, ym);
-    const p = Number(e.paidInMonth || 0);
+    const p = Number(e.paid_in_month || 0);
     const o = Math.max(exp - p, 0);
     expected += exp;
     paid += p;
