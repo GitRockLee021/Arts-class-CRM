@@ -523,6 +523,37 @@ after"** — build and get sign-off on a mock before wiring backend/frontend.
 
 ## Open items
 
+### Next up: compensation / makeup classes (design agreed, not started)
+
+The studio's promise is ~8 classes a month, but a twice-weekly batch only yields 8–9 and
+anything missed has to be made up. Decisions taken 2026-09-27:
+
+- **Quota** is per batch, not per student: add `batches.classes_per_month INTEGER NOT NULL
+  DEFAULT 8`.
+- A student may attend **any other batch of the same course** to burn a credit. This is exactly
+  why the demo data has Varnam running two non-overlapping slots.
+- Unused credits **carry over**, but **expire at the end of the next month** (so a credit earned
+  in September is usable through October).
+- Target for a month is `min(quota, sessions actually held)` — if a batch only met 6 times, the
+  student is not owed 2.
+- No capacity cap on a makeup slot; the UI should show the **headcount** instead.
+
+Work to do: attendance entries currently have no `enrollment_id`, so present/absent cannot be
+attributed to a specific enrollment, and `POST /api/attendance` is destructive (it deletes the
+log and re-inserts). Both need attention before credits can be computed. Likely shape:
+`server/src/lib/credits.js` + `node:test` (there is no test framework yet), a Credits tab on
+`Attendance.jsx`, a quota field on `Batches.jsx`, and a per-student summary on `StudentDetail.jsx`.
+
+**Two questions still unanswered:**
+
+1. **Do cancelled holidays reduce "sessions held"?** Deriving sessions from the batch's weekdays
+   would count a cancelled class as held, and there is no session-cancellation mechanism today.
+   Suggest adding an explicit one rather than inferring.
+2. **The seed can still duplicate on a second non-reset run.** Names, phones and emails are
+   unique within one run, but plain `npm run seed` twice creates two identical sets. Suggest
+   making it refuse to run when demo rows already exist, rather than suffixing names (the demo
+   data deliberately has no visible "Demo" marker).
+
 - Confirm the new admin credentials and the **Name-field decision** (drop the Name field vs keep
   it optional), then apply via `npm run create-admin`.
 - ~~Sample-course purge~~ **Done (2026-09-26).** The duplicated demo data is gone, `seed.js` now
