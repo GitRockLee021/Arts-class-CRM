@@ -1,8 +1,8 @@
 import { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { api } from '../api.js';
-import { inr, fmtDate } from '../format.js';
-import { Modal, Spinner, EmptyState, Confirm, Field } from '../components/ui.jsx';
+import { inr, fmtDate, today } from '../format.js';
+import { Modal, Spinner, EmptyState, Confirm, Field, useForm } from '../components/ui.jsx';
 import { Icon } from '../components/icons.jsx';
 import AddStudentForm from '../components/AddStudentForm.jsx';
 import EnrollmentForm from '../components/EnrollmentForm.jsx';
@@ -43,6 +43,118 @@ const LOG_TITLES = {
   profile_updated: 'Profile updated',
 };
 
+function RestoreModal({ student, enrollments, onSave, onClose }) {
+  const [courses, setCourses] = useState([]);
+  const [batches, setBatches] = useState([]);
+  const [busy, setBusy] = useState(false);
+  const [error, setError] = useState('');
+  const last = [...(enrollments || [])].sort((a, b) => (b.id || 0) - (a.id || 0))[0];
+  const { form, set, setRaw } = useForm({
+    course_id: last?.course_id ? String(last.course_id) : '',
+    batch_id: last?.batch_id ? String(last.batch_id) : '',
+    start_date: today(),
+    notes: '',
+  });
+
+  useEffect(() => {
+    api
+      .get('/courses')
+      .then(setCourses)
+      .catch(() => {});
+    api
+      .get('/batches')
+      .then((data) => setBatches((data.batches || []).filter((b) => b.status === 'active')))
+      .catch(() => {});
+  }, []);
+
+  const courseBatches = form.course_id
+    ? batches.filter((b) => String(b.course_id) === String(form.course_id))
+    : batches;
+
+  async function submit(e) {
+    e.preventDefault();
+    setError('');
+    if (!form.start_date) {
+      setError('Start date is required.');
+      return;
+    }
+    setBusy(true);
+    try {
+      await onSave(form);
+    } catch (err) {
+      setError(err.message);
+    } finally {
+      setBusy(false);
+    }
+  }
+
+  const pastLabel = last
+    ? `${last.course_name || 'Course'}${last.batch_name ? ` · ${last.batch_name}` : ''}`
+    : null;
+
+  return (
+    <form className="form-grid" onSubmit={submit}>
+      {error && <p className="form-error">{error}</p>}
+      <p className="muted span-2" style={{ margin: 0 }}>
+        Restore {student?.name} to active students and set up their current batch details.
+        {pastLabel ? (
+          <>
+            {' '}
+            Last record was <strong>{pastLabel}</strong>.
+          </>
+        ) : null}
+      </p>
+      <Field label="Course">
+        <select className="input" value={form.course_id} onChange={set('course_id')}>
+          <option value="">No course</option>
+          {courses
+            .filter((c) => c.status !== 'inactive')
+            .map((c) => (
+              <option key={c.id} value={c.id}>
+                {c.name} — {c.monthly_fee}/mo
+              </option>
+            ))}
+        </select>
+      </Field>
+      <Field label="Batch / schedule">
+        {courseBatches.length === 0 ? (
+          <span className="muted">No batches available{form.course_id ? ' for this course' : ''}.</span>
+        ) : (
+          <select className="input" value={form.batch_id} onChange={set('batch_id')}>
+            <option value="">No batch</option>
+            {courseBatches.map((b) => (
+              <option key={b.id} value={b.id}>
+                {b.name}
+                {b.days || b.time ? ` — ${[b.days, b.time].filter(Boolean).join(' · ')}` : ''}
+              </option>
+            ))}
+          </select>
+        )}
+      </Field>
+      <Field label="Start date *">
+        <input className="input" type="date" value={form.start_date} onChange={set('start_date')} />
+      </Field>
+      <Field label="Notes (optional)" className="span-2">
+        <textarea
+          className="input"
+          rows="2"
+          value={form.notes}
+          onChange={set('notes')}
+          placeholder="Anything to note about their return…"
+        />
+      </Field>
+      <div className="row end span-2">
+        <button type="button" className="btn btn-ghost" onClick={onClose}>
+          Cancel
+        </button>
+        <button className="btn btn-primary" disabled={busy}>
+          {busy ? 'Restoring…' : 'Restore & activate'}
+        </button>
+      </div>
+    </form>
+  );
+}
+
 export default function StudentDetail() {
   const { id } = useParams();
   const navigate = useNavigate();
@@ -54,6 +166,7 @@ export default function StudentDetail() {
   const [admissionOpen, setAdmissionOpen] = useState(false);
   const [courseFor, setCourseFor] = useState(null);
   const [upgradeFor, setUpgradeFor] = useState(null);
+  const [restoreOpen, setRestoreOpen] = useState(false);
   const [certBusy, setCertBusy] = useState(false);
   const [certPreview, setCertPreview] = useState(null);
 
@@ -77,6 +190,11 @@ export default function StudentDetail() {
   const payCount = enrollments.reduce((s, e) => s + (e.payments?.length || 0), 0);
 
   const team = active[0] || enrollments[0] || null;
+  const admissionPending =
+    Boolean(team) &&
+    !(team.payments || []).some(
+      (p) => p.admission_group || p.fee_type === 'admission' || p.fee_type === 'kit',
+    );
   const duePlan = enrollments.find((e) => e.fee?.due > 0) || null;
   const overs = overdueDays(duePlan?.fee?.dueDate);
   const progress = expected > 0 ? Math.min(100, Math.round((paid / expected) * 100)) : 0;
@@ -178,6 +296,28 @@ export default function StudentDetail() {
     navigate('/students');
   }
 
+  async function archiveStudent() {
+    try {
+      await api.post(`/students/${id}/archive`);
+      toast('Student archived.');
+      load();
+    } catch (err) {
+      toast(err.message || 'Could not archive student.', 'error');
+    }
+  }
+
+  async function restoreStudent(form) {
+    await api.post(`/students/${id}/unarchive`, {
+      course_id: form.course_id || null,
+      batch_id: form.batch_id || null,
+      start_date: form.start_date,
+      notes: form.notes || null,
+    });
+    toast('Student restored.');
+    setRestoreOpen(false);
+    load();
+  }
+
   async function remindStudent() {
     const ids = enrollments.filter((e) => e.fee?.due > 0).map((e) => e.id);
     if (!ids.length) {
@@ -210,7 +350,10 @@ export default function StudentDetail() {
             <div className="sv-avatar">
               <span>{initials(student.name)}</span>
             </div>
-            <span className="sv-live-dot" title="Active Student"></span>
+            <span
+              className={`sv-live-dot${student.status === 'inactive' ? ' sv-live-dot-off' : ''}`}
+              title={student.status === 'inactive' ? 'Archived student' : 'Active student'}
+            ></span>
           </div>
           <div>
             <div className="sv-name-row">
@@ -245,20 +388,33 @@ export default function StudentDetail() {
           <button className="sv-btn sv-btn-primary" disabled={!payable} onClick={() => payable && setPayFor(payable.id)}>
             <Icon name="card" size={15} /> Record payment
           </button>
-          <button className="sv-btn" disabled={!team} onClick={() => team && setAdmissionOpen(true)}>
-            <Icon name="rupee" size={15} /> Admission fees
-          </button>
           <button className="sv-btn" onClick={remindStudent}>
             <Icon name="bell" size={15} /> Remind
           </button>
           <button className="sv-btn" onClick={() => setEditOpen(true)}>
             <Icon name="edit" size={15} /> Edit
           </button>
-          <button className="sv-btn sv-btn-dots" title="More options" onClick={() => setEditOpen(true)}>
-            <Icon name="more" size={16} />
-          </button>
         </div>
       </div>
+
+      {admissionPending && (
+        <div className="card fee-notice">
+          <div className="fee-notice-text">
+            <span className="fee-notice-ico">
+              <Icon name="alert" size={16} />
+            </span>
+            <div>
+              <strong>Admission fees not collected</strong>
+              <p className="muted">
+                The course, admission and kit fees for {student.name} haven't been recorded yet.
+              </p>
+            </div>
+          </div>
+          <button className="btn btn-primary" onClick={() => setAdmissionOpen(true)}>
+            <Icon name="rupee" size={15} /> Record admission payment
+          </button>
+        </div>
+      )}
 
       {showInsights && (
       <section className="sv-grid3">
@@ -509,9 +665,6 @@ export default function StudentDetail() {
                       {e.payments.slice(0, 8).map((p) => (
                         <li key={p.id}>
                           <span>{fmtDate(p.payment_date)}</span>
-                          {p.fee_type && p.fee_type !== 'tuition' && (
-                            <span className={`mchip mchip-fee mchip-ft-${p.fee_type}`}>{p.fee_type}</span>
-                          )}
                           <strong>{inr(p.amount)}</strong>
                           <span className="sv-muted-sm">{p.method}</span>
                         </li>
@@ -595,6 +748,24 @@ export default function StudentDetail() {
       </div>
 
       <div className="sv-danger">
+        {student.status === 'inactive' ? (
+          <button className="btn btn-sm btn-primary" onClick={() => setRestoreOpen(true)}>
+            Restore to active
+          </button>
+        ) : (
+          <Confirm
+            confirmLabel="Archive"
+            message={`Archive ${student.name}? They'll be marked as inactive. Payments, attendance and history are all kept, and they can be restored later.`}
+            onConfirm={archiveStudent}
+          >
+            Archive student
+          </Confirm>
+        )}
+        <span className="sv-muted-sm">
+          {student.status === 'inactive'
+            ? 'Marks this student as active again. Pick their course, batch and start date to re-enroll.'
+            : 'Marks this student as inactive. All history is kept and they can be restored later.'}
+        </span>
         <Confirm
           message="Permanently delete this student and all related records? This cannot be undone."
           onConfirm={deleteStudent}
@@ -618,6 +789,16 @@ export default function StudentDetail() {
       {enrollOpen && (
         <Modal title="Enroll in a course" onClose={() => setEnrollOpen(false)}>
           <EnrollmentForm fixedStudentId={id} onSave={addEnrollment} />
+        </Modal>
+      )}
+      {restoreOpen && (
+        <Modal title="Restore to active" onClose={() => setRestoreOpen(false)}>
+          <RestoreModal
+            student={student}
+            enrollments={enrollments}
+            onSave={restoreStudent}
+            onClose={() => setRestoreOpen(false)}
+          />
         </Modal>
       )}
       {courseFor && (

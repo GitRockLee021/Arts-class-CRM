@@ -22,7 +22,7 @@ router.get(
            WHERE substr(payment_date, 1, 7) = to_char(CURRENT_DATE - INTERVAL '1 month', 'YYYY-MM')) AS collected_last_month
     `);
 
-    const enrollments = await fetchEnrollments({ status: 'active' });
+    const enrollments = await fetchEnrollments({ status: 'active', student_status: 'active' });
     const activeEnrollments = enrollments.filter((e) => e.status === 'active');
     const dues = activeEnrollments.filter((e) => e.fee.due > 0);
     const monthlyExpectation = activeEnrollments.reduce((s, e) => s + (Number(e.monthly_fee) || 0), 0);

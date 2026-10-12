@@ -23,7 +23,7 @@ function dueDateLabel(d) {
 router.get('/dues', async (req, res, next) => {
   try {
     const now = new Date();
-    const enrollments = await fetchEnrollments({ status: 'active' });
+    const enrollments = await fetchEnrollments({ status: 'active', student_status: 'active' });
 
     const byEnrollment = new Map();
     for (const r of await query(
@@ -75,6 +75,9 @@ router.get('/dues', async (req, res, next) => {
 
 async function sendForEnrollment(enrollment) {
   const due = enrollment.fee.due;
+  if (enrollment.student_status === 'inactive') {
+    return { enrollment_id: enrollment.id, student_name: enrollment.student_name, status: 'skipped', error: 'Student archived.' };
+  }
   if (due <= 0) {
     return { enrollment_id: enrollment.id, student_name: enrollment.student_name, status: 'skipped', error: 'No dues.' };
   }
@@ -158,7 +161,7 @@ router.post('/send', requireRole('admin'), async (req, res) => {
       }
       targets = fetched;
     } else {
-      targets = await fetchEnrollments({ status: 'active', due_only: true });
+      targets = await fetchEnrollments({ status: 'active', due_only: true, student_status: 'active' });
     }
     if (!targets.length) return res.json({ results: [], message: 'No dues to remind.' });
 

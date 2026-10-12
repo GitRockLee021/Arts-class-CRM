@@ -1,0 +1,165 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>View Student · Option C — Single column</title>
+<link rel="stylesheet" href="/client/src/styles.css">
+<style>
+  .demo-frame{max-width:820px;margin:0 auto;padding:22px 22px 70px}
+</style>
+</head>
+<body>
+<div class="demo-frame">
+<div class="sv">
+
+  <div class="sv-top">
+    <nav class="sv-crumb"><a>Students</a><span>/</span><span class="sv-here">Nitilakshan</span></nav>
+    <div class="sv-top-right">
+      <span class="sv-id-pill">ID: #PAS-2026-058</span>
+      <span class="sv-enrolled">Enrolled 04 Jun 2026</span>
+    </div>
+  </div>
+
+  <div class="sv-card sv-header">
+    <div class="sv-header-main">
+      <div class="sv-avatar-wrap">
+        <div class="sv-avatar"><span>NI</span></div>
+        <span class="sv-live-dot" title="Active Student"></span>
+      </div>
+      <div>
+        <div class="sv-name-row">
+          <h1 class="sv-name">Nitilakshan</h1>
+          <span class="sv-status sv-status-active"><span class="sv-status-dot"></span>active</span>
+        </div>
+        <div class="sv-meta">
+          <span class="sv-meta-item">Age 12</span>
+          <span class="sv-meta-sep">•</span>
+          <span class="sv-meta-item">Parent: <strong>Suresh Kumar</strong> (+91 98765 43210)</span>
+          <span class="sv-meta-sep">•</span>
+          <span class="sv-meta-item">Evening Advanced</span>
+        </div>
+      </div>
+    </div>
+    <div class="sv-header-actions">
+      <button class="sv-btn sv-btn-primary"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 7a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2Z"/><path d="M2 11h20M6 15h4"/></svg> Record payment</button>
+      <button class="sv-btn"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9a6 6 0 1 1 12 0c0 5 2 6.5 2 6.5H4S6 14 6 9"/><path d="M10 20a2 2 0 0 0 4 0"/></svg> Remind</button>
+    </div>
+  </div>
+
+  <section class="sv-card">
+    <div class="sv-big-row" style="margin-bottom:12px">
+      <div>
+        <p class="sv-label">Outstanding Balance</p>
+        <div class="sv-big"><span class="sv-big-due">₹1,500</span><span class="sv-for">for 05 Nov 2026</span></div>
+      </div>
+      <div class="sv-big-side">
+        <p class="sv-label">Monthly Plan</p>
+        <p class="sv-plan">₹1,500<span class="sv-per">/mo</span></p>
+      </div>
+    </div>
+    <div class="sv-breakbox" style="margin-bottom:12px">
+      <div class="sv-bb-row"><span class="sv-muted-sm">Paid to date</span><span class="sv-bold sv-ok">₹10,500 · 5 receipts</span></div>
+      <div class="sv-bb-row"><span class="sv-muted-sm">Attendance</span><span class="sv-bold">92% · 88 of 96 sessions</span></div>
+      <div class="sv-bb-row"><span class="sv-muted-sm">Course progress</span><span class="sv-bold">Month 5 of 12</span></div>
+    </div>
+    <div class="sv-progress-wrap" style="margin-bottom:10px">
+      <div class="sv-prow"><span class="sv-muted-sm">Billing completion</span><span class="sv-progress-pct">42%</span></div>
+      <div class="sv-progress"><div class="sv-progress-fill" style="width:42%"></div></div>
+    </div>
+    <div class="sv-card-foot">
+      <button class="sv-mini sv-mini-berry"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 2 11 13"/><path d="M22 2 15 22l-4-9-9-4Z"/></svg> Send WhatsApp</button>
+      <button class="sv-btn sm">Record payment</button>
+    </div>
+  </section>
+
+  <div class="card fee-notice">
+    <div class="fee-notice-text">
+      <span class="fee-notice-ico"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 8v4M12 16h.01"/></svg></span>
+      <div><strong>Admission fees not collected</strong><p class="muted">The course, admission and kit fees haven't been recorded yet.</p></div>
+    </div>
+    <button class="btn btn-primary">Record admission payment</button>
+  </div>
+
+  <section class="sv-card sv-enrolls">
+    <div class="sv-info-head">
+      <div class="sv-info-title">
+        <span class="sv-card-ico sv-ico-purple"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20V3H6.5A2.5 2.5 0 0 0 4 5.5v14Z"/><path d="M4 19.5A2.5 2.5 0 0 0 6.5 22H20v-5"/></svg></span>
+        <div><h3 class="sv-h3">Enrollment</h3><p class="sv-muted-sm">1 active course</p></div>
+      </div>
+      <div class="sv-enroll-actions">
+        <button class="sv-btn sm">Edit</button>
+        <button class="sv-btn sv-btn-primary">Upgrade course</button>
+      </div>
+    </div>
+    <div class="sv-enroll">
+      <div class="sv-enroll-head">
+        <div class="sv-enroll-course">
+          <span class="sv-course-mono">KA</span>
+          <div>
+            <div class="sv-enroll-title-row">
+              <h4 class="sv-enroll-title">Kani — Advanced Drawing</h4>
+              <span class="sv-status sv-status-active"><span class="sv-status-dot"></span>active</span>
+            </div>
+            <p class="sv-muted-sm">Evening Advanced · Mon, Wed, Fri 5:30–7:00 PM</p>
+          </div>
+        </div>
+        <span class="sv-muted-sm">Enrolled: 04 Jun 2026</span>
+      </div>
+      <div class="sv-enroll-body">
+        <div class="sv-enroll-main">
+          <p class="sv-kv-label">Recent payments</p>
+          <ul class="sv-paylist">
+            <li><span>05 Oct 2026</span><strong>₹1,500</strong><span class="sv-muted-sm">UPI</span></li>
+            <li><span>05 Sep 2026</span><strong>₹1,500</strong><span class="sv-muted-sm">Cash</span></li>
+            <li><span>05 Aug 2026</span><strong>₹1,500</strong><span class="sv-muted-sm">UPI</span></li>
+            <li><span>04 Jun 2026</span><strong>₹3,000</strong><span class="sv-muted-sm">UPI</span></li>
+          </ul>
+        </div>
+        <div class="sv-fee-summary">
+          <div class="sv-fs-box">
+            <p class="sv-kv-label">Billing</p>
+            <div class="sv-fs-hero bad">₹1,500 due<span class="sv-fs-hero-sub">November cycle · due 05 Nov</span></div>
+            <div class="sv-fs-row"><span class="sv-muted-sm">Next due</span><strong>05 Nov 2026</strong></div>
+            <div class="sv-fs-row"><span class="sv-muted-sm">Base fee</span><strong>₹1,500<span class="sv-per">/mo</span></strong></div>
+            <div class="sv-fs-row"><span class="sv-muted-sm">Last payment</span><strong>05 Oct 2026</strong></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="sv-card sv-info">
+    <div class="sv-info-head">
+      <div class="sv-info-title">
+        <span class="sv-card-ico sv-ico-purple"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="8" r="3.5"/><path d="M2.5 20c.6-3.6 3-5.5 6.5-5.5s5.9 1.9 6.5 5.5"/><circle cx="17" cy="9" r="2.8"/><path d="M16 14.8c2.6.3 4.4 1.9 5 5.2"/></svg></span>
+        <div><h3 class="sv-h3">Student &amp; Parent Info</h3></div>
+      </div>
+      <span class="sv-chip sv-chip-ok">Profile</span>
+    </div>
+    <div class="sv-info-grid">
+      <div class="sv-kv"><p class="sv-kv-label">Phone &amp; WhatsApp</p><span class="sv-kv-val">+91 98765 43210</span></div>
+      <div class="sv-kv"><p class="sv-kv-label">Parent</p><span class="sv-kv-val">Suresh Kumar</span></div>
+      <div class="sv-kv"><p class="sv-kv-label">Age</p><span class="sv-kv-val">12 yrs</span></div>
+      <div class="sv-kv"><p class="sv-kv-label">Date of Admission</p><span class="sv-kv-val">04 Jun 2026</span></div>
+    </div>
+  </section>
+
+  <section class="sv-card sv-logcard">
+    <div class="sv-info-head">
+      <div class="sv-info-title">
+        <span class="sv-card-ico sv-ico-indigo"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9a6 6 0 1 1 12 0c0 5 2 6.5 2 6.5H4S6 14 6 9"/><path d="M10 20a2 2 0 0 0 4 0"/></svg></span>
+        <div><h3 class="sv-h3">Recent Activity &amp; Timeline</h3></div>
+      </div>
+    </div>
+    <div class="sv-log">
+      <div class="sv-log-item"><span class="sv-log-dot sv-log-dot-ok"></span><div><p class="sv-log-title">Payment recorded</p><p class="sv-muted-sm">₹1,500 · UPI · October fee</p></div><span class="sv-log-date">05 Oct 2026</span></div>
+      <div class="sv-log-item"><span class="sv-log-dot sv-log-dot-purple"></span><div><p class="sv-log-title">Fee reminder sent</p><p class="sv-muted-sm">WhatsApp to parent</p></div><span class="sv-log-date">03 Oct 2026</span></div>
+      <div class="sv-log-item"><span class="sv-log-dot sv-log-dot-purple"></span><div><p class="sv-log-title">Enrolled in course</p><p class="sv-muted-sm">Kani — Advanced Drawing</p></div><span class="sv-log-date">04 Jun 2026</span></div>
+    </div>
+  </section>
+
+</div>
+</div>
+</body>
+</html>

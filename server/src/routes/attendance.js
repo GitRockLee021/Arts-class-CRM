@@ -184,21 +184,48 @@ router.post(
     }
     const present = roster.filter((r) => !absent.includes(r.student_id)).map((r) => r.student_id);
 
+    // Map each student to their enrollment in this batch (roster is deduped by student) so every
+    // register row can be attributed to a specific enrollment.
+    const enrollmentByStudent = new Map(roster.map((r) => [r.student_id, r.enrollment_id]));
+    const statusByStudent = new Map([
+      ...present.map((sid) => [sid, 'present']),
+      ...absent.map((sid) => [sid, 'absent']),
+    ]);
+
     await begin();
     try {
-      await run('DELETE FROM attendance_logs WHERE batch_id = $1 AND batch_date = $2', batchId, date);
-      const { lastInsertRowid } = await run(
-        'INSERT INTO attendance_logs (batch_id, batch_date, created_by) VALUES ($1, $2, $3)',
+      // Upsert the day's log instead of deleting and re-inserting it: the log id and every
+      // surviving entry id stay stable, so anything derived from attendance (compensation
+      // credits, history) is not silently invalidated by a re-save.
+      const { lastInsertRowid: attendanceId } = await run(
+        `INSERT INTO attendance_logs (batch_id, batch_date, created_by)
+         VALUES ($1, $2, $3)
+         ON CONFLICT (batch_id, batch_date) DO UPDATE SET created_by = EXCLUDED.created_by
+         RETURNING id`,
         batchId,
         date,
         req.user?.id || null,
       );
-      for (const sid of present) {
-        await run('INSERT INTO attendance_entries (attendance_id, student_id, status) VALUES ($1, $2, $3)', lastInsertRowid, sid, 'present');
+      for (const [sid, status] of statusByStudent) {
+        await run(
+          `INSERT INTO attendance_entries (attendance_id, student_id, enrollment_id, status)
+           VALUES ($1, $2, $3, $4)
+           ON CONFLICT (attendance_id, student_id)
+           DO UPDATE SET status = EXCLUDED.status, enrollment_id = EXCLUDED.enrollment_id`,
+          attendanceId,
+          sid,
+          enrollmentByStudent.get(sid) || null,
+          status,
+        );
       }
-      for (const sid of absent) {
-        await run('INSERT INTO attendance_entries (attendance_id, student_id, status) VALUES ($1, $2, $3)', lastInsertRowid, sid, 'absent');
-      }
+      // Drop only entries for students no longer in the roster (e.g. left the batch); keep the
+      // rest in place.
+      await run(
+        `DELETE FROM attendance_entries
+          WHERE attendance_id = $1 AND student_id <> ALL($2::int[])`,
+        attendanceId,
+        [...statusByStudent.keys()],
+      );
       await commit();
     } catch (err) {
       await rollback();

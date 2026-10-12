@@ -1,0 +1,154 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>2 · Dark cockpit — Student revamp</title>
+<style>
+:root{--bg:#0c1016;--panel:#111722;--panel2:#0e141d;--line:#1e2735;--ink:#e9eef7;--muted:#7d8aa0;--accent:#38d39f;--accent2:#5b8cff;--warn:#f0b445;--bad:#ff6b6b}
+*{box-sizing:border-box}
+body{margin:0;background:radial-gradient(900px 500px at 90% -10%,#132033,transparent),var(--bg);color:var(--ink);font-family:"IBM Plex Sans",Inter,system-ui,Arial,sans-serif}
+.wrap{max-width:1240px;margin:0 auto;padding:22px 20px 70px}
+.bar{display:flex;align-items:center;justify-content:space-between;gap:14px;margin-bottom:16px}
+.brand{font-weight:800;letter-spacing:.02em;font-size:15px}
+.brand small{display:block;color:var(--muted);font-weight:600;font-size:10px;letter-spacing:.2em;text-transform:uppercase}
+.acts{display:flex;gap:9px}
+.btn{border:1px solid var(--line);background:#141b27;color:var(--ink);border-radius:10px;padding:9px 13px;font-size:12.5px;font-weight:600;cursor:pointer}
+.btn.primary{background:var(--accent);border-color:var(--accent);color:#04231a}
+.layout{display:grid;grid-template-columns:320px 1fr;gap:16px;align-items:start}
+.panel{background:linear-gradient(180deg,var(--panel),var(--panel2));border:1px solid var(--line);border-radius:16px;padding:16px}
+.id-card{position:sticky;top:18px}
+.avatar{width:60px;height:60px;border-radius:14px;background:linear-gradient(140deg,var(--accent2),var(--accent));color:#04140f;display:grid;place-items:center;font-weight:800;font-size:22px}
+.name{font-size:22px;font-weight:800;letter-spacing:-.02em;margin:12px 0 3px}
+.tag{display:inline-flex;align-items:center;gap:6px;font-size:11px;font-weight:700;color:var(--accent);background:rgba(56,211,159,.12);border:1px solid rgba(56,211,159,.3);border-radius:999px;padding:3px 10px}
+.kv{display:flex;justify-content:space-between;gap:10px;padding:9px 0;border-bottom:1px dashed var(--line);font-size:12.5px}
+.kv:last-child{border-bottom:0}
+.kv span:first-child{color:var(--muted)}
+.kv b{font-weight:700}
+.metrics{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:16px}
+.metric{background:linear-gradient(180deg,var(--panel),var(--panel2));border:1px solid var(--line);border-radius:14px;padding:14px}
+.metric .l{color:var(--muted);font-size:10.5px;font-weight:700;letter-spacing:.12em;text-transform:uppercase}
+.metric .v{font-size:24px;font-weight:800;letter-spacing:-.03em;margin-top:8px}
+.metric .v.g{color:var(--accent)}
+.metric .v.w{color:var(--warn)}
+.metric .s{color:var(--muted);font-size:11.5px;margin-top:3px}
+.h{display:flex;align-items:center;justify-content:space-between;margin:0 0 12px;font-size:12px;font-weight:800;letter-spacing:.13em;text-transform:uppercase;color:var(--muted)}
+.hr{height:1px;background:var(--line);flex:1;margin-left:12px}
+.enr{display:flex;gap:14px;align-items:center}
+.enr .ring{width:78px;height:78px;border-radius:50%;background:conic-gradient(var(--accent) 42%,#1b2431 0);display:grid;place-items:center;flex:none}
+.enr .ring b{width:60px;height:60px;border-radius:50%;background:var(--panel);display:grid;place-items:center;font-size:15px;font-weight:800}
+.enr h3{margin:0;font-size:16px}
+.enr p{margin:4px 0 0;color:var(--muted);font-size:12.5px}
+table{width:100%;border-collapse:collapse;font-size:12.5px}
+th{text-align:left;color:var(--muted);font-weight:700;font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;padding:0 0 8px}
+td{padding:9px 0;border-top:1px solid var(--line)}
+td.amt{text-align:right;font-weight:700;font-variant-numeric:tabular-nums}
+td.m{text-align:right;color:var(--muted)}
+.spark{width:100%;height:44px}
+.bars{display:flex;align-items:flex-end;gap:5px;height:70px;margin-top:6px}
+.bars i{flex:1;background:linear-gradient(180deg,var(--accent),#12836b);border-radius:4px 4px 0 0;min-height:6px}
+.bars i.dim{background:#22303f}
+.tl{list-style:none;margin:0;padding:0}
+.tl li{position:relative;padding:0 0 14px 22px;font-size:12.5px}
+.tl li:before{content:"";position:absolute;left:2px;top:4px;width:9px;height:9px;border-radius:50%;background:var(--accent2);box-shadow:0 0 0 3px rgba(91,140,255,.18)}
+.tl li:after{content:"";position:absolute;left:6px;top:15px;bottom:0;width:1px;background:var(--line)}
+.tl li:last-child:after{display:none}
+.tl time{display:block;color:var(--muted);font-size:11px;margin-top:2px}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.mono{font-variant-numeric:tabular-nums;font-family:"IBM Plex Mono",ui-monospace,Consolas,monospace}
+@media(max-width:1000px){.layout{grid-template-columns:1fr}.two{grid-template-columns:1fr}.metrics{grid-template-columns:1fr 1fr}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="bar">
+    <div class="brand">PRAVAHA ART SPACE<small>Student intelligence</small></div>
+    <div class="acts">
+      <button class="btn">Remind</button>
+      <button class="btn">Edit</button>
+      <button class="btn primary">Record payment</button>
+    </div>
+  </div>
+
+  <div class="layout">
+    <aside class="panel id-card">
+      <div class="avatar">N</div>
+      <div class="name">Nitilakshan</div>
+      <span class="tag">● Active</span>
+      <div style="margin-top:14px">
+        <div class="kv"><span>Student ID</span><b class="mono">PAS-2026-058</b></div>
+        <div class="kv"><span>Age</span><b>12</b></div>
+        <div class="kv"><span>Parent</span><b>Suresh Kumar</b></div>
+        <div class="kv"><span>Phone</span><b class="mono">+91 98765 43210</b></div>
+        <div class="kv"><span>Batch</span><b>Evening Advanced</b></div>
+        <div class="kv"><span>Joined</span><b class="mono">04 Jun 2026</b></div>
+      </div>
+    </aside>
+
+    <main>
+      <div class="metrics">
+        <div class="metric"><div class="l">Outstanding</div><div class="v w mono">₹1,500</div><div class="s">due 05 Nov</div></div>
+        <div class="metric"><div class="l">Attendance</div><div class="v g mono">92%</div><div class="s">88 / 96 sessions</div></div>
+        <div class="metric"><div class="l">Lifetime paid</div><div class="v mono">₹10,500</div><div class="s">across 5 receipts</div></div>
+      </div>
+
+      <div class="two">
+        <section class="panel">
+          <div class="h">Enrollment<span class="hr"></span></div>
+          <div class="enr">
+            <div class="ring"><b>42%</b></div>
+            <div>
+              <h3>Kani — Advanced Drawing</h3>
+              <p>Mon · Wed · Fri · 5:30–7:00 PM</p>
+              <p style="color:var(--ink)">₹1,500<span style="color:var(--muted)">/mo · 5 of 12 months</span></p>
+            </div>
+          </div>
+        </section>
+
+        <section class="panel">
+          <div class="h">Collected — last 6 months<span class="hr"></span></div>
+          <svg class="spark" viewBox="0 0 300 44" preserveAspectRatio="none">
+            <polyline points="0,34 50,30 100,32 150,18 200,20 250,10 300,12" fill="none" stroke="#38d39f" stroke-width="2.5"/>
+            <polyline points="0,34 50,30 100,32 150,18 200,20 250,10 300,12 300,44 0,44" fill="rgba(56,211,159,.12)" stroke="none"/>
+          </svg>
+          <div style="color:var(--muted);font-size:11.5px">₹1,500 every month · on time</div>
+        </section>
+      </div>
+
+      <section class="panel" style="margin-top:16px">
+        <div class="h">Recent payments<span class="hr"></span></div>
+        <table>
+          <thead><tr><th>Date</th><th>Method</th><th style="text-align:right">Amount</th></tr></thead>
+          <tbody>
+            <tr><td class="mono">05 Oct 2026</td><td>UPI</td><td class="amt mono">₹1,500</td></tr>
+            <tr><td class="mono">05 Sep 2026</td><td>Cash</td><td class="amt mono">₹1,500</td></tr>
+            <tr><td class="mono">05 Aug 2026</td><td>UPI</td><td class="amt mono">₹1,500</td></tr>
+            <tr><td class="mono">04 Jun 2026</td><td>UPI</td><td class="amt mono">₹3,000</td></tr>
+          </tbody>
+        </table>
+      </section>
+
+      <div class="two" style="margin-top:16px">
+        <section class="panel">
+          <div class="h">Attendance — 12 weeks<span class="hr"></span></div>
+          <div class="bars">
+            <i style="height:90%"></i><i style="height:70%"></i><i class="dim" style="height:35%"></i><i style="height:80%"></i><i style="height:100%"></i><i style="height:60%"></i>
+            <i style="height:88%"></i><i class="dim" style="height:30%"></i><i style="height:95%"></i><i style="height:75%"></i><i style="height:82%"></i><i style="height:90%"></i>
+          </div>
+          <div style="color:var(--muted);font-size:11.5px;margin-top:8px">2 missed weeks · no long gaps</div>
+        </section>
+
+        <section class="panel">
+          <div class="h">Activity<span class="hr"></span></div>
+          <ul class="tl">
+            <li>October fee recorded — ₹1,500<time>05 Oct 2026</time></li>
+            <li>Reminder delivered on WhatsApp<time>03 Oct 2026</time></li>
+            <li>Enrolled in Kani<time>04 Jun 2026</time></li>
+          </ul>
+        </section>
+      </div>
+    </main>
+  </div>
+</div>
+</body>
+</html>

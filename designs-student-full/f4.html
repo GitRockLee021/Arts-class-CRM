@@ -1,0 +1,108 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Full page · Enrollment option 4 — Stat tiles</title>
+<link rel="stylesheet" href="/client/src/styles.css">
+<style>
+.demo-frame{max-width:1080px;margin:0 auto;padding:22px 22px 70px}
+.ecard{background:var(--surface);border:1px solid var(--line);border-radius:26px 18px 28px 20px / 18px 26px 16px 22px;box-shadow:var(--shadow);padding:18px;margin-bottom:16px}
+.ehead{display:flex;align-items:center;gap:12px}
+.emono{width:44px;height:44px;border-radius:14px 10px 15px 11px/11px 14px 10px 13px;background:linear-gradient(135deg,var(--brand),var(--bad));color:#fff;display:grid;place-items:center;font-weight:800;font-size:15px;flex:none}
+.etitle{font-family:var(--font-accent);font-size:16px;font-weight:700;display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.esub{color:var(--muted);font-size:12.5px;margin-top:2px}
+.tiles{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:16px}
+.tile{border-radius:16px 12px 17px 13px/13px 16px 12px 15px;border:1px solid var(--line);padding:14px;background:var(--surface-2)}
+.tile.bad{background:var(--bad-soft);border-color:color-mix(in srgb,var(--bad) 25%,transparent)}
+.tile.ok{background:var(--ok-soft);border-color:color-mix(in srgb,var(--ok) 25%,transparent)}
+.tile.brand{background:var(--brand-soft);border-color:color-mix(in srgb,var(--brand) 22%,transparent)}
+.tile .k{font-size:10.5px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+.tile .v{font-size:22px;font-weight:800;letter-spacing:-.02em;margin-top:6px;font-variant-numeric:tabular-nums}
+.tile.bad .v{color:var(--bad)}
+.tile.ok .v{color:var(--ok)}
+.tile.brand .v{color:var(--brand-dark)}
+.tile .s{font-size:11.5px;color:var(--muted);margin-top:3px}
+.efoot{display:flex;align-items:center;gap:12px;margin-top:16px;padding-top:14px;border-top:1px dashed var(--line);flex-wrap:wrap}
+.prog{flex:1;min-width:180px}
+.prog .row{display:flex;justify-content:space-between;font-size:12px;color:var(--muted);margin-bottom:6px}
+.prog .bar{height:9px;border-radius:99px;background:var(--surface-2);overflow:hidden}
+.prog .bar i{display:block;height:100%;width:42%;border-radius:99px;background:linear-gradient(90deg,var(--brand),var(--brand-2))}
+@media(max-width:640px){.tiles{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<div class="demo-frame"><div class="sv">
+  <div class="sv-top">
+    <nav class="sv-crumb"><a>Students</a><span>/</span><span class="sv-here">Nitilakshan</span></nav>
+    <div class="sv-top-right"><span class="sv-id-pill">ID: #PAS-2026-058</span><span class="sv-enrolled">Enrolled 04 Jun 2026</span></div>
+  </div>
+
+  <div class="sv-card sv-header">
+    <div class="sv-header-main">
+      <div class="sv-avatar-wrap"><div class="sv-avatar"><span>NI</span></div><span class="sv-live-dot"></span></div>
+      <div>
+        <div class="sv-name-row"><h1 class="sv-name">Nitilakshan</h1><span class="sv-status sv-status-active"><span class="sv-status-dot"></span>active</span></div>
+        <div class="sv-meta">
+          <span class="sv-meta-item">Age 12</span><span class="sv-meta-sep">•</span>
+          <span class="sv-meta-item">Parent: <strong>Suresh Kumar</strong> (+91 98765 43210)</span><span class="sv-meta-sep">•</span>
+          <span class="sv-meta-item">Batch: Evening Advanced</span>
+        </div>
+      </div>
+    </div>
+    <div class="sv-header-actions">
+      <button class="sv-btn sv-btn-primary">Record payment</button>
+      <button class="sv-btn">Remind</button>
+      <button class="sv-btn">Edit</button>
+    </div>
+  </div>
+
+  <div class="sv-twocol">
+    <section>
+      <div class="sv-info-head" style="margin-bottom:12px">
+        <div class="sv-info-title"><span class="sv-card-ico sv-ico-purple">▤</span><div><h3 class="sv-h3">Enrollments &amp; Course Batches</h3><p class="sv-muted-sm">1 active enrollment</p></div></div>
+      </div>
+      <div class="ecard">
+        <div class="ehead">
+          <span class="emono">KA</span>
+          <div><div class="etitle">Kani — Advanced Drawing <span class="badge badge-ok">active</span></div><div class="esub">Evening Advanced · Mon, Wed, Fri · 5:30–7:00 PM</div></div>
+        </div>
+        <div class="tiles">
+          <div class="tile bad"><div class="k">Amount due</div><div class="v">₹1,500</div><div class="s">due 05 Nov · 6 days</div></div>
+          <div class="tile brand"><div class="k">Monthly fee</div><div class="v">₹1,500</div><div class="s">12-month course</div></div>
+          <div class="tile ok"><div class="k">Paid to date</div><div class="v">₹10,500</div><div class="s">last 05 Oct</div></div>
+        </div>
+        <div class="efoot">
+          <div class="prog">
+            <div class="row"><span>Course progress</span><span>Month 5 of 12 · 42%</span></div>
+            <div class="bar"><i></i></div>
+          </div>
+          <button class="btn btn-sm">Edit course</button>
+          <button class="btn btn-primary btn-sm">Record payment</button>
+        </div>
+      </div>
+    </section>
+
+    <div style="display:flex;flex-direction:column;gap:16px">
+      <section class="sv-card sv-info">
+        <div class="sv-info-head" style="margin-bottom:12px"><div class="sv-info-title"><span class="sv-card-ico sv-ico-purple">👤</span><div><h3 class="sv-h3">Student &amp; Parent</h3></div></div></div>
+        <div class="sv-info-grid" style="grid-template-columns:1fr 1fr">
+          <div class="sv-kv"><p class="sv-kv-label">Phone</p><span class="sv-kv-val">+91 98765 43210</span></div>
+          <div class="sv-kv"><p class="sv-kv-label">Parent</p><span class="sv-kv-val">Suresh Kumar</span></div>
+          <div class="sv-kv"><p class="sv-kv-label">Age</p><span class="sv-kv-val">12 yrs</span></div>
+          <div class="sv-kv"><p class="sv-kv-label">Admitted</p><span class="sv-kv-val">04 Jun 2026</span></div>
+        </div>
+      </section>
+      <section class="sv-card sv-logcard">
+        <div class="sv-info-head" style="margin-bottom:8px"><div class="sv-info-title"><span class="sv-card-ico sv-ico-indigo">🔔</span><div><h3 class="sv-h3">Recent Activity</h3></div></div></div>
+        <div class="sv-log">
+          <div class="sv-log-item"><span class="sv-log-dot sv-log-dot-ok"></span><div><p class="sv-log-title">Payment recorded</p><p class="sv-muted-sm">₹1,500 · UPI</p></div><span class="sv-log-date">05 Oct</span></div>
+          <div class="sv-log-item"><span class="sv-log-dot sv-log-dot-purple"></span><div><p class="sv-log-title">Fee reminder sent</p><p class="sv-muted-sm">WhatsApp to parent</p></div><span class="sv-log-date">03 Oct</span></div>
+          <div class="sv-log-item"><span class="sv-log-dot sv-log-dot-purple"></span><div><p class="sv-log-title">Enrolled in course</p><p class="sv-muted-sm">Kani — Advanced Drawing</p></div><span class="sv-log-date">04 Jun</span></div>
+        </div>
+      </section>
+    </div>
+  </div>
+</div></div>
+</body>
+</html>

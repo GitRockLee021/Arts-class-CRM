@@ -1,0 +1,120 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>8 · Playful pastel — our palette</title>
+<style>
+:root{--ink:#2f2a36;--muted:#8b8590;--card:#fffdf8;--line:#e4dfec;--brand:#7a5ba8;--brand-dark:#60438c;--brand2:#c09ad8;--brand-soft:#ede6f5;--ok:#5e7e8c;--ok-soft:#e7edf0;--warn:#b0893f;--warn-soft:#f3edde;--bad:#a8507e;--bad-soft:#f4e6ee;--info:#6b62a0;--info-soft:#e8e6f2;--mint:#e7edf0;--peach:#f4e6ee;--lav:#ede6f5;--sky:#e8e6f2;--lemon:#f3edde;--pink:#f4e6ee}
+*{box-sizing:border-box}
+body{margin:0;background:#f7f4fa;color:var(--ink);font-family:"Segoe UI Rounded","Nunito","Segoe UI",system-ui,Arial,sans-serif}
+.blob{position:fixed;border-radius:50%;filter:blur(60px);opacity:.5;z-index:0}
+.b1{width:360px;height:360px;background:var(--ok-soft);top:-90px;left:-80px}
+.b2{width:320px;height:320px;background:var(--bad-soft);top:40px;right:-90px}
+.b3{width:300px;height:300px;background:var(--info-soft);bottom:-100px;left:30%}
+.wrap{position:relative;z-index:1;max-width:1120px;margin:0 auto;padding:26px 20px 90px}
+.bar{display:flex;align-items:center;justify-content:space-between;gap:14px;flex-wrap:wrap;margin-bottom:20px}
+.brand{font-weight:800;font-size:19px;letter-spacing:-.01em}
+.brand small{display:block;font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted)}
+.acts{display:flex;gap:10px}
+.btn{font:inherit;font-weight:700;border:2px dashed var(--line);background:var(--card);border-radius:16px;padding:10px 16px;cursor:pointer;color:var(--ink)}
+.btn.primary{background:var(--brand-soft);border-style:solid;border-color:var(--brand2)}
+.card{background:var(--card);border-radius:28px;padding:20px;box-shadow:0 16px 34px rgba(80,70,90,.1);border:1px solid var(--line)}
+.hero{display:flex;align-items:center;gap:22px;margin-bottom:18px;background:linear-gradient(135deg,var(--lemon),var(--mint));border:0}
+.avatar{width:96px;height:96px;border-radius:32px;background:var(--card);display:grid;place-items:center;font-size:40px;font-weight:800;color:var(--brand);transform:rotate(-3deg);box-shadow:0 12px 24px rgba(80,70,90,.16);flex:none}
+.hero h1{margin:0;font-size:34px;letter-spacing:-.02em}
+.hero p{margin:8px 0 0;color:var(--muted);font-size:14px;line-height:1.6}
+.sticker{display:inline-block;background:var(--card);border-radius:999px;padding:6px 14px;font-size:12.5px;font-weight:800;color:var(--ok);box-shadow:0 6px 14px rgba(80,70,90,.14);transform:rotate(2deg)}
+.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-top:16px}
+.mini .l{font-size:11px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:var(--muted)}
+.mini .n{font-size:34px;font-weight:800;letter-spacing:-.03em;margin-top:8px}
+.mini .n .cur{font-size:.55em}
+.mini .s{color:var(--muted);font-size:12.5px;margin-top:4px}
+.mint{background:linear-gradient(150deg,var(--mint),#fff)}
+.peach{background:linear-gradient(150deg,var(--peach),#fff)}
+.sky{background:linear-gradient(150deg,var(--sky),#fff)}
+.lav{background:linear-gradient(150deg,var(--lav),#fff)}
+.lemon{background:linear-gradient(150deg,var(--lemon),#fff)}
+.pink{background:linear-gradient(150deg,var(--pink),#fff)}
+.span2{grid-column:span 2}
+h3{margin:0 0 12px;font-size:12px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:var(--muted)}
+.pay div{display:flex;align-items:center;gap:12px;padding:11px 0;border-bottom:1.5px dashed var(--line);font-size:14px;font-weight:600}
+.pay div:last-child{border-bottom:0}
+.pay .amt{margin-left:auto;font-weight:800;color:var(--brand-dark)}
+.pay .m{width:48px;text-align:right;color:var(--muted);font-size:12px}
+.track{height:16px;border-radius:999px;background:var(--brand-soft);overflow:hidden;margin-top:12px}
+.track i{display:block;height:100%;width:42%;border-radius:999px;background:linear-gradient(90deg,var(--brand),var(--brand2))}
+.bars{display:flex;align-items:flex-end;gap:6px;height:70px;margin-top:12px}
+.bars i{flex:1;border-radius:6px;background:linear-gradient(180deg,var(--brand),var(--brand2));min-height:6px}
+.bars i.dim{background:var(--line)}
+.tl{list-style:none;margin:0;padding:0}
+.tl li{display:flex;gap:12px;align-items:flex-start;padding:10px 0;border-bottom:1.5px dashed var(--line);font-size:13.5px;font-weight:600}
+.tl li:last-child{border-bottom:0}
+.tl .e{width:34px;height:34px;border-radius:12px;display:grid;place-items:center;background:var(--lav);flex:none;font-size:15px}
+.tl time{margin-left:auto;color:var(--muted);font-size:12px;font-weight:700;white-space:nowrap}
+@media(max-width:900px){.grid{grid-template-columns:1fr}.span2{grid-column:span 1}}
+</style>
+</head>
+<body>
+<div class="blob b1"></div><div class="blob b2"></div><div class="blob b3"></div>
+<div class="wrap">
+  <div class="bar">
+    <div class="brand">Pravaha Art Space<small>Student</small></div>
+    <div class="acts"><button class="btn">Remind</button><button class="btn">Edit</button><button class="btn primary">Record payment</button></div>
+  </div>
+
+  <div class="card hero">
+    <div class="avatar">N</div>
+    <div>
+      <h1>Nitilakshan</h1>
+      <p>Age 12 · PAS-2026-058 · Parent: Suresh Kumar · +91 98765 43210<br>Loves drawing since 04 Jun 2026</p>
+    </div>
+    <span class="sticker" style="margin-left:auto">Active</span>
+  </div>
+
+  <div class="grid">
+    <div class="card mini peach"><div class="l">Outstanding</div><div class="n"><span class="cur">₹</span>1,500</div><div class="s">next due 05 Nov 2026</div></div>
+    <div class="card mini mint"><div class="l">Attendance</div><div class="n">92%</div><div class="s">88 / 96 sessions</div></div>
+    <div class="card mini sky"><div class="l">Paid to date</div><div class="n"><span class="cur">₹</span>10,500</div><div class="s">never missed a month</div></div>
+
+    <div class="card span2 lemon">
+      <h3>Enrollment &amp; batch</h3>
+      <div style="font-size:21px;font-weight:800">Kani — Advanced Drawing</div>
+      <div style="color:var(--muted);font-size:13.5px;margin-top:4px;font-weight:600">Evening Advanced · Mon, Wed, Fri · 5:30–7:00 PM</div>
+      <div class="track"><i></i></div>
+      <div style="color:var(--muted);font-size:12.5px;margin-top:8px;font-weight:700">Month 5 of 12 · ₹1,500 a month</div>
+    </div>
+    <div class="card pink">
+      <h3>Last payment</h3>
+      <div class="n" style="font-size:30px;font-weight:800">₹1,500</div>
+      <div style="color:var(--muted);font-size:13px;font-weight:600;margin-top:4px">05 Oct 2026 · UPI</div>
+    </div>
+
+    <div class="card span2">
+      <h3>Recent payments</h3>
+      <div class="pay">
+        <div><span>05 Oct 2026</span><span class="amt">₹1,500</span><span class="m">UPI</span></div>
+        <div><span>05 Sep 2026</span><span class="amt">₹1,500</span><span class="m">Cash</span></div>
+        <div><span>05 Aug 2026</span><span class="amt">₹1,500</span><span class="m">UPI</span></div>
+        <div><span>04 Jun 2026</span><span class="amt">₹3,000</span><span class="m">UPI</span></div>
+      </div>
+    </div>
+    <div class="card lav">
+      <h3>Attendance — 12 weeks</h3>
+      <div class="bars">
+        <i style="height:90%"></i><i style="height:70%"></i><i class="dim" style="height:35%"></i><i style="height:80%"></i><i style="height:100%"></i><i style="height:60%"></i><i style="height:88%"></i><i class="dim" style="height:30%"></i><i style="height:95%"></i><i style="height:75%"></i><i style="height:82%"></i><i style="height:90%"></i>
+      </div>
+    </div>
+
+    <div class="card span2" style="grid-column:span 3">
+      <h3>Activity</h3>
+      <ul class="tl">
+        <li><span class="e">₹</span><span>October course fee recorded — ₹1,500</span><time>05 Oct</time></li>
+        <li><span class="e">✉</span><span>Fee reminder sent to parent on WhatsApp</span><time>03 Oct</time></li>
+        <li><span class="e">★</span><span>Enrolled in Kani — Advanced Drawing</span><time>04 Jun</time></li>
+      </ul>
+    </div>
+  </div>
+</div>
+</body>
+</html>

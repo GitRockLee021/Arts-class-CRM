@@ -8,7 +8,7 @@ parent communication.
 > docs) and `SESSION_MEMORY.md` (project state + feature history). Duplicated content was
 > collapsed into one entry per topic.
 
-Last updated: 2026-09-26
+Last updated: 2026-10-11
 
 ---
 
@@ -394,10 +394,12 @@ Env `WHATSAPP_TEMPLATE_NAME`; **code default `fee_reminder`**, but the live `.en
   written to `reminder_logs`. Note there is **no resend button** - receipts only fire when a
   payment is created (`routes/enrollments.js`) or the Razorpay webhook confirms one
   (`routes/webhooks.js`), so a failed send means messaging that parent manually.
-- **Status: using the Railway URL for now.** The Railway host is a shared `*.up.railway.app`
-  domain, so it *cannot* be verified with Meta — submitting anyway to avoid burning an approval
-  attempt. If Meta rejects the template over the domain, the fix is the business subdomain
-  (verify it in Meta Business Manager → Brand safety → Domains), not a code change.
+- **Status: approved by Meta (~2026-10-11).** The button host is the shared Railway URL
+  `https://pravaha-crm-demo-production.up.railway.app`, which is what the `payment_receipt`
+  template was submitted with. `WHATSAPP_RECEIPT_SHARE_BASE` matches it in both `server/.env`
+  and the live Railway env, and the language is `en`. That host is frozen into the template, so
+  when the business subdomain replaces Railway, update **both** the template's button URL *and*
+  `WHATSAPP_RECEIPT_SHARE_BASE` together (see the template spec above).
 - For a real PDF/image receipt you'd send a **document message** instead (media upload +
   document header, or an open 24h window) — not implemented.
 
@@ -495,9 +497,12 @@ after"** — build and get sign-off on a mock before wiring backend/frontend.
 - **The admin password is `Radhakannan`** — the same as the user ID, on a publicly reachable URL.
   Leaving it was an explicit request; it is the weakest thing in the deployment and should be
   changed before real student data goes in.
-- `npm audit` reports 4 moderate advisories, all from `exceljs` → `uuid` (a buffer-bounds check
-  in `uuid` v3/v5/v6). Only the CSV import path touches it, and the offered fix is a breaking
-  downgrade to `exceljs@3.4.0`, so it is deferred rather than forced.
+- `npm audit` now reports **2 moderate** advisories, both from `exceljs` → `uuid` (a buffer-bounds
+  check in `uuid` v3/v5/v6; exceljs uses only v4 here, so it is not reachable). The offered fix
+  is a breaking downgrade to `exceljs@3.4.0`, so it is deferred rather than forced. The critical
+  `proxy-addr` (IP spoofing, CVE-2026-90711, via express) and high `brace-expansion` (DoS, via
+  exceljs → archiver → glob) advisories that surfaced on 2026-10-11 were fixed with
+  `npm audit fix` (non-breaking: express 4.22.2→4.22.3, proxy-addr 2.0.7→2.0.8, qs 6.15.3→6.16.0).
 
 ---
 
@@ -516,8 +521,9 @@ after"** — build and get sign-off on a mock before wiring backend/frontend.
 - [x] Commit the security-audit fixes (#6 error leakage, #2 rate limiting, #4 input validation).
 - [x] Second audit pass: CSPRNG share tokens, `helmet` security headers, admin-only mass send
       (see the table above). The weak admin password was left as-is on request.
-- [ ] Submit the `payment_receipt` template to Meta using the Railway URL (no domain
-  verification - see the template spec above).
+- [x] Submit the `payment_receipt` template to Meta using the Railway URL (no domain
+      verification - see the template spec above). **Approved by Meta (~2026-10-11)**; no code
+      or config change needed — it was already wired from all payment paths.
 
 ---
 
@@ -538,21 +544,22 @@ anything missed has to be made up. Decisions taken 2026-09-27:
   student is not owed 2.
 - No capacity cap on a makeup slot; the UI should show the **headcount** instead.
 
-Work to do: attendance entries currently have no `enrollment_id`, so present/absent cannot be
-attributed to a specific enrollment, and `POST /api/attendance` is destructive (it deletes the
-log and re-inserts). Both need attention before credits can be computed. Likely shape:
+Foundations (**done 2026-10-11**): `attendance_entries` now has an `enrollment_id` (additive
+migration in `db.js`), `POST /api/attendance` populates it, and the save is no longer
+destructive — it upserts the log and its entries (`ON CONFLICT`) and only drops entries for
+students who left the batch, so the log id and surviving entry ids stay stable. Remaining work:
 `server/src/lib/credits.js` + `node:test` (there is no test framework yet), a Credits tab on
-`Attendance.jsx`, a quota field on `Batches.jsx`, and a per-student summary on `StudentDetail.jsx`.
+`Attendance.jsx`, a quota field on `Batches.jsx` (plus `batches.classes_per_month`), and a
+per-student summary on `StudentDetail.jsx`.
 
-**Two questions still unanswered:**
+**One question still unanswered:**
 
 1. **Do cancelled holidays reduce "sessions held"?** Deriving sessions from the batch's weekdays
    would count a cancelled class as held, and there is no session-cancellation mechanism today.
    Suggest adding an explicit one rather than inferring.
-2. **The seed can still duplicate on a second non-reset run.** Names, phones and emails are
-   unique within one run, but plain `npm run seed` twice creates two identical sets. Suggest
-   making it refuse to run when demo rows already exist, rather than suffixing names (the demo
-   data deliberately has no visible "Demo" marker).
+2. ~~**The seed can still duplicate on a second non-reset run.**~~ **Done (2026-10-11).**
+   `seed.js` now refuses a second non-reset run (prints a message and exits 1, pointing at
+   `npm run seed -- --reset`) instead of inserting a duplicate set.
 
 - Confirm the new admin credentials and the **Name-field decision** (drop the Name field vs keep
   it optional), then apply via `npm run create-admin`.
@@ -602,7 +609,7 @@ log and re-inserts). Both need attention before credits can be computed. Likely 
 | Certificates | Done |
 | CSV/XLSX import | Done |
 | `payment_reminder_test` template | Pending Meta re-approval (bold-text edit) |
-| `payment_receipt` template | Ready to submit (app now hosted) |
+| `payment_receipt` template | Approved by Meta (~2026-10-11); already wired |
 | Batch timing-change intimation | Planned |
 | Products & Materials | Planned |
 

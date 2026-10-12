@@ -1,0 +1,175 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Pravaha B · Two-pane — Student</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Syne:wght@600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#f7f4fa;--bg-2:#e9e3f0;--surface:#fffdf8;--surface-2:#f1ebf3;
+  --ink:#2f2a36;--muted:#8b8590;--line:#e4dfec;
+  --brand:#7a5ba8;--brand-dark:#60438c;--brand-2:#c09ad8;--brand-soft:#ede6f5;
+  --ok:#5e7e8c;--ok-soft:#e7edf0;--warn:#b0893f;--warn-soft:#f3edde;--bad:#a8507e;--bad-soft:#f4e6ee;--info:#6b62a0;--info-soft:#e8e6f2;
+  --radius:14px;
+  --shadow-sm:0 1px 3px rgba(80,70,90,.06);
+  --shadow:0 2px 3px rgba(80,70,90,.06),0 10px 26px rgba(80,70,90,.08);
+  --shadow-md:0 4px 16px rgba(80,70,90,.12);
+  --head:'Syne','Inter',system-ui,sans-serif;
+  --body:'Inter',system-ui,-apple-system,"Segoe UI",sans-serif;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--body);font-size:16px;line-height:1.6;-webkit-font-smoothing:antialiased}
+.wrap{max-width:1180px;margin:0 auto;padding:32px 24px 96px}
+.top{display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;margin-bottom:28px}
+.brand{font-family:var(--head);font-weight:700;font-size:18px}
+.brand small{display:block;font-family:var(--body);font-weight:500;font-size:12px;color:var(--muted);letter-spacing:.08em;text-transform:uppercase}
+.actions{display:flex;gap:8px}
+.btn{font-family:var(--body);font-size:14px;font-weight:600;border-radius:var(--radius);padding:11px 22px;border:1px solid transparent;cursor:pointer;box-shadow:var(--shadow-sm)}
+.btn.primary{background:var(--brand);color:#fff}
+.btn.primary:hover{background:var(--brand-dark)}
+.btn.secondary{background:transparent;color:var(--brand);border-color:var(--brand-2)}
+.btn.ghost{background:transparent;color:var(--muted);box-shadow:none}
+.btn.full{width:100%}
+.grid{display:grid;grid-template-columns:340px 1fr;gap:24px;align-items:start}
+
+.rail{position:sticky;top:24px;background:linear-gradient(160deg,var(--brand),var(--brand-dark));border-radius:var(--radius);overflow:hidden;box-shadow:var(--shadow-md);color:#fff}
+.rail-top{padding:26px}
+.mono-avatar{width:64px;height:64px;border-radius:9999px;background:rgba(255,255,255,.18);display:grid;place-items:center;font-family:var(--head);font-size:26px;font-weight:700}
+.rail h1{margin:16px 0 8px;font-family:var(--head);font-size:24px;font-weight:700;letter-spacing:-.01em}
+.chip{display:inline-block;font-size:12px;font-weight:600;text-transform:uppercase;letter-spacing:.5px;padding:5px 12px;border-radius:9999px}
+.chip.onbrand{background:rgba(255,255,255,.2);color:#fff}
+.rail-body{padding:0 26px 26px}
+.kv{display:flex;justify-content:space-between;gap:12px;padding:11px 0;border-bottom:1px solid rgba(255,255,255,.15);font-size:14px}
+.kv span:first-child{color:rgba(255,255,255,.7)}
+.kv b{font-weight:600}
+.due{margin:18px 0 4px;padding:16px;border-radius:10px;background:rgba(255,255,255,.14);border:1px solid rgba(255,255,255,.2)}
+.due .l{font-size:12px;letter-spacing:.5px;text-transform:uppercase;color:rgba(255,255,255,.8)}
+.due .n{font-family:var(--head);font-size:30px;font-weight:700;margin-top:6px;letter-spacing:-.02em}
+.due .s{color:rgba(255,255,255,.75);font-size:12px}
+.rail-actions{display:flex;flex-direction:column;gap:8px;margin-top:18px}
+.rail-actions .btn.primary{background:#fff;color:var(--brand)}
+.rail-actions .btn.onbrand{background:transparent;color:#fff;border-color:rgba(255,255,255,.45);box-shadow:none}
+
+.metrics{display:grid;grid-template-columns:repeat(3,1fr);gap:24px;margin-bottom:24px}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:26px;margin-bottom:24px}
+.metric .l{font-size:12px;font-weight:600;text-transform:uppercase;letter-spacing:.6px;color:var(--muted)}
+.metric .n{font-family:var(--head);font-size:32px;font-weight:700;margin-top:12px;letter-spacing:-.02em;font-variant-numeric:tabular-nums}
+.metric .n.warn{color:var(--warn)}.metric .n.ok{color:var(--ok)}.metric .n.brand{color:var(--brand)}
+.metric .s{color:var(--muted);font-size:13px;margin-top:4px}
+.strip{background:var(--brand);color:#fff;font-family:var(--head);font-size:13px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;padding:13px 26px;border-radius:13px 13px 0 0;margin:-26px -26px 20px}
+.strip.sage{background:linear-gradient(135deg,var(--brand-2),var(--brand))}
+.enroll-head{display:flex;align-items:baseline;justify-content:space-between;gap:16px;flex-wrap:wrap}
+.enroll-head h3{margin:0;font-family:var(--head);font-size:22px;font-weight:700}
+.mutedline{color:var(--muted);font-size:14px;margin-top:4px}
+.track{height:9px;border-radius:9999px;background:var(--brand-soft);overflow:hidden;margin-top:16px}
+.track i{display:block;height:100%;width:42%;background:var(--brand);border-radius:9999px}
+.list{list-style:none;margin:0;padding:0}
+.list li{display:flex;align-items:center;gap:16px;height:56px;border-bottom:1px solid var(--line);font-size:16px}
+.list li:last-child{border-bottom:0}
+.list .amt{margin-left:auto;font-weight:600;font-variant-numeric:tabular-nums}
+.list .m{width:56px;text-align:right;color:var(--muted);font-size:14px}
+.bars{display:flex;align-items:flex-end;gap:7px;height:92px}
+.bars i{flex:1;background:var(--brand);border-radius:6px 6px 0 0;min-height:6px;opacity:.9}
+.bars i.dim{background:var(--brand-soft);opacity:1}
+.tl{list-style:none;margin:0;padding:0}
+.tl li{position:relative;padding:0 0 20px 26px;font-size:15px}
+.tl li:before{content:"";position:absolute;left:0;top:6px;width:11px;height:11px;border-radius:9999px;background:var(--brand)}
+.tl li:after{content:"";position:absolute;left:5px;top:19px;bottom:0;width:1px;background:var(--line)}
+.tl li:last-child:after{display:none}
+.tl time{display:block;color:var(--muted);font-size:12px;margin-top:2px}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:24px}
+@media(max-width:960px){.grid{grid-template-columns:1fr}.rail{position:static}.two{grid-template-columns:1fr}.metrics{grid-template-columns:1fr 1fr}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="top">
+    <div class="brand">Pravaha Art Space<small>Student record</small></div>
+    <div class="actions">
+      <button class="btn ghost">Remind</button>
+      <button class="btn secondary">Edit</button>
+      <button class="btn primary">Record payment</button>
+    </div>
+  </div>
+
+  <div class="grid">
+    <aside class="rail">
+      <div class="rail-top">
+        <div class="mono-avatar">N</div>
+        <h1>Nitilakshan</h1>
+        <span class="chip onbrand">Active · Age 12</span>
+      </div>
+      <div class="rail-body">
+        <div class="kv"><span>Student ID</span><b>PAS-2026-058</b></div>
+        <div class="kv"><span>Parent</span><b>Suresh Kumar</b></div>
+        <div class="kv"><span>Phone</span><b>+91 98765 43210</b></div>
+        <div class="kv"><span>Batch</span><b>Evening Advanced</b></div>
+        <div class="kv"><span>Joined</span><b>04 Jun 2026</b></div>
+        <div class="due">
+          <div class="l">Outstanding</div>
+          <div class="n">₹1,500</div>
+          <div class="s">next due 05 Nov 2026</div>
+        </div>
+        <div class="rail-actions">
+          <button class="btn primary full">Record payment</button>
+          <button class="btn onbrand full">Send reminder</button>
+        </div>
+      </div>
+    </aside>
+
+    <main>
+      <div class="metrics">
+        <div class="card metric" style="margin:0"><div class="l">Attendance</div><div class="n ok">92%</div><div class="s">88 / 96 sessions</div></div>
+        <div class="card metric" style="margin:0"><div class="l">Paid to date</div><div class="n brand">₹10,500</div><div class="s">5 receipts</div></div>
+        <div class="card metric" style="margin:0"><div class="l">Course month</div><div class="n">5<span style="font-size:.5em;color:var(--muted)"> / 12</span></div><div class="s">42% complete</div></div>
+      </div>
+
+      <div class="card">
+        <div class="enroll-head">
+          <div>
+            <h3>Kani — Advanced Drawing</h3>
+            <div class="mutedline">Evening Advanced · Mon, Wed, Fri · 5:30–7:00 PM</div>
+          </div>
+          <span class="chip brand">₹1,500 / month</span>
+        </div>
+        <div class="track"><i></i></div>
+      </div>
+
+      <div class="card" style="padding:0">
+        <div class="strip">Recent payments</div>
+        <div style="padding:4px 26px 16px">
+          <ul class="list">
+            <li><span>05 Oct 2026</span><span class="amt">₹1,500</span><span class="m">UPI</span></li>
+            <li><span>05 Sep 2026</span><span class="amt">₹1,500</span><span class="m">Cash</span></li>
+            <li><span>05 Aug 2026</span><span class="amt">₹1,500</span><span class="m">UPI</span></li>
+            <li><span>04 Jun 2026</span><span class="amt">₹3,000</span><span class="m">UPI</span></li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="two">
+        <div class="card" style="padding:0;margin:0">
+          <div class="strip sage">Attendance — 12 weeks</div>
+          <div style="padding:20px 26px 26px">
+            <div class="bars">
+              <i style="height:90%"></i><i style="height:70%"></i><i class="dim" style="height:35%"></i><i style="height:80%"></i><i style="height:100%"></i><i style="height:60%"></i><i style="height:88%"></i><i class="dim" style="height:30%"></i><i style="height:95%"></i><i style="height:75%"></i><i style="height:82%"></i><i style="height:90%"></i>
+            </div>
+          </div>
+        </div>
+        <div class="card" style="margin:0">
+          <div style="font-family:var(--head);font-size:16px;font-weight:700;margin-bottom:12px">Activity</div>
+          <ul class="tl">
+            <li>October fee recorded — ₹1,500<time>05 Oct 2026</time></li>
+            <li>Reminder sent to parent<time>03 Oct 2026</time></li>
+            <li>Enrolled in Kani<time>04 Jun 2026</time></li>
+          </ul>
+        </div>
+      </div>
+    </main>
+  </div>
+</div>
+</body>
+</html>

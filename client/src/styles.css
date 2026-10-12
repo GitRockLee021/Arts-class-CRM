@@ -1129,6 +1129,42 @@ tr.clickable:hover {
   border-color: var(--muted);
 }
 
+/* Student detail: uncollected admission fees notice */
+.fee-notice {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+  flex-wrap: wrap;
+  border-left: 4px solid var(--warn);
+}
+
+.fee-notice-text {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+}
+
+.fee-notice-text strong {
+  color: var(--warn);
+}
+
+.fee-notice-text p {
+  margin: 2px 0 0;
+}
+
+.fee-notice-ico {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  flex: none;
+  border-radius: 50%;
+  color: var(--warn);
+  background: var(--warn-soft);
+}
+
 .empty-state {
   display: flex;
   flex-direction: column;
@@ -1322,6 +1358,7 @@ tr.clickable:hover {
   position: absolute; right: -3px; bottom: -3px; width: 14px; height: 14px; border-radius: 50%;
   background: var(--ok); border: 3px solid var(--surface);
 }
+.sv-live-dot-off { background: var(--muted); }
 .sv-name-row { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
 .sv-name { font-family: var(--font-accent); font-size: 24px; font-weight: 700; margin: 0; }
 .sv-status {

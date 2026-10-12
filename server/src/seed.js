@@ -7,10 +7,10 @@
  *
  * Two rules this file exists to enforce:
  *
- * 1. Re-running never duplicates. The old version inserted fixed names, so running it twice
- *    produced two of every student. Every row now carries a `demo_run` number and every phone,
- *    email and name is derived from a fixed template, so a second run is a clean second set
- *    rather than a silent duplicate - and `--reset` can delete exactly one run.
+ * 1. Re-running never duplicates. Every row carries a `demo_run` number and every phone, email
+ *    and name is derived from a fixed template, so a second non-reset run would be a clean but
+ *    *duplicate* second set - so `main()` refuses to run while demo rows already exist. Use
+ *    `--reset` to delete exactly one run and rebuild.
  *
  * 2. It never touches the studio's real data. Courses are *looked up by name*, never inserted or
  *    deleted, and they are deliberately not tagged with `demo_run`. If a needed course is
@@ -138,6 +138,20 @@ async function reset(run_) {
 
 async function main() {
   if (RESET) await reset(run);
+
+  // Refuse a second non-reset run. Names, phones and emails are unique within one run, but
+  // inserting a second set would quietly create duplicate students (and a second set of
+  // enrollments). The demo data is deliberately unmarked, so a stray duplicate is hard to spot.
+  const existing = await query(
+    `SELECT COUNT(*)::int AS n FROM (
+       SELECT id FROM students WHERE demo_run IS NOT NULL
+       UNION ALL SELECT id FROM batches WHERE demo_run IS NOT NULL) t`,
+  );
+  if (Number(existing[0].n) > 0) {
+    console.error('Demo data already exists. Refusing to add a duplicate set.');
+    console.error('Rebuild it with: npm run seed -- --reset');
+    process.exit(1);
+  }
 
   const run_ = await query(
     `SELECT COALESCE(MAX(demo_run), 0) AS m FROM (

@@ -1,0 +1,120 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>9 · Ledger sheet — Student revamp</title>
+<style>
+:root{--paper:#f5f5ee;--ink:#1c2a20;--muted:#6f7a70;--line:#d7dccf;--bar:#e7ece0;--accent:#1f7a4d;--warn:#b8791a;--rule:#c3cbb9}
+*{box-sizing:border-box}
+body{margin:0;background:#e9ebe2;color:var(--ink);font-family:"Consolas","SFMono-Regular",ui-monospace,Menlo,monospace;font-size:13px;line-height:1.5}
+.sheet{max-width:1080px;margin:26px auto 60px;background:var(--paper);border:1px solid var(--rule);box-shadow:0 18px 50px rgba(40,50,40,.14)}
+.head{padding:18px 26px;border-bottom:2px solid var(--ink);display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap}
+.head .t{font-size:16px;font-weight:700;letter-spacing:.06em}
+.head .t b{background:var(--ink);color:var(--paper);padding:2px 8px;margin-right:8px}
+.head .r{color:var(--muted);text-align:right}
+.toolbar{display:flex;gap:0;border-bottom:1px solid var(--rule);background:var(--bar)}
+.toolbar button{font:inherit;background:transparent;border:0;border-right:1px solid var(--rule);padding:11px 18px;cursor:pointer;color:var(--ink)}
+.toolbar button.primary{background:var(--ink);color:var(--paper)}
+.body{padding:22px 26px}
+h2{font-size:12px;letter-spacing:.16em;text-transform:uppercase;margin:26px 0 8px;padding-bottom:6px;border-bottom:1px solid var(--rule)}
+h2:first-child{margin-top:0}
+.cols{display:grid;grid-template-columns:1fr 340px;gap:26px}
+.fields{display:grid;grid-template-columns:150px 1fr;gap:3px 14px;margin-top:6px}
+.fields dt{color:var(--muted)}
+.fields dd{margin:0;font-weight:700}
+.rule{color:var(--rule);overflow:hidden;white-space:nowrap;margin:14px 0}
+table{width:100%;border-collapse:collapse;font-variant-numeric:tabular-nums}
+th{text-align:left;color:var(--muted);font-weight:700;font-size:11px;letter-spacing:.08em;text-transform:uppercase;padding:0 0 6px;border-bottom:1px solid var(--ink)}
+td{padding:6px 0;border-bottom:1px dotted var(--rule)}
+tr:nth-child(even) td{background:rgba(31,122,77,.05)}
+td.r{text-align:right}
+td.m{text-align:right;color:var(--muted)}
+.sum{margin-top:10px;display:grid;grid-template-columns:1fr auto;gap:4px 20px;font-weight:700}
+.sum .lab{color:var(--muted);font-weight:400}
+.sum .big{color:var(--accent)}
+.bars{display:flex;align-items:flex-end;gap:4px;height:64px;margin-top:10px;border-bottom:1px solid var(--rule)}
+.bars i{flex:1;background:var(--accent);min-height:4px;opacity:.8}
+.bars i.dim{background:var(--line)}
+.log{max-height:none}
+.log div{display:grid;grid-template-columns:92px 1fr;gap:14px;padding:6px 0;border-bottom:1px dotted var(--rule)}
+.log time{color:var(--muted)}
+.stamp{margin-top:26px;padding-top:14px;border-top:2px solid var(--ink);display:flex;justify-content:space-between;color:var(--muted);font-size:11px;letter-spacing:.08em;text-transform:uppercase}
+.flag{color:var(--warn);font-weight:700}
+@media(max-width:820px){.cols{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<div class="sheet">
+  <div class="head">
+    <div class="t"><b>STUDENT LEDGER</b> PRAVAHA ART SPACE</div>
+    <div class="r">
+      Document PAS-2026-058<br>
+      Printed 11 Oct 2026 · Chennai
+    </div>
+  </div>
+  <div class="toolbar">
+    <button>REMIND</button>
+    <button>EDIT</button>
+    <button class="primary">RECORD PAYMENT</button>
+  </div>
+
+  <div class="body">
+    <div class="cols">
+      <div>
+        <h2>Account holder</h2>
+        <dl class="fields">
+          <dt>NAME</dt><dd>NITILAKSHAN</dd>
+          <dt>AGE</dt><dd>12</dd>
+          <dt>STATUS</dt><dd>ACTIVE</dd>
+          <dt>PARENT</dt><dd>SURESH KUMAR</dd>
+          <dt>PHONE</dt><dd>+91 98765 43210</dd>
+          <dt>ENROLLED</dt><dd>04 JUN 2026</dd>
+          <dt>BATCH</dt><dd>EVENING ADVANCED (MWF 17:30–19:00)</dd>
+        </dl>
+
+        <h2>Enrollment</h2>
+        <div>KANI — ADVANCED DRAWING ......................... ₹1,500.00 / MONTH</div>
+        <div>PROGRESS ......................................... MONTH 5 OF 12 (42%)</div>
+
+        <h2>Payment register</h2>
+        <table>
+          <thead><tr><th>Date</th><th>Particulars</th><th>Method</th><th class="r">Amount</th></tr></thead>
+          <tbody>
+            <tr><td>05-OCT-2026</td><td>Course fee — October</td><td class="m">UPI</td><td class="r">1,500.00</td></tr>
+            <tr><td>05-SEP-2026</td><td>Course fee — September</td><td class="m">CASH</td><td class="r">1,500.00</td></tr>
+            <tr><td>05-AUG-2026</td><td>Course fee — August</td><td class="m">UPI</td><td class="r">1,500.00</td></tr>
+            <tr><td>04-JUN-2026</td><td>Admission + kit + first month</td><td class="m">UPI</td><td class="r">3,000.00</td></tr>
+          </tbody>
+        </table>
+        <div class="sum">
+          <span class="lab">TOTAL RECEIVED TO DATE</span><span>₹ 10,500.00</span>
+          <span class="lab">RECEIPTS ISSUED</span><span>5</span>
+          <span class="lab">OUTSTANDING</span><span class="big">₹ 1,500.00</span>
+          <span class="lab">NEXT DUE</span><span class="flag">05 NOV 2026</span>
+        </div>
+      </div>
+
+      <div>
+        <h2>Attendance</h2>
+        <div class="sum"><span class="lab">RATE</span><span class="big">92.0%</span><span class="lab">SESSIONS</span><span>88 / 96</span></div>
+        <div class="bars">
+          <i style="height:90%"></i><i style="height:70%"></i><i class="dim" style="height:35%"></i><i style="height:80%"></i><i style="height:100%"></i><i style="height:60%"></i><i style="height:88%"></i><i class="dim" style="height:30%"></i><i style="height:95%"></i><i style="height:75%"></i><i style="height:82%"></i><i style="height:90%"></i>
+        </div>
+        <div style="color:var(--muted);margin-top:6px">12 weeks · 2 absences</div>
+
+        <h2>Activity log</h2>
+        <div class="log">
+          <div><time>05-OCT</time><span>PAYMENT  ₹1,500.00 UPI — October fee</span></div>
+          <div><time>03-OCT</time><span>REMINDER sent to parent (WhatsApp)</span></div>
+          <div><time>05-SEP</time><span>PAYMENT  ₹1,500.00 CASH — September fee</span></div>
+          <div><time>04-JUN</time><span>ENROLLED in Kani — Advanced Drawing</span></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="stamp"><span>Computer-generated ledger</span><span>End of record 058</span></div>
+  </div>
+</div>
+</body>
+</html>

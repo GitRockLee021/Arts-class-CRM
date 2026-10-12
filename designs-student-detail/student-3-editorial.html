@@ -1,0 +1,122 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>3 · Editorial — Student revamp</title>
+<style>
+:root{--paper:#f7f3ea;--ink:#211d18;--muted:#8a8074;--line:#ddd4c6;--accent:#9b2c2c;--ok:#3c6b4f}
+*{box-sizing:border-box}
+body{margin:0;background:var(--paper);color:var(--ink);font-family:Georgia,"Times New Roman",serif}
+.wrap{max-width:1120px;margin:0 auto;padding:0 28px 70px}
+.masthead{border-bottom:3px double var(--ink);padding:20px 0 12px;display:flex;align-items:baseline;justify-content:space-between;gap:16px;flex-wrap:wrap}
+.masthead .logo{font-size:15px;letter-spacing:.34em;text-transform:uppercase;font-weight:700}
+.masthead .meta{font-size:11.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--muted)}
+.acts{display:flex;gap:10px;margin:18px 0 8px;justify-content:flex-end}
+.btn{font-family:Inter,system-ui,Arial,sans-serif;border:1px solid var(--ink);background:transparent;color:var(--ink);border-radius:0;padding:9px 15px;font-size:12px;letter-spacing:.06em;text-transform:uppercase;cursor:pointer}
+.btn.primary{background:var(--ink);color:var(--paper)}
+.hero{display:grid;grid-template-columns:1.6fr .9fr;gap:38px;align-items:end;margin:10px 0 22px;padding-bottom:22px;border-bottom:1px solid var(--line)}
+.kicker{font-family:Inter,system-ui,Arial,sans-serif;font-size:11px;letter-spacing:.26em;text-transform:uppercase;color:var(--accent);font-weight:700}
+.headline{font-size:64px;line-height:.98;letter-spacing:-.02em;margin:10px 0 12px;font-weight:400}
+.standfirst{font-size:17px;line-height:1.65;color:#4a423a;max-width:52ch}
+.portrait{border:1px solid var(--ink);aspect-ratio:4/5;display:grid;place-items:center;background:linear-gradient(160deg,#efe7d8,#f7f3ea);position:relative}
+.portrait .mono{font-size:74px;letter-spacing:-.04em;color:var(--accent);font-family:Georgia,serif}
+.portrait figcaption{position:absolute;bottom:0;left:0;right:0;border-top:1px solid var(--ink);background:var(--paper);padding:8px 12px;font-family:Inter,system-ui,Arial,sans-serif;font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);display:flex;justify-content:space-between}
+.cols{display:grid;grid-template-columns:2.1fr 1fr;gap:38px}
+.figrow{display:grid;grid-template-columns:repeat(3,1fr);gap:0;border-top:1px solid var(--ink);border-bottom:1px solid var(--ink)}
+.fig{padding:16px 18px;border-right:1px solid var(--line)}
+.fig:last-child{border-right:0}
+.fig .n{font-size:38px;letter-spacing:-.03em}
+.fig .n .cur{font-size:.55em;margin-right:1px}
+.fig .c{font-family:Inter,system-ui,Arial,sans-serif;font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);margin-top:6px}
+h2{font-size:12px;letter-spacing:.2em;text-transform:uppercase;font-family:Inter,system-ui,Arial,sans-serif;border-bottom:1px solid var(--ink);padding-bottom:8px;margin:30px 0 14px}
+.body{font-size:15.5px;line-height:1.72;column-gap:34px}
+.ledger{width:100%;border-collapse:collapse;font-size:14px}
+.ledger th{font-family:Inter,system-ui,Arial,sans-serif;font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);text-align:left;padding:0 0 8px;border-bottom:1px solid var(--line)}
+.ledger td{padding:10px 0;border-bottom:1px solid var(--line)}
+.ledger td.r{text-align:right;font-variant-numeric:tabular-nums}
+.pull{border-left:3px solid var(--accent);padding:6px 0 6px 18px;font-size:19px;line-height:1.5;font-style:italic;margin:6px 0 20px}
+.dl{font-family:Inter,system-ui,Arial,sans-serif;font-size:13px}
+.dl div{display:flex;justify-content:space-between;padding:9px 0;border-bottom:1px solid var(--line)}
+.dl span:first-child{color:var(--muted);text-transform:uppercase;font-size:10.5px;letter-spacing:.1em}
+.tl{font-family:Inter,system-ui,Arial,sans-serif;font-size:13px;margin:0;padding:0;list-style:none}
+.tl li{padding:10px 0;border-bottom:1px solid var(--line);display:flex;justify-content:space-between;gap:12px}
+.tl time{color:var(--muted);font-size:11.5px;white-space:nowrap}
+.foot{border-top:3px double var(--ink);margin-top:34px;padding-top:12px;font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--muted);display:flex;justify-content:space-between}
+@media(max-width:900px){.hero,.cols{grid-template-columns:1fr}.headline{font-size:44px}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="masthead">
+    <div class="logo">Pravaha Art Space</div>
+    <div class="meta">Student profile · Chennai</div>
+  </header>
+
+  <div class="acts">
+    <button class="btn">Remind</button>
+    <button class="btn">Edit</button>
+    <button class="btn primary">Record payment</button>
+  </div>
+
+  <section class="hero">
+    <div>
+      <div class="kicker">The Student Record · No. 058</div>
+      <h1 class="headline">Nitilakshan</h1>
+      <p class="standfirst">Twelve years old, a student of <em>Kani — Advanced Drawing</em> in the Evening Advanced batch. Enrolled 04 Jun 2026; steady attendance and a clean payment record, with one month currently outstanding.</p>
+    </div>
+    <figure class="portrait">
+      <span class="mono">N</span>
+      <figcaption><span>Active</span><span>PAS-2026-058</span></figcaption>
+    </figure>
+  </section>
+
+  <div class="figrow">
+    <div class="fig"><div class="n"><span class="cur">₹</span>1,500</div><div class="c">Outstanding due</div></div>
+    <div class="fig"><div class="n">92%</div><div class="c">Attendance · 88/96</div></div>
+    <div class="fig"><div class="n"><span class="cur">₹</span>10,500</div><div class="c">Paid to date</div></div>
+  </div>
+
+  <div class="cols">
+    <div>
+      <h2>Enrollment</h2>
+      <p class="pull">Kani — Advanced Drawing · ₹1,500 a month · Mon, Wed &amp; Fri, 5:30–7:00 PM.</p>
+      <div class="body">
+        <p>Progress: month five of twelve. The course fee is collected on the fifth of each month; the most recent receipt, for October, was settled by UPI.</p>
+      </div>
+
+      <h2>Recent payments</h2>
+      <table class="ledger">
+        <thead><tr><th>Date</th><th>Method</th><th class="r">Amount</th></tr></thead>
+        <tbody>
+          <tr><td>05 Oct 2026</td><td>UPI</td><td class="r">₹1,500</td></tr>
+          <tr><td>05 Sep 2026</td><td>Cash</td><td class="r">₹1,500</td></tr>
+          <tr><td>05 Aug 2026</td><td>UPI</td><td class="r">₹1,500</td></tr>
+          <tr><td>04 Jun 2026</td><td>UPI</td><td class="r">₹3,000 &nbsp;·&nbsp; admission + kit</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <aside>
+      <h2>The particulars</h2>
+      <div class="dl">
+        <div><span>Age</span><b>12</b></div>
+        <div><span>Parent</span><b>Suresh Kumar</b></div>
+        <div><span>Phone</span><b>+91 98765 43210</b></div>
+        <div><span>Batch</span><b>Evening Advanced</b></div>
+        <div><span>Next due</span><b>05 Nov 2026</b></div>
+      </div>
+
+      <h2>Recent activity</h2>
+      <ul class="tl">
+        <li><span>October fee recorded</span><time>05 Oct</time></li>
+        <li><span>Reminder sent to parent</span><time>03 Oct</time></li>
+        <li><span>Enrolled in Kani</span><time>04 Jun</time></li>
+      </ul>
+    </aside>
+  </div>
+
+  <footer class="foot"><span>Pravaha Art Space · Chennai</span><span>Prepared 11 Oct 2026</span></footer>
+</div>
+</body>
+</html>

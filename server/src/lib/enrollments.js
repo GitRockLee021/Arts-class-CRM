@@ -3,7 +3,7 @@ import { computeFeeStatus } from './fees.js';
 
 /**
  * Fetch enrollments joined with student + course info and computed fee status.
- * @param {{student_id?: string, status?: string, due_only?: boolean}} filters
+ * @param {{student_id?: string, status?: string, due_only?: boolean, student_status?: string}} filters
  */
 export async function fetchEnrollments(filters = {}) {
   const conds = [];
@@ -16,6 +16,11 @@ export async function fetchEnrollments(filters = {}) {
     conds.push('e.status = $' + (params.length + 1));
     params.push(filters.status);
   }
+  if (filters.student_status && filters.student_status !== 'all') {
+    // Exclude archived students (status 'inactive') from reminders/dues/collections.
+    conds.push('s.status = $' + (params.length + 1));
+    params.push(filters.student_status);
+  }
   if (filters.due_only) {
     conds.push(`e.status = 'active'`);
   }
@@ -26,6 +31,7 @@ export async function fetchEnrollments(filters = {}) {
             s.name AS student_name,
             s.phone AS student_phone,
             s.guardian_phone,
+            s.status AS student_status,
             c.name AS course_name,
             c.fee_mode,
             c.monthly_fee,
@@ -54,6 +60,7 @@ export async function getEnrollmentWithFees(id) {
             s.name AS student_name,
             s.phone AS student_phone,
             s.guardian_phone,
+            s.status AS student_status,
             c.name AS course_name,
             c.fee_mode,
             c.monthly_fee,

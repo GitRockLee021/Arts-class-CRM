@@ -1,0 +1,35 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>View Student — app-native options</title>
+<link rel="stylesheet" href="/client/src/styles.css">
+<style>
+  .gal{max-width:1180px;margin:0 auto;padding:30px 22px 70px}
+  .gal h1{margin:0 0 4px}
+  .gal p{color:var(--muted);font-size:13.5px;margin:0 0 22px;max-width:780px}
+  .gal-grid{display:flex;flex-direction:column;gap:26px}
+  .gal-frame{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow);padding:14px}
+  .gal-label{display:flex;align-items:baseline;gap:10px;margin:2px 4px 12px}
+  .gal-label b{font-family:var(--font-accent);font-size:15px}
+  .gal-label span{font-size:12px;color:var(--muted)}
+  iframe{width:100%;height:900px;border:1px solid var(--line);border-radius:12px;background:var(--bg)}
+  .gal-links{margin-top:22px;font-size:13px}
+  .gal-links a{color:var(--brand);font-weight:600;text-decoration:none;margin-right:16px}
+  .gal-links a:hover{text-decoration:underline}
+</style>
+</head>
+<body>
+<div class="gal">
+  <h1>View Student — app-native options</h1>
+  <p>These reuse the app's real stylesheet, so type, spacing, corners and colours match Pravaha exactly. Only the layout changes. Pick one (or mix) and I'll build it into the page.</p>
+  <div class="gal-grid">
+    <div class="gal-frame"><div class="gal-label"><b>A · Dashboard</b><span>stat tiles up top · enrollments left, info + activity right</span></div><iframe src="a.html" loading="lazy"></iframe></div>
+    <div class="gal-frame"><div class="gal-label"><b>B · Profile rail</b><span>sticky left identity + quick actions · content right</span></div><iframe src="b.html" loading="lazy"></iframe></div>
+    <div class="gal-frame"><div class="gal-label"><b>C · Single column</b><span>calm one-column story · fee focus panel first</span></div><iframe src="c.html" loading="lazy"></iframe></div>
+  </div>
+  <p class="gal-links">Open full-size: <a href="a.html">A</a><a href="b.html">B</a><a href="c.html">C</a></p>
+</div>
+</body>
+</html>

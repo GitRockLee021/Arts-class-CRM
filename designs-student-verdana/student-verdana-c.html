@@ -1,0 +1,183 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Pravaha C · Board — Student</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Syne:wght@600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#f7f4fa;--bg-2:#e9e3f0;--surface:#fffdf8;--surface-2:#f1ebf3;
+  --ink:#2f2a36;--muted:#8b8590;--line:#e4dfec;
+  --brand:#7a5ba8;--brand-dark:#60438c;--brand-2:#c09ad8;--brand-soft:#ede6f5;
+  --ok:#5e7e8c;--ok-soft:#e7edf0;--warn:#b0893f;--warn-soft:#f3edde;--bad:#a8507e;--bad-soft:#f4e6ee;--info:#6b62a0;--info-soft:#e8e6f2;
+  --radius:14px;
+  --shadow-sm:0 1px 3px rgba(80,70,90,.06);
+  --shadow-md:0 4px 16px rgba(80,70,90,.12);
+  --head:'Syne','Inter',system-ui,sans-serif;
+  --body:'Inter',system-ui,-apple-system,"Segoe UI",sans-serif;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--body);font-size:16px;line-height:1.6;-webkit-font-smoothing:antialiased}
+.wrap{max-width:1180px;margin:0 auto;padding:32px 24px 96px}
+.top{display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;margin-bottom:24px}
+.brand{font-family:var(--head);font-weight:700;font-size:18px}
+.brand small{display:block;font-family:var(--body);font-weight:500;font-size:12px;color:var(--muted);letter-spacing:.08em;text-transform:uppercase}
+.actions{display:flex;gap:8px}
+.btn{font-family:var(--body);font-size:14px;font-weight:600;border-radius:var(--radius);padding:11px 22px;border:1px solid transparent;cursor:pointer;box-shadow:var(--shadow-sm)}
+.btn.primary{background:var(--brand);color:#fff}
+.btn.primary:hover{background:var(--brand-dark)}
+.btn.secondary{background:transparent;color:var(--brand);border-color:var(--brand-2)}
+.btn.ghost{background:transparent;color:var(--muted);box-shadow:none}
+
+.band{display:flex;align-items:center;gap:24px;flex-wrap:wrap;background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:26px;box-shadow:var(--shadow-md);margin-bottom:24px}
+.mono-avatar{width:72px;height:72px;border-radius:9999px;background:linear-gradient(135deg,var(--brand),var(--brand-dark));color:#fff;display:grid;place-items:center;font-family:var(--head);font-size:30px;font-weight:700;flex:none}
+.band h1{margin:0;font-family:var(--head);font-size:32px;font-weight:800;letter-spacing:-.02em}
+.band .meta{color:var(--muted);font-size:14px;margin-top:4px}
+.band .right{margin-left:auto;display:flex;gap:8px;flex-wrap:wrap}
+.chip{display:inline-block;font-size:12px;font-weight:600;text-transform:uppercase;letter-spacing:.5px;padding:5px 12px;border-radius:9999px}
+.chip.success{background:var(--ok-soft);color:var(--ok)}
+.chip.warn{background:var(--warn-soft);color:var(--warn)}
+.chip.info{background:var(--info-soft);color:var(--info)}
+.chip.brand{background:var(--brand-soft);color:var(--brand)}
+
+.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:24px}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);overflow:hidden;box-shadow:var(--shadow-sm)}
+.card .strip{display:flex;align-items:center;gap:10px;font-family:var(--head);font-size:13px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:#fff;background:var(--brand);padding:13px 20px}
+.card .strip .ic{width:24px;height:24px;border-radius:7px;background:rgba(255,255,255,.2);display:grid;place-items:center;font-size:12px}
+.strip.brand2{background:linear-gradient(135deg,var(--brand-2),var(--brand))}
+.strip.slate{background:var(--info)}
+.strip.ok{background:var(--ok)}
+.strip.warn{background:var(--warn)}
+.card:nth-child(2) .strip{background:var(--info)}
+.card:nth-child(3) .strip{background:var(--ok)}
+.card .body{padding:20px}
+.span2{grid-column:span 2}
+.span3{grid-column:span 3}
+.n{font-family:var(--head);font-size:32px;font-weight:700;letter-spacing:-.02em;font-variant-numeric:tabular-nums}
+.n.warn{color:var(--warn)}.n.ok{color:var(--ok)}.n.brand{color:var(--brand)}
+.s{color:var(--muted);font-size:13px;margin-top:4px}
+.big-line{font-family:var(--head);font-size:20px;font-weight:700;letter-spacing:-.01em}
+.mutedline{color:var(--muted);font-size:14px;margin-top:4px}
+.track{height:9px;border-radius:9999px;background:var(--brand-soft);overflow:hidden;margin-top:16px}
+.track i{display:block;height:100%;width:42%;background:var(--brand);border-radius:9999px}
+.list{list-style:none;margin:0;padding:0}
+.list li{display:flex;align-items:center;gap:14px;padding:12px 0;border-bottom:1px solid var(--line);font-size:15px}
+.list li:last-child{border-bottom:0;padding-bottom:0}
+.list .amt{margin-left:auto;font-weight:600;font-variant-numeric:tabular-nums}
+.list .m{width:52px;text-align:right;color:var(--muted);font-size:13px}
+.kv{display:grid;grid-template-columns:1fr auto;gap:10px 16px;font-size:15px}
+.kv .k{color:var(--muted)}
+.kv .v{font-weight:600;text-align:right}
+.bars{display:flex;align-items:flex-end;gap:5px;height:76px}
+.bars i{flex:1;background:var(--info);border-radius:4px 4px 0 0;min-height:6px;opacity:.9}
+.bars i.dim{background:var(--brand-soft);opacity:1}
+.tl{list-style:none;margin:0;padding:0}
+.tl li{display:grid;grid-template-columns:82px 1fr;gap:14px;padding:11px 0;border-bottom:1px solid var(--line);font-size:14px}
+.tl li:last-child{border-bottom:0}
+.tl time{color:var(--muted);font-size:13px}
+@media(max-width:900px){.grid{grid-template-columns:1fr}.span2,.span3{grid-column:span 1}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="top">
+    <div class="brand">Pravaha Art Space<small>Student record</small></div>
+    <div class="actions">
+      <button class="btn ghost">Remind</button>
+      <button class="btn secondary">Edit</button>
+      <button class="btn primary">Record payment</button>
+    </div>
+  </div>
+
+  <div class="band">
+    <div class="mono-avatar">N</div>
+    <div>
+      <h1>Nitilakshan</h1>
+      <div class="meta">Age 12 · PAS-2026-058 · Parent Suresh Kumar · +91 98765 43210</div>
+    </div>
+    <div class="right">
+      <span class="chip success">Active</span>
+      <span class="chip warn">₹1,500 due</span>
+      <span class="chip info">92% attendance</span>
+    </div>
+  </div>
+
+  <div class="grid">
+    <div class="card">
+      <div class="strip"><span class="ic">₹</span>Fees</div>
+      <div class="body">
+        <div class="n warn">₹1,500</div>
+        <div class="s">outstanding · due 05 Nov 2026</div>
+        <hr style="border:0;border-top:1px solid var(--line);margin:16px 0">
+        <div class="n brand">₹10,500</div>
+        <div class="s">paid to date · 5 receipts</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="strip"><span class="ic">✓</span>Attendance</div>
+      <div class="body">
+        <div class="n ok">92%</div>
+        <div class="s">88 of 96 sessions · last 3 months</div>
+        <div class="bars" style="margin-top:16px">
+          <i style="height:90%"></i><i style="height:70%"></i><i class="dim" style="height:35%"></i><i style="height:80%"></i><i style="height:100%"></i><i style="height:60%"></i><i style="height:88%"></i><i class="dim" style="height:30%"></i><i style="height:95%"></i><i style="height:75%"></i><i style="height:82%"></i><i style="height:90%"></i>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="strip"><span class="ic">i</span>Contact</div>
+      <div class="body">
+        <div class="kv">
+          <span class="k">Parent</span><span class="v">Suresh Kumar</span>
+          <span class="k">Phone</span><span class="v">+91 98765 43210</span>
+          <span class="k">Batch</span><span class="v">Evening Advanced</span>
+          <span class="k">Joined</span><span class="v">04 Jun 2026</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="card span2">
+      <div class="strip brand2"><span class="ic">▤</span>Enrollment</div>
+      <div class="body">
+        <div style="display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap">
+          <div>
+            <div class="big-line">Kani — Advanced Drawing</div>
+            <div class="mutedline">Evening Advanced · Mon, Wed, Fri · 5:30–7:00 PM</div>
+          </div>
+          <span class="chip brand">₹1,500 / month</span>
+        </div>
+        <div class="track"><i></i></div>
+        <div class="s" style="margin-top:8px">Month 5 of 12 · 42% complete</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="strip warn"><span class="ic">▤</span>Recent payments</div>
+      <div class="body">
+        <ul class="list">
+          <li><span>05 Oct</span><span class="amt">₹1,500</span><span class="m">UPI</span></li>
+          <li><span>05 Sep</span><span class="amt">₹1,500</span><span class="m">Cash</span></li>
+          <li><span>05 Aug</span><span class="amt">₹1,500</span><span class="m">UPI</span></li>
+          <li><span>04 Jun</span><span class="amt">₹3,000</span><span class="m">UPI</span></li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="card span3">
+      <div class="strip"><span class="ic">✎</span>Activity</div>
+      <div class="body">
+        <ul class="tl">
+          <li><time>05 Oct 2026</time><span>October course fee recorded — ₹1,500 (UPI)</span></li>
+          <li><time>03 Oct 2026</time><span>Fee reminder sent to parent on WhatsApp</span></li>
+          <li><time>04 Jun 2026</time><span>Enrolled in Kani — Advanced Drawing</span></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>
+</body>
+</html>

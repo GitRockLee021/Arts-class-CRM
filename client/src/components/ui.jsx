@@ -71,7 +71,7 @@ export function useForm(initial) {
   return { form, set, setRaw, setForm };
 }
 
-export function Confirm({ message, onConfirm, children }) {
+export function Confirm({ message, onConfirm, confirmLabel = 'Delete', children }) {
   const [open, setOpen] = useState(false);
   return (
     <>
@@ -92,7 +92,7 @@ export function Confirm({ message, onConfirm, children }) {
                 setOpen(false);
               }}
             >
-              Delete
+              {confirmLabel}
             </button>
           </div>
         </Modal>

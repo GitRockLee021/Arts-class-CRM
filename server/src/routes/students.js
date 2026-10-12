@@ -86,7 +86,7 @@ router.get(
     );
 
     const dueByStudent = {};
-    for (const e of await fetchEnrollments({})) {
+    for (const e of await fetchEnrollments({ student_status: 'active' })) {
       dueByStudent[e.student_id] = (dueByStudent[e.student_id] || 0) + (e.fee?.due || 0);
     }
     const dueCount = Object.values(dueByStudent).filter((d) => d > 0).length;
@@ -260,6 +260,92 @@ router.put(
       );
     }
 
+    res.json(await get('SELECT * FROM students WHERE id = $1', req.params.id));
+  }),
+);
+
+router.post(
+  '/:id/archive',
+  requireIntId,
+  ah(async (req, res) => {
+    const existing = await get('SELECT * FROM students WHERE id = $1', req.params.id);
+    if (!existing) return res.status(404).json({ error: 'Student not found.' });
+    if (existing.status !== 'inactive') {
+      await run(`UPDATE students SET status = 'inactive' WHERE id = $1`, req.params.id);
+      await run(
+        `INSERT INTO student_events (student_id, type, remark) VALUES ($1, 'profile_updated', $2)`,
+        req.params.id,
+        'Student archived — status: active → inactive',
+      );
+    }
+    res.json(await get('SELECT * FROM students WHERE id = $1', req.params.id));
+  }),
+);
+
+router.post(
+  '/:id/unarchive',
+  requireIntId,
+  ah(async (req, res) => {
+    const existing = await get('SELECT * FROM students WHERE id = $1', req.params.id);
+    if (!existing) return res.status(404).json({ error: 'Student not found.' });
+    if (existing.status === 'inactive') {
+      const b = req.body || {};
+      const courseId = b.course_id ? Number(b.course_id) : null;
+      const batchId = b.batch_id ? Number(b.batch_id) : null;
+      const startDate = b.start_date || new Date().toISOString().slice(0, 10);
+      const notes = b.notes ? String(b.notes).trim() : null;
+
+      await run(`UPDATE students SET status = 'active' WHERE id = $1`, req.params.id);
+
+      let remark = 'Student restored — status: inactive → active';
+      if (courseId) {
+        const course = await get('SELECT id, name, status FROM courses WHERE id = $1', courseId);
+        if (!course || course.status === 'inactive') {
+          return res.status(400).json({ error: 'Select a valid active course.' });
+        }
+        const current = await get(
+          `SELECT * FROM enrollments WHERE student_id = $1 AND course_id = $2 AND status = 'active'
+           ORDER BY id DESC LIMIT 1`,
+          req.params.id,
+          courseId,
+        );
+        if (current) {
+          await run(
+            `UPDATE enrollments SET batch_id = $1, start_date = $2, notes = COALESCE($3, notes) WHERE id = $4`,
+            batchId,
+            startDate,
+            notes,
+            current.id,
+          );
+          remark = 'Student restored — current course kept, batch/schedule updated';
+        } else {
+          const { lastInsertRowid } = await run(
+            `INSERT INTO enrollments (student_id, course_id, batch_id, start_date, status, notes)
+             VALUES ($1, $2, $3, $4, 'active', $5)`,
+            req.params.id,
+            courseId,
+            batchId,
+            startDate,
+            notes,
+          );
+          await run(
+            `INSERT INTO student_events (student_id, enrollment_id, type, course_id, to_course, remark)
+             VALUES ($1, $2, 'enrolled', $3, $4, $5)`,
+            req.params.id,
+            lastInsertRowid,
+            courseId,
+            course.name,
+            'Re-enrolled on restore',
+          );
+          remark = `Student restored — re-enrolled in ${course.name}`;
+        }
+      }
+      await run(
+        `INSERT INTO student_events (student_id, type, remark) VALUES ($1, 'profile_updated', $2)`,
+        req.params.id,
+        remark,
+      );
+    }
     res.json(await get('SELECT * FROM students WHERE id = $1', req.params.id));
   }),
 );

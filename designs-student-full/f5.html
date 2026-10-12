@@ -1,0 +1,113 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Full page · Enrollment option 5 — Schedule focus</title>
+<link rel="stylesheet" href="/client/src/styles.css">
+<style>
+.demo-frame{max-width:1080px;margin:0 auto;padding:22px 22px 70px}
+.ecard{background:var(--surface);border:1px solid var(--line);border-radius:26px 18px 28px 20px / 18px 26px 16px 22px;box-shadow:var(--shadow);padding:18px;margin-bottom:16px}
+.ehead{display:flex;align-items:center;gap:12px}
+.emono{width:44px;height:44px;border-radius:14px 10px 15px 11px/11px 14px 10px 13px;background:linear-gradient(135deg,var(--brand),var(--bad));color:#fff;display:grid;place-items:center;font-weight:800;font-size:15px;flex:none}
+.etitle{font-family:var(--font-accent);font-size:16px;font-weight:700;display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.esub{color:var(--muted);font-size:12.5px;margin-top:2px}
+.nextclass{margin-top:16px;display:flex;align-items:center;gap:14px;background:linear-gradient(120deg,var(--brand-soft),var(--surface-2));border:1px solid color-mix(in srgb,var(--brand) 22%,transparent);border-radius:16px 12px 17px 13px/13px 16px 12px 15px;padding:14px}
+.nc-ico{width:40px;height:40px;border-radius:13px 10px 14px 11px/11px 13px 10px 13px;background:var(--brand);color:#fff;display:grid;place-items:center;font-weight:800;flex:none}
+.nc-k{font-size:10.5px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--brand-dark)}
+.nc-v{font-family:var(--font-accent);font-weight:700;font-size:15px;margin-top:2px}
+.nc-right{margin-left:auto;text-align:right}
+.nc-right b{font-size:13px;color:var(--brand-dark)}
+.daychips{display:flex;gap:6px;margin-top:14px;align-items:center}
+.daychips i{width:32px;height:32px;border-radius:11px 8px 12px 9px/9px 11px 8px 12px;display:grid;place-items:center;font-style:normal;font-weight:800;font-size:12px;background:var(--brand-soft);color:var(--brand-dark)}
+.daychips i.off{background:var(--surface-2);color:var(--muted);opacity:.6}
+.daychips .lab{font-size:12px;color:var(--muted);margin-left:6px}
+.feestrip{margin-top:16px;display:flex;align-items:center;gap:12px;border-top:1px dashed var(--line);padding-top:14px;flex-wrap:wrap}
+.feestrip .fs{display:flex;flex-direction:column}
+.feestrip .k{font-size:10.5px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+.feestrip .v{font-weight:700;font-size:14px;margin-top:2px;font-variant-numeric:tabular-nums}
+.feestrip .v.bad{color:var(--bad)}
+.feestrip .v.ok{color:var(--ok)}
+.feestrip .sep{width:1px;height:30px;background:var(--line)}
+.feestrip .acts{margin-left:auto;display:flex;gap:8px}
+</style>
+</head>
+<body>
+<div class="demo-frame"><div class="sv">
+  <div class="sv-top">
+    <nav class="sv-crumb"><a>Students</a><span>/</span><span class="sv-here">Nitilakshan</span></nav>
+    <div class="sv-top-right"><span class="sv-id-pill">ID: #PAS-2026-058</span><span class="sv-enrolled">Enrolled 04 Jun 2026</span></div>
+  </div>
+
+  <div class="sv-card sv-header">
+    <div class="sv-header-main">
+      <div class="sv-avatar-wrap"><div class="sv-avatar"><span>NI</span></div><span class="sv-live-dot"></span></div>
+      <div>
+        <div class="sv-name-row"><h1 class="sv-name">Nitilakshan</h1><span class="sv-status sv-status-active"><span class="sv-status-dot"></span>active</span></div>
+        <div class="sv-meta">
+          <span class="sv-meta-item">Age 12</span><span class="sv-meta-sep">•</span>
+          <span class="sv-meta-item">Parent: <strong>Suresh Kumar</strong> (+91 98765 43210)</span><span class="sv-meta-sep">•</span>
+          <span class="sv-meta-item">Batch: Evening Advanced</span>
+        </div>
+      </div>
+    </div>
+    <div class="sv-header-actions">
+      <button class="sv-btn sv-btn-primary">Record payment</button>
+      <button class="sv-btn">Remind</button>
+      <button class="sv-btn">Edit</button>
+    </div>
+  </div>
+
+  <div class="sv-twocol">
+    <section>
+      <div class="sv-info-head" style="margin-bottom:12px">
+        <div class="sv-info-title"><span class="sv-card-ico sv-ico-purple">▤</span><div><h3 class="sv-h3">Enrollments &amp; Course Batches</h3><p class="sv-muted-sm">1 active enrollment</p></div></div>
+      </div>
+      <div class="ecard">
+        <div class="ehead">
+          <span class="emono">KA</span>
+          <div><div class="etitle">Kani — Advanced Drawing <span class="badge badge-ok">active</span></div><div class="esub">Evening Advanced batch · since 04 Jun 2026</div></div>
+        </div>
+        <div class="nextclass">
+          <span class="nc-ico">▶</span>
+          <div><div class="nc-k">Next class</div><div class="nc-v">Today · 5:30 – 7:00 PM</div></div>
+          <div class="nc-right">Room<br><b>Studio 2</b></div>
+        </div>
+        <div class="daychips"><i>M</i><i class="off">T</i><i>W</i><i class="off">T</i><i>F</i><i class="off">S</i><i class="off">S</i><span class="lab">every Mon, Wed, Fri</span></div>
+        <div class="feestrip">
+          <div class="fs"><span class="k">Amount due</span><span class="v bad">₹1,500</span></div>
+          <span class="sep"></span>
+          <div class="fs"><span class="k">Due date</span><span class="v bad">05 Nov</span></div>
+          <span class="sep"></span>
+          <div class="fs"><span class="k">Paid to date</span><span class="v ok">₹10,500</span></div>
+          <div class="acts">
+            <button class="btn btn-sm">Edit</button>
+            <button class="btn btn-primary btn-sm">Record payment</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <div style="display:flex;flex-direction:column;gap:16px">
+      <section class="sv-card sv-info">
+        <div class="sv-info-head" style="margin-bottom:12px"><div class="sv-info-title"><span class="sv-card-ico sv-ico-purple">👤</span><div><h3 class="sv-h3">Student &amp; Parent</h3></div></div></div>
+        <div class="sv-info-grid" style="grid-template-columns:1fr 1fr">
+          <div class="sv-kv"><p class="sv-kv-label">Phone</p><span class="sv-kv-val">+91 98765 43210</span></div>
+          <div class="sv-kv"><p class="sv-kv-label">Parent</p><span class="sv-kv-val">Suresh Kumar</span></div>
+          <div class="sv-kv"><p class="sv-kv-label">Age</p><span class="sv-kv-val">12 yrs</span></div>
+          <div class="sv-kv"><p class="sv-kv-label">Admitted</p><span class="sv-kv-val">04 Jun 2026</span></div>
+        </div>
+      </section>
+      <section class="sv-card sv-logcard">
+        <div class="sv-info-head" style="margin-bottom:8px"><div class="sv-info-title"><span class="sv-card-ico sv-ico-indigo">🔔</span><div><h3 class="sv-h3">Recent Activity</h3></div></div></div>
+        <div class="sv-log">
+          <div class="sv-log-item"><span class="sv-log-dot sv-log-dot-ok"></span><div><p class="sv-log-title">Payment recorded</p><p class="sv-muted-sm">₹1,500 · UPI</p></div><span class="sv-log-date">05 Oct</span></div>
+          <div class="sv-log-item"><span class="sv-log-dot sv-log-dot-purple"></span><div><p class="sv-log-title">Fee reminder sent</p><p class="sv-muted-sm">WhatsApp to parent</p></div><span class="sv-log-date">03 Oct</span></div>
+          <div class="sv-log-item"><span class="sv-log-dot sv-log-dot-purple"></span><div><p class="sv-log-title">Enrolled in course</p><p class="sv-muted-sm">Kani — Advanced Drawing</p></div><span class="sv-log-date">04 Jun</span></div>
+        </div>
+      </section>
+    </div>
+  </div>
+</div></div>
+</body>
+</html>

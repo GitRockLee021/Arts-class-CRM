@@ -1,0 +1,122 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Enrollment card · Option 2 — Split panel</title>
+<link rel="stylesheet" href="/client/src/styles.css">
+<style>
+.demo{max-width:900px;margin:0 auto;padding:28px 22px 80px}
+.demo h1{font-size:20px}
+.ecard{background:var(--surface);border:1px solid var(--line);border-radius:26px 18px 28px 20px / 18px 26px 16px 22px;box-shadow:var(--shadow);padding:18px;margin-bottom:16px;display:flex;gap:0}
+.eleft{flex:1;min-width:0;padding-right:18px}
+.eright{width:216px;flex:none;border-left:1px dashed var(--line);padding-left:18px;display:flex;flex-direction:column}
+.ehead{display:flex;align-items:center;gap:12px}
+.emono{width:44px;height:44px;border-radius:14px 10px 15px 11px/11px 14px 10px 13px;background:linear-gradient(135deg,var(--brand),var(--bad));color:#fff;display:grid;place-items:center;font-weight:800;font-size:15px;flex:none}
+.etitle{font-family:var(--font-accent);font-size:16px;font-weight:700;display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.esub{color:var(--muted);font-size:12.5px;margin-top:2px}
+.sched{margin-top:16px}
+.sched .k{font-size:10.5px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin-bottom:8px}
+.daychips{display:flex;gap:6px}
+.daychips i{width:34px;height:34px;border-radius:11px 8px 12px 9px/9px 11px 8px 12px;display:grid;place-items:center;font-style:normal;font-weight:800;font-size:12px;background:var(--brand-soft);color:var(--brand-dark)}
+.daychips i.off{background:var(--surface-2);color:var(--muted);opacity:.6}
+.time{color:var(--muted);font-size:12.5px;margin-top:10px}
+.prog{margin-top:16px}
+.prog .row{display:flex;justify-content:space-between;font-size:12px;color:var(--muted);margin-bottom:6px}
+.prog .bar{height:9px;border-radius:99px;background:var(--surface-2);overflow:hidden}
+.prog .bar i{display:block;height:100%;width:42%;border-radius:99px;background:linear-gradient(90deg,var(--brand),var(--brand-2))}
+.rail-k{font-size:10.5px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+.rail-hero{font-size:24px;font-weight:800;color:var(--bad);letter-spacing:-.02em;margin-top:6px;font-variant-numeric:tabular-nums}
+.rail-hero.ok{color:var(--ok)}
+.rail-hero small{display:block;font-size:11.5px;font-weight:600;color:var(--muted);margin-top:2px}
+.rail-rows{margin-top:12px;display:flex;flex-direction:column;gap:0}
+.rail-rows .r{display:flex;justify-content:space-between;gap:8px;font-size:12.5px;padding:7px 0;border-bottom:1px dashed var(--line)}
+.rail-rows .r:last-child{border-bottom:0}
+.rail-rows .r b{font-variant-numeric:tabular-nums}
+.rail-foot{margin-top:14px;display:flex;flex-direction:column;gap:8px}
+.rail-foot .btn{justify-content:center}
+.paylist{list-style:none;margin:14px 0 0;padding:0;display:flex;flex-wrap:wrap;gap:6px}
+.paylist li{font-size:11.5px;background:var(--surface-2);border:1px solid var(--line);border-radius:9px;padding:3px 9px}
+@media(max-width:640px){.ecard{flex-direction:column}.eright{width:auto;border-left:0;border-top:1px dashed var(--line);padding-left:0;padding-top:16px;margin-top:16px}.eleft{padding-right:0}}
+</style>
+</head>
+<body>
+<div class="demo">
+<h1>Option 2 · Split panel</h1>
+<p class="muted" style="margin-bottom:18px">Identity + class schedule on the left, a billing rail on the right. Schedule gets real prominence.</p>
+
+<div class="ecard">
+  <div class="eleft">
+    <div class="ehead">
+      <span class="emono">KA</span>
+      <div>
+        <div class="etitle">Kani — Advanced Drawing <span class="badge badge-ok">active</span></div>
+        <div class="esub">Evening Advanced batch</div>
+      </div>
+    </div>
+    <div class="sched">
+      <div class="k">Class days</div>
+      <div class="daychips"><i>M</i><i class="off">T</i><i>W</i><i class="off">T</i><i>F</i><i class="off">S</i><i class="off">S</i></div>
+      <div class="time">5:30 – 7:00 PM · since 04 Jun 2026</div>
+    </div>
+    <div class="prog">
+      <div class="row"><span>Course progress</span><span>Month 5 of 12 · 42%</span></div>
+      <div class="bar"><i></i></div>
+    </div>
+    <ul class="paylist">
+      <li>05 Oct ₹1,500</li><li>05 Sep ₹1,500</li><li>05 Aug ₹1,500</li><li>04 Jun ₹3,000</li>
+    </ul>
+  </div>
+  <div class="eright">
+    <div class="rail-k">Billing</div>
+    <div class="rail-hero">₹1,500<small>due 05 Nov · 6 days left</small></div>
+    <div class="rail-rows">
+      <div class="r"><span class="muted">Monthly fee</span><b>₹1,500</b></div>
+      <div class="r"><span class="muted">Paid to date</span><b class="text-ok">₹10,500</b></div>
+      <div class="r"><span class="muted">Last payment</span><b>05 Oct</b></div>
+    </div>
+    <div class="rail-foot">
+      <button class="btn btn-primary btn-sm">Record payment</button>
+      <button class="btn btn-sm">Edit course</button>
+    </div>
+  </div>
+</div>
+
+<div class="ecard">
+  <div class="eleft">
+    <div class="ehead">
+      <span class="emono" style="background:var(--ok)">FA</span>
+      <div>
+        <div class="etitle">Fine Arts — Level 1 <span class="badge badge-info">one-time</span></div>
+        <div class="esub">Weekend Morning batch</div>
+      </div>
+    </div>
+    <div class="sched">
+      <div class="k">Class days</div>
+      <div class="daychips"><i class="off">M</i><i class="off">T</i><i class="off">W</i><i class="off">T</i><i class="off">F</i><i>S</i><i class="off">S</i></div>
+      <div class="time">9:00 – 11:00 AM · since 12 Feb 2026</div>
+    </div>
+    <div class="prog">
+      <div class="row"><span>Course progress</span><span>Completed</span></div>
+      <div class="bar"><i style="width:100%;background:var(--ok)"></i></div>
+    </div>
+    <ul class="paylist"><li>12 Feb ₹6,000</li></ul>
+  </div>
+  <div class="eright">
+    <div class="rail-k">Billing</div>
+    <div class="rail-hero ok">Cleared<small>fully paid · one-time course</small></div>
+    <div class="rail-rows">
+      <div class="r"><span class="muted">Course fee</span><b>₹6,000</b></div>
+      <div class="r"><span class="muted">Paid to date</span><b class="text-ok">₹6,000</b></div>
+      <div class="r"><span class="muted">Last payment</span><b>12 Feb</b></div>
+    </div>
+    <div class="rail-foot">
+      <button class="btn btn-ghost btn-sm">Record payment</button>
+      <button class="btn btn-sm">Edit course</button>
+    </div>
+  </div>
+</div>
+
+</div>
+</body>
+</html>

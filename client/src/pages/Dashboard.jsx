@@ -2,14 +2,53 @@ import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { api } from '../api.js';
 import { inr, fmtDate } from '../format.js';
-import { Badge, Spinner, EmptyState } from '../components/ui.jsx';
+import { Badge, Spinner, EmptyState, Modal } from '../components/ui.jsx';
+import { Icon } from '../components/icons.jsx';
+import AddStudentForm from '../components/AddStudentForm.jsx';
+import AdmissionCollect from '../components/AdmissionCollect.jsx';
+import { useToast } from '../components/Toast.jsx';
 
 export default function Dashboard() {
+  const toast = useToast();
   const [data, setData] = useState(null);
+  const [showForm, setShowForm] = useState(false);
+  const [lastStudent, setLastStudent] = useState(null);
+  const [admissionEnroll, setAdmissionEnroll] = useState(null);
+
+  function load() {
+    api.get('/stats').then(setData).catch(() => {});
+  }
 
   useEffect(() => {
-    api.get('/stats').then(setData).catch(() => {});
+    load();
   }, []);
+
+  async function createStudent(form, mode) {
+    const student = await api.post('/students', {
+      name: form.name,
+      age: form.age,
+      phone: form.phone,
+      guardian_name: form.guardian_name,
+      date_of_admission: form.date_of_admission,
+      status: mode === 'draft' ? 'draft' : 'active',
+    });
+    if (mode === 'save' && form.course_id) {
+      const enrollment = await api.post('/enrollments', {
+        student_id: student.id,
+        course_id: form.course_id,
+        batch_id: form.batch_id || null,
+        start_date: form.date_of_admission,
+        status: 'active',
+      });
+      toast('Student added and enrolled.');
+      setLastStudent(student);
+      setAdmissionEnroll(enrollment);
+    } else {
+      toast('Draft saved.');
+    }
+    setShowForm(false);
+    load();
+  }
 
   if (!data) return <Spinner />;
 
@@ -25,7 +64,14 @@ export default function Dashboard() {
 
   return (
     <>
-      <h1>Dashboard</h1>
+      <div className="page-head">
+        <h1>Dashboard</h1>
+        <div className="row" style={{ marginLeft: 'auto' }}>
+          <button className="btn btn-primary" onClick={() => setShowForm(true)}>
+            <Icon name="plus" size={16} /> Add student
+          </button>
+        </div>
+      </div>
       <div className="stat-grid">
         {cards.map((c) => (
           <div key={c.label} className="card stat">
@@ -85,6 +131,27 @@ export default function Dashboard() {
           </div>
         )}
       </div>
+
+      {showForm && (
+        <Modal title="Add student" onClose={() => setShowForm(false)}>
+          <AddStudentForm
+            onSave={createStudent}
+            onCancel={() => setShowForm(false)}
+            submitLabel="Save & continue"
+          />
+        </Modal>
+      )}
+
+      {admissionEnroll && (
+        <AdmissionCollect
+          enrollment={admissionEnroll}
+          onClose={() => {
+            setAdmissionEnroll(null);
+            setLastStudent(null);
+          }}
+          onSaved={load}
+        />
+      )}
     </>
   );
 }

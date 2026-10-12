@@ -1,0 +1,100 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Enrollment card · Option 6 — Compact accordion</title>
+<link rel="stylesheet" href="/client/src/styles.css">
+<style>
+.demo{max-width:900px;margin:0 auto;padding:28px 22px 80px}
+.demo h1{font-size:20px}
+.shell{background:var(--surface);border:1px solid var(--line);border-radius:26px 18px 28px 20px / 18px 26px 16px 22px;box-shadow:var(--shadow);padding:6px 18px;margin-bottom:16px}
+.acc{border-bottom:1px dashed var(--line)}
+.acc:last-child{border-bottom:0}
+.acc>summary{list-style:none;cursor:pointer;display:flex;align-items:center;gap:12px;padding:14px 0}
+.acc>summary::-webkit-details-marker{display:none}
+.emono{width:40px;height:40px;border-radius:13px 9px 14px 10px/10px 13px 9px 12px;background:linear-gradient(135deg,var(--brand),var(--bad));color:#fff;display:grid;place-items:center;font-weight:800;font-size:14px;flex:none}
+.sum-main{min-width:0}
+.sum-title{font-family:var(--font-accent);font-size:15px;font-weight:700;display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.sum-sub{color:var(--muted);font-size:12px;margin-top:1px}
+.sum-right{margin-left:auto;display:flex;align-items:center;gap:10px}
+.chev{width:22px;height:22px;border-radius:7px;background:var(--surface-2);display:grid;place-items:center;color:var(--muted);font-size:12px;transition:transform .15s}
+.acc[open] .chev{transform:rotate(90deg)}
+.acc-body{padding:0 0 16px 52px;display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+.acc-body .k{font-size:10.5px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+.acc-body .v{font-weight:700;font-size:14.5px;margin-top:3px;font-variant-numeric:tabular-nums}
+.acc-body .v.bad{color:var(--bad)}
+.acc-body .v.ok{color:var(--ok)}
+.acc-body .wide{grid-column:1/-1;display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-top:4px}
+.acc-body .wide .btn{font-size:13px}
+.paylist{list-style:none;margin:0;padding:0;display:flex;flex-wrap:wrap;gap:6px}
+.paylist li{font-size:11.5px;background:var(--surface-2);border:1px solid var(--line);border-radius:9px;padding:3px 9px}
+@media(max-width:640px){.acc-body{grid-template-columns:repeat(2,1fr);padding-left:52px}}
+</style>
+</head>
+<body>
+<div class="demo">
+<h1>Option 6 · Compact accordion</h1>
+<p class="muted" style="margin-bottom:18px">Best when a student has several enrollments — a tight list, expand the one you care about. (Click the rows.)</p>
+
+<div class="shell">
+  <details class="acc" open>
+    <summary>
+      <span class="emono">KA</span>
+      <div class="sum-main">
+        <div class="sum-title">Kani — Advanced Drawing <span class="badge badge-ok">active</span></div>
+        <div class="sum-sub">Evening Advanced · Mon, Wed, Fri · 5:30–7:00 PM</div>
+      </div>
+      <div class="sum-right">
+        <span class="fee-chip fee-due">₹1,500 due</span>
+        <span class="chev">›</span>
+      </div>
+    </summary>
+    <div class="acc-body">
+      <div><div class="k">Monthly fee</div><div class="v">₹1,500</div></div>
+      <div><div class="k">Next due</div><div class="v bad">05 Nov 2026</div></div>
+      <div><div class="k">Paid to date</div><div class="v ok">₹10,500</div></div>
+      <div class="wide">
+        <span class="k" style="margin-right:4px">Recent</span>
+        <ul class="paylist"><li>05 Oct ₹1,500</li><li>05 Sep ₹1,500</li><li>05 Aug ₹1,500</li><li>04 Jun ₹3,000</li></ul>
+      </div>
+      <div class="wide">
+        <button class="btn btn-primary btn-sm">Record payment</button>
+        <button class="btn btn-sm">Edit</button>
+        <button class="btn btn-sm">Upgrade course</button>
+      </div>
+    </div>
+  </details>
+
+  <details class="acc">
+    <summary>
+      <span class="emono" style="background:var(--ok)">FA</span>
+      <div class="sum-main">
+        <div class="sum-title">Fine Arts — Level 1 <span class="badge badge-info">one-time</span></div>
+        <div class="sum-sub">Weekend Morning · Sat · 9:00–11:00 AM</div>
+      </div>
+      <div class="sum-right">
+        <span class="fee-chip fee-paid">Cleared</span>
+        <span class="chev">›</span>
+      </div>
+    </summary>
+    <div class="acc-body">
+      <div><div class="k">Course fee</div><div class="v">₹6,000</div></div>
+      <div><div class="k">Next due</div><div class="v">—</div></div>
+      <div><div class="k">Paid to date</div><div class="v ok">₹6,000</div></div>
+      <div class="wide">
+        <span class="k" style="margin-right:4px">Recent</span>
+        <ul class="paylist"><li>12 Feb ₹6,000</li></ul>
+      </div>
+      <div class="wide">
+        <button class="btn btn-ghost btn-sm">Record payment</button>
+        <button class="btn btn-sm">Edit</button>
+        <button class="btn btn-sm">Upgrade course</button>
+      </div>
+    </div>
+  </details>
+</div>
+
+</div>
+</body>
+</html>

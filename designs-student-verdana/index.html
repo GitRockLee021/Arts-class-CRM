@@ -1,0 +1,50 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>View Student — options (our palette)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Syne:wght@600;700;800&display=swap" rel="stylesheet">
+<style>
+  *{box-sizing:border-box}
+  body{margin:0;padding:36px 24px 60px;background:#f7f4fa;color:#2f2a36;font-family:'Inter',system-ui,Segoe UI,Arial,sans-serif;-webkit-font-smoothing:antialiased}
+  h1{margin:0 0 6px;font-family:'Syne',system-ui,sans-serif;font-size:28px;font-weight:800;letter-spacing:-.02em;color:#2f2a36}
+  p.muted{color:#8b8590;margin:0 0 10px;font-size:14px;max-width:860px}
+  .tokens{display:flex;gap:12px;flex-wrap:wrap;margin:16px 0 28px}
+  .sw{display:flex;align-items:center;gap:6px;font-size:12px;color:#5b5563;letter-spacing:.2px}
+  .sw i{width:16px;height:16px;border-radius:5px;display:inline-block;border:1px solid rgba(80,70,90,.12)}
+  .grid{display:grid;grid-template-columns:1fr;gap:28px}
+  .frame{background:#fffdf8;border:1px solid #e4dfec;border-radius:14px;padding:14px;box-shadow:0 2px 3px rgba(80,70,90,.06),0 10px 26px rgba(80,70,90,.08)}
+  .frame .label{display:flex;align-items:baseline;gap:10px;margin:2px 6px 12px}
+  .frame .label b{font-family:'Syne',system-ui,sans-serif;font-size:15px;font-weight:700;letter-spacing:.01em}
+  .frame .label span{font-size:12px;color:#8b8590}
+  iframe{width:100%;height:860px;border:1px solid #ece7f2;border-radius:10px;background:#f7f4fa}
+  .links{margin-top:30px;font-size:13px;color:#8b8590}
+  .links a{color:#7a5ba8;text-decoration:none;margin-right:16px;font-weight:600}
+  .links a:hover{text-decoration:underline}
+</style>
+</head>
+<body>
+  <h1>View Student — options in our palette</h1>
+  <p class="muted">Same content model as our app (profile, enrollment, fees, attendance, activity), re-skinned with the <b>Pravaha brand palette</b> and borrowing only layout ideas from the design doc (tinted header strips, uppercase chips, metric cards, tabular numerals).</p>
+  <div class="tokens">
+    <span class="sw"><i style="background:#7a5ba8"></i>brand</span>
+    <span class="sw"><i style="background:#60438c"></i>brand-dark</span>
+    <span class="sw"><i style="background:#c09ad8"></i>brand-2</span>
+    <span class="sw"><i style="background:#ede6f5"></i>brand-soft</span>
+    <span class="sw"><i style="background:#f7f4fa"></i>bg</span>
+    <span class="sw"><i style="background:#fffdf8"></i>surface</span>
+    <span class="sw"><i style="background:#5e7e8c"></i>ok</span>
+    <span class="sw"><i style="background:#b0893f"></i>warn</span>
+    <span class="sw"><i style="background:#6b62a0"></i>info</span>
+  </div>
+  <div class="grid">
+    <div class="frame"><div class="label"><b>A · Record sheet</b><span>single column · calm · generous whitespace</span></div><iframe src="student-verdana-a.html" loading="lazy"></iframe></div>
+    <div class="frame"><div class="label"><b>B · Two-pane</b><span>brand gradient sticky rail + content</span></div><iframe src="student-verdana-b.html" loading="lazy"></iframe></div>
+    <div class="frame"><div class="label"><b>C · Board</b><span>card grid · tinted header strips · at-a-glance</span></div><iframe src="student-verdana-c.html" loading="lazy"></iframe></div>
+  </div>
+  <p class="links">Open full-size: <a href="student-verdana-a.html">A</a><a href="student-verdana-b.html">B</a><a href="student-verdana-c.html">C</a></p>
+</body>
+</html>

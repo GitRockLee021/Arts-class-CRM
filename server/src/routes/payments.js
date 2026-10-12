@@ -80,7 +80,7 @@ router.get(
        FROM enrollments e
        JOIN students s ON s.id = e.student_id
        LEFT JOIN courses c ON c.id = e.course_id
-       WHERE e.status = 'active'`,
+       WHERE e.status = 'active' AND s.status = 'active'`,
       ym.key,
     );
 

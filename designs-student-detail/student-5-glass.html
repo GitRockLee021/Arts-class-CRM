@@ -1,0 +1,132 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>5 · Glass — Student revamp</title>
+<style>
+:root{--ink:#1c1630;--muted:#6f6a86;--glass:rgba(255,255,255,.55);--line:rgba(255,255,255,.7);--brand:#7c5cff;--ok:#17a673;--warn:#e0932e}
+*{box-sizing:border-box}
+body{margin:0;min-height:100vh;color:var(--ink);font-family:Inter,system-ui,Arial,sans-serif;
+  background:
+   radial-gradient(50vw 50vw at 12% 8%,#ffd1ec,transparent 60%),
+   radial-gradient(45vw 45vw at 88% 12%,#c9e7ff,transparent 60%),
+   radial-gradient(55vw 55vw at 78% 92%,#d7ffe6,transparent 62%),
+   radial-gradient(45vw 45vw at 8% 88%,#ffe9c7,transparent 60%),
+   linear-gradient(160deg,#f2f0ff,#eefaff)}
+.wrap{max-width:1180px;margin:0 auto;padding:28px 20px 80px}
+.bar{display:flex;align-items:center;justify-content:space-between;gap:14px;flex-wrap:wrap;margin-bottom:20px}
+.brand{font-weight:800;letter-spacing:-.02em;font-size:17px;text-shadow:0 1px 0 rgba(255,255,255,.6)}
+.brand small{display:block;font-size:10px;letter-spacing:.16em;text-transform:uppercase;color:var(--muted);font-weight:700}
+.acts{display:flex;gap:10px}
+.btn{border:1px solid var(--line);background:var(--glass);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border-radius:14px;padding:10px 15px;font-weight:600;font-size:13px;color:var(--ink);cursor:pointer;box-shadow:0 8px 22px rgba(80,70,140,.12)}
+.btn.primary{background:linear-gradient(140deg,#7c5cff,#9a6bff);border-color:transparent;color:#fff}
+.card{background:var(--glass);backdrop-filter:blur(18px) saturate(160%);-webkit-backdrop-filter:blur(18px) saturate(160%);border:1px solid var(--line);border-radius:26px;box-shadow:0 18px 46px rgba(70,60,140,.16);padding:20px}
+.hero{display:flex;gap:20px;align-items:center;margin-bottom:18px}
+.avatar{width:86px;height:86px;border-radius:26px;background:linear-gradient(140deg,#7c5cff,#39c6ff);color:#fff;display:grid;place-items:center;font-size:34px;font-weight:800;box-shadow:0 12px 28px rgba(124,92,255,.4);flex:none}
+.hero h1{margin:0;font-size:30px;letter-spacing:-.03em}
+.hero p{margin:6px 0 0;color:var(--muted);font-size:13.5px;line-height:1.6}
+.chip{display:inline-flex;align-items:center;gap:6px;background:rgba(23,166,115,.14);color:var(--ok);border:1px solid rgba(23,166,115,.3);border-radius:999px;padding:4px 11px;font-size:11.5px;font-weight:700}
+.dot{width:7px;height:7px;border-radius:50%;background:var(--ok)}
+.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}
+.stat .l{font-size:10.5px;font-weight:800;letter-spacing:.14em;text-transform:uppercase;color:var(--muted)}
+.stat .n{font-size:32px;font-weight:800;letter-spacing:-.04em;margin-top:10px}
+.stat .n .cur{font-size:.55em;opacity:.7;margin-right:2px}
+.stat .s{color:var(--muted);font-size:12px;margin-top:4px}
+.ring{--p:92;width:104px;height:104px;border-radius:50%;background:conic-gradient(#7c5cff calc(var(--p)*1%),rgba(255,255,255,.6) 0);display:grid;place-items:center;margin:8px auto 0}
+.ring b{width:80px;height:80px;border-radius:50%;background:rgba(255,255,255,.85);display:grid;place-items:center;font-size:20px;font-weight:800}
+.span2{grid-column:span 2}
+.two{display:grid;grid-template-columns:1.4fr 1fr;gap:18px;margin-top:18px}
+h3{margin:0 0 12px;font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);font-weight:800}
+.pay div{display:flex;align-items:center;gap:14px;padding:10px 0;border-bottom:1px solid rgba(255,255,255,.7);font-size:13.5px}
+.pay div:last-child{border-bottom:0}
+.pay .amt{margin-left:auto;font-weight:800}
+.pay .m{width:48px;text-align:right;color:var(--muted);font-size:12px}
+.heat{display:grid;grid-template-columns:repeat(18,1fr);gap:5px}
+.heat i{aspect-ratio:1;border-radius:5px;background:rgba(255,255,255,.7)}
+.heat i.on{background:rgba(124,92,255,.45)}
+.heat i.hi{background:#7c5cff}
+.tl{list-style:none;margin:0;padding:0}
+.tl li{position:relative;padding:0 0 15px 20px;font-size:13px}
+.tl li:before{content:"";position:absolute;left:3px;top:5px;width:8px;height:8px;border-radius:50%;background:#7c5cff;box-shadow:0 0 0 3px rgba(124,92,255,.2)}
+.tl li:after{content:"";position:absolute;left:6.5px;top:14px;bottom:0;width:1px;background:rgba(124,92,255,.25)}
+.tl li:last-child:after{display:none}
+.tl time{display:block;color:var(--muted);font-size:11.5px;margin-top:2px}
+.bar-track{height:12px;border-radius:999px;background:rgba(255,255,255,.75);overflow:hidden;margin-top:8px}
+.bar-track i{display:block;height:100%;width:42%;border-radius:999px;background:linear-gradient(90deg,#7c5cff,#39c6ff)}
+@media(max-width:900px){.grid{grid-template-columns:1fr}.span2{grid-column:span 1}.two{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="bar">
+    <div class="brand">Pravaha Art Space<small>Student</small></div>
+    <div class="acts">
+      <button class="btn">Remind</button>
+      <button class="btn">Edit</button>
+      <button class="btn primary">Record payment</button>
+    </div>
+  </div>
+
+  <div class="card hero">
+    <div class="avatar">N</div>
+    <div>
+      <h1>Nitilakshan</h1>
+      <p>Age 12 · PAS-2026-058 · Parent: Suresh Kumar · +91 98765 43210<br>Enrolled 04 Jun 2026</p>
+    </div>
+    <span class="chip" style="margin-left:auto"><span class="dot"></span>Active</span>
+  </div>
+
+  <div class="grid">
+    <div class="card stat" style="background:linear-gradient(150deg,rgba(255,214,214,.7),rgba(255,255,255,.5))">
+      <div class="l">Outstanding</div><div class="n"><span class="cur">₹</span>1,500</div><div class="s">next due 05 Nov 2026</div>
+    </div>
+    <div class="card stat">
+      <div class="l">Attendance</div>
+      <div class="ring"><b>92%</b></div>
+      <div class="s" style="text-align:center">88 / 96 sessions</div>
+    </div>
+    <div class="card stat" style="background:linear-gradient(150deg,rgba(210,255,231,.7),rgba(255,255,255,.5))">
+      <div class="l">Paid to date</div><div class="n"><span class="cur">₹</span>10,500</div><div class="s">5 receipts · always on time</div>
+    </div>
+  </div>
+
+  <div class="two">
+    <div class="card">
+      <h3>Enrollment &amp; batch</h3>
+      <div style="font-size:19px;font-weight:800">Kani — Advanced Drawing</div>
+      <div style="color:var(--muted);font-size:13px;margin-top:4px">Evening Advanced · Mon, Wed, Fri · 5:30–7:00 PM</div>
+      <div class="bar-track"><i></i></div>
+      <div style="color:var(--muted);font-size:12px;margin-top:8px">Month 5 of 12 · ₹1,500 a month</div>
+    </div>
+    <div class="card">
+      <h3>Activity</h3>
+      <ul class="tl">
+        <li>October fee recorded — ₹1,500<time>05 Oct 2026</time></li>
+        <li>Reminder sent to parent<time>03 Oct 2026</time></li>
+        <li>Enrolled in Kani<time>04 Jun 2026</time></li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="two" style="grid-template-columns:1.4fr 1fr">
+    <div class="card">
+      <h3>Recent payments</h3>
+      <div class="pay">
+        <div><span>05 Oct 2026</span><span class="amt">₹1,500</span><span class="m">UPI</span></div>
+        <div><span>05 Sep 2026</span><span class="amt">₹1,500</span><span class="m">Cash</span></div>
+        <div><span>05 Aug 2026</span><span class="amt">₹1,500</span><span class="m">UPI</span></div>
+        <div><span>04 Jun 2026</span><span class="amt">₹3,000</span><span class="m">UPI</span></div>
+      </div>
+    </div>
+    <div class="card">
+      <h3>Attendance — last 90 days</h3>
+      <div class="heat">
+        <i class="hi"></i><i class="hi"></i><i></i><i class="on"></i><i class="hi"></i><i class="hi"></i><i class="hi"></i><i></i><i class="on"></i><i class="hi"></i><i class="hi"></i><i class="hi"></i><i class="on"></i><i class="hi"></i><i></i><i class="hi"></i><i class="hi"></i><i class="on"></i>
+        <i class="on"></i><i class="hi"></i><i class="hi"></i><i></i><i class="hi"></i><i class="on"></i><i class="hi"></i><i class="hi"></i><i class="hi"></i><i class="on"></i><i></i><i class="hi"></i><i class="hi"></i><i class="hi"></i><i class="on"></i><i class="hi"></i><i></i><i class="on"></i>
+      </div>
+    </div>
+  </div>
+</div>
+</body>
+</html>

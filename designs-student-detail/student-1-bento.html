@@ -1,0 +1,151 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>1 · Bento mosaic — Student revamp</title>
+<style>
+:root{--bg:#eef0f8;--ink:#171523;--muted:#767183;--card:#fff;--line:#e6e4f0;--brand:#6b4fa0;--brand2:#9a7cc4;--ok:#2f8f6b;--warn:#c8932e;--bad:#d95a5a}
+*{box-sizing:border-box}
+body{margin:0;background:radial-gradient(1200px 600px at 80% -10%,#e7e3fb,transparent),var(--bg);color:var(--ink);font-family:Inter,system-ui,Arial,sans-serif}
+.wrap{max-width:1200px;margin:0 auto;padding:26px 22px 70px}
+.bar{display:flex;align-items:center;justify-content:space-between;gap:14px;margin-bottom:18px}
+.brand{font-weight:800;letter-spacing:-.02em;font-size:17px}
+.brand small{display:block;font-weight:700;color:var(--muted);letter-spacing:.16em;text-transform:uppercase;font-size:9.5px}
+.acts{display:flex;gap:9px;flex-wrap:wrap}
+.btn{border:1px solid var(--line);background:#fff;border-radius:13px;padding:10px 14px;font-weight:600;font-size:13px;cursor:pointer;color:var(--ink)}
+.btn.primary{background:var(--brand);border-color:var(--brand);color:#fff}
+.btn.ghost{background:transparent}
+.grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px}
+.tile{background:var(--card);border:1px solid var(--line);border-radius:24px;padding:18px;box-shadow:0 12px 30px rgba(40,30,70,.06)}
+.profile{grid-column:span 2;grid-row:span 2;border:0;color:#fff;background:linear-gradient(145deg,#221d30,#6b4fa0 75%,#9a7cc4);display:flex;flex-direction:column;justify-content:space-between;min-height:260px}
+.avatar{width:68px;height:68px;border-radius:20px;background:rgba(255,255,255,.16);display:grid;place-items:center;font-weight:800;font-size:24px;letter-spacing:.02em}
+.pname{font-size:30px;font-weight:800;letter-spacing:-.03em;margin:14px 0 4px}
+.pmeta{color:rgba(255,255,255,.82);font-size:13px;line-height:1.7}
+.pill{display:inline-flex;align-items:center;gap:6px;background:rgba(255,255,255,.18);border-radius:999px;padding:4px 11px;font-size:11.5px;font-weight:700}
+.dot{width:7px;height:7px;border-radius:50%;background:#7ff0b8;box-shadow:0 0 0 3px rgba(127,240,184,.25)}
+.lbl{font-size:10.5px;font-weight:800;letter-spacing:.13em;text-transform:uppercase;color:var(--muted);margin:0 0 8px}
+.big{font-size:26px;font-weight:800;letter-spacing:-.03em}
+.big .cur{font-size:.62em;font-weight:700;opacity:.7;margin-right:2px}
+.sub{color:var(--muted);font-size:12px;margin-top:4px}
+.tile.ok{background:linear-gradient(160deg,#eafaf1,#fff)}
+.tile.warn{background:linear-gradient(160deg,#fdf6e7,#fff)}
+.tile.brand{background:linear-gradient(160deg,#f1ecfb,#fff)}
+.span2{grid-column:span 2}
+.ring{--p:92;width:96px;height:96px;border-radius:50%;background:conic-gradient(var(--brand) calc(var(--p)*1%),#ece8f6 0);display:grid;place-items:center;margin-right:16px}
+.ring b{width:74px;height:74px;border-radius:50%;background:#fff;display:grid;place-items:center;font-size:19px;font-weight:800}
+.heat{display:grid;grid-template-columns:repeat(18,1fr);gap:4px;margin-top:8px}
+.heat i{aspect-ratio:1;border-radius:4px;background:#ece8f6}
+.heat i.on{background:var(--brand2)}
+.heat i.hi{background:var(--brand)}
+.pay{display:flex;flex-direction:column;gap:2px;margin-top:6px}
+.pay > div{display:flex;align-items:center;gap:12px;padding:9px 0;border-bottom:1px solid var(--line);font-size:13px}
+.pay > div:last-child{border-bottom:0}
+.pay .amt{margin-left:auto;font-weight:800}
+.pay .m{width:52px;text-align:right;color:var(--muted);font-size:12px}
+.tl{list-style:none;margin:6px 0 0;padding:0}
+.tl li{position:relative;padding:0 0 14px 20px;font-size:13px}
+.tl li:before{content:"";position:absolute;left:3px;top:5px;width:8px;height:8px;border-radius:50%;background:var(--brand)}
+.tl li:after{content:"";position:absolute;left:6.5px;top:14px;bottom:0;width:1px;background:var(--line)}
+.tl li:last-child:after{display:none}
+.tl time{display:block;color:var(--muted);font-size:11.5px;margin-top:2px}
+.row{display:flex;align-items:center;gap:14px}
+.chip{display:inline-block;font-size:11px;font-weight:700;border-radius:8px;padding:3px 9px;background:#f1ecfb;color:var(--brand)}
+@media(max-width:900px){.grid{grid-template-columns:repeat(2,1fr)}.profile,.span2{grid-column:span 2}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="bar">
+    <div class="brand">Pravaha Art Space<small>Student</small></div>
+    <div class="acts">
+      <button class="btn ghost">Remind</button>
+      <button class="btn">Edit</button>
+      <button class="btn primary">Record payment</button>
+    </div>
+  </div>
+
+  <div class="grid">
+    <div class="tile profile">
+      <div class="row">
+        <div class="avatar">N</div>
+        <span class="pill"><span class="dot"></span>Active</span>
+      </div>
+      <div>
+        <div class="pname">Nitilakshan</div>
+        <div class="pmeta">
+          Age 12 · PAS-2026-058<br>
+          Parent: Suresh Kumar · +91 98765 43210<br>
+          Enrolled 04 Jun 2026
+        </div>
+      </div>
+    </div>
+
+    <div class="tile warn">
+      <p class="lbl">Outstanding due</p>
+      <div class="big"><span class="cur">₹</span>1,500</div>
+      <div class="sub">next due 05 Nov 2026</div>
+    </div>
+
+    <div class="tile ok">
+      <p class="lbl">Attendance</p>
+      <div class="row">
+        <div class="ring" style="--p:92"><b>92%</b></div>
+        <div class="sub" style="margin:0">88 of 96 sessions<br>last 3 months</div>
+      </div>
+    </div>
+
+    <div class="tile brand span2">
+      <p class="lbl">Enrollment &amp; batch</p>
+      <div class="row" style="justify-content:space-between">
+        <div>
+          <div class="big" style="font-size:20px">Kani — Advanced Drawing</div>
+          <div class="sub">Evening Advanced · Mon, Wed, Fri · 5:30–7:00 PM</div>
+        </div>
+        <span class="chip">₹1,500 /mo</span>
+      </div>
+    </div>
+
+    <div class="tile">
+      <p class="lbl">Last payment</p>
+      <div class="big"><span class="cur">₹</span>1,500</div>
+      <div class="sub">05 Oct 2026 · UPI</div>
+    </div>
+
+    <div class="tile">
+      <p class="lbl">Course progress</p>
+      <div class="big">5<span style="font-size:.6em;color:var(--muted)">/ 12 mo</span></div>
+      <div class="sub">42% through the course</div>
+    </div>
+
+    <div class="tile span2">
+      <p class="lbl">Recent payments</p>
+      <div class="pay">
+        <div><span>05 Oct 2026</span><span class="amt">₹1,500</span><span class="m">UPI</span></div>
+        <div><span>05 Sep 2026</span><span class="amt">₹1,500</span><span class="m">Cash</span></div>
+        <div><span>05 Aug 2026</span><span class="amt">₹1,500</span><span class="m">UPI</span></div>
+        <div><span>04 Jun 2026</span><span class="amt">₹3,000</span><span class="m">UPI</span></div>
+      </div>
+    </div>
+
+    <div class="tile span2">
+      <p class="lbl">Attendance — last 90 days</p>
+      <div class="heat">
+        <i class="hi"></i><i class="hi"></i><i></i><i class="on"></i><i class="hi"></i><i class="hi"></i><i class="hi"></i><i></i><i class="on"></i><i class="hi"></i><i class="hi"></i><i class="hi"></i><i class="on"></i><i class="hi"></i><i></i><i class="hi"></i><i class="hi"></i><i class="on"></i>
+        <i class="on"></i><i class="hi"></i><i class="hi"></i><i></i><i class="hi"></i><i class="on"></i><i class="hi"></i><i class="hi"></i><i class="hi"></i><i class="on"></i><i></i><i class="hi"></i><i class="hi"></i><i class="hi"></i><i class="on"></i><i class="hi"></i><i></i><i class="on"></i>
+      </div>
+      <div class="sub">attended in purple · missed in light</div>
+    </div>
+
+    <div class="tile span2">
+      <p class="lbl">Activity</p>
+      <ul class="tl">
+        <li>Course fee for October recorded — ₹1,500<time>05 Oct 2026</time></li>
+        <li>Fee reminder sent to parent<time>03 Oct 2026</time></li>
+        <li>Enrolled in Kani — Advanced Drawing<time>04 Jun 2026</time></li>
+      </ul>
+    </div>
+  </div>
+</div>
+</body>
+</html>
