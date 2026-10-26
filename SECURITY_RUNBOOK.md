@@ -1,5 +1,12 @@
 # Security runbook — 2026-10-26
 
+> **Status 2026-10-26:** the admin password and recovery key were rotated directly in the
+> production database, and all 32 pre-existing sessions were deleted. The new credentials are not
+> in this repo. Priorities 1 and 2 are done; the user table was reviewed (two expected accounts)
+> and the payment/reminder queries are still worth running. The live Railway service was returning
+> `404 Application not found` when this was executed, so the code fixes below are committed but
+> not yet deployed.
+
 ## What happened
 
 Until this commit, `README.md` published the live URL **and a working admin login** of the

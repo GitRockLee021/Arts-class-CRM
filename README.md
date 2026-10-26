@@ -494,10 +494,10 @@ after"** — build and get sign-off on a mock before wiring backend/frontend.
 
 **Still open (deliberately, not forgotten)**
 
-- **Admin credentials were published in this README and are therefore in git history.** The live
-  account must be re-keyed immediately — run `npm run create-admin` or change the password in the
-  UI, then invalidate every session. `SECURITY_RUNBOOK.md` has the exact steps and verification
-  queries. Never commit credentials here again (history rewrite does not substitute for rotation).
+- **Admin credentials were published in this README and are therefore in git history.** They were
+  rotated on 2026-10-26 (new password + recovery key, all 32 pre-existing sessions invalidated).
+  The new credentials are not stored in this repo. Never commit credentials here again; history
+  rewrite does not substitute for rotation. `SECURITY_RUNBOOK.md` records the procedure.
 - `npm audit` now reports **2 moderate** advisories, both from `exceljs` → `uuid` (a buffer-bounds
   check in `uuid` v3/v5/v6; exceljs uses only v4 here, so it is not reachable). The offered fix
   is a breaking downgrade to `exceljs@3.4.0`, so it is deferred rather than forced. The critical
