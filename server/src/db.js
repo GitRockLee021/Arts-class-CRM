@@ -1,7 +1,12 @@
 import 'dotenv/config';
+import fs from 'node:fs';
+import path from 'node:path';
+import { fileURLToPath } from 'node:url';
 import pg from 'pg';
 
 const { Pool } = pg;
+
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
 const connectionString = process.env.DATABASE_URL;
 if (!connectionString) {
@@ -11,12 +16,35 @@ if (!connectionString) {
   );
 }
 
-const ssl =
-  process.env.PGSSL === 'false' || process.env.PGSSL === '0'
-    ? false
-    : { rejectUnauthorized: false };
+// Supabase's pooler presents a self-signed chain rooted at "Supabase Root 2021 CA", which is not in
+// Node's trust store. Pin that root so the DB connection is actually verified instead of accepting
+// any certificate (`rejectUnauthorized: false` made the app trivially MITM-able).
+//
+// Overrides:
+// - PGSSL_CA=/path/to/ca.pem  use a different CA bundle (e.g. after Supabase rotates the root)
+// - PGSSL_NO_VERIFY=true      disable certificate verification entirely (local dev only, never live)
+// - PGSSL=false               disable TLS entirely (local dev only)
+const DEFAULT_CA_PATH = path.join(__dirname, '..', 'certs', 'supabase-root-2021-ca.pem');
 
-export const pool = new Pool({ connectionString, ssl, max: 10 });
+function sslConfig() {
+  if (process.env.PGSSL === 'false' || process.env.PGSSL === '0') return false;
+  if (process.env.PGSSL_NO_VERIFY === 'true') {
+    console.warn('[db] PGSSL_NO_VERIFY=true - database TLS certificate verification is DISABLED');
+    return { rejectUnauthorized: false };
+  }
+  const caPath = process.env.PGSSL_CA || DEFAULT_CA_PATH;
+  try {
+    return { ca: fs.readFileSync(caPath, 'utf8'), rejectUnauthorized: true };
+  } catch (err) {
+    // Fail closed: never silently fall back to an unverified connection.
+    throw new Error(
+      `Cannot read PostgreSQL CA certificate at ${caPath} (${err.message}). ` +
+        'Set PGSSL_CA to a PEM file, or PGSSL_NO_VERIFY=true for local development only.',
+    );
+  }
+}
+
+export const pool = new Pool({ connectionString, ssl: sslConfig(), max: 10 });
 
 let tx = null;
 

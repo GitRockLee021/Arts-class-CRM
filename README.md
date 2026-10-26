@@ -174,11 +174,11 @@ by default; `--yes` applies. Kept for reference — it is not part of the normal
   per-router with `requireRole('admin')`.
 - Env: `SESSION_TTL_DAYS`, `COOKIE_SECURE` (**must be `true` on live HTTPS**).
 
-### Test accounts (local/dev only)
+### Admin account
 
-| Role | Login (user ID) | Password |
-| ---- | --------------- | -------- |
-| Admin | `Radhakannan` | `Radhakannan` (reset via `npm run create-admin`) |
+Credentials are **not** recorded in this repo. Provision or reset the admin with
+`npm run create-admin` (it prompts for the user ID, name and password, and prints a fresh
+recovery key once). See `SECURITY_RUNBOOK.md` for rotation and incident-response steps.
 
 Login identifier is a **user ID**, not necessarily an email - the demo signs in by name. The
 server validates it with `isLoginId` (non-empty, no control chars, <=120 chars) in
@@ -494,15 +494,27 @@ after"** — build and get sign-off on a mock before wiring backend/frontend.
 
 **Still open (deliberately, not forgotten)**
 
-- **The admin password is `Radhakannan`** — the same as the user ID, on a publicly reachable URL.
-  Leaving it was an explicit request; it is the weakest thing in the deployment and should be
-  changed before real student data goes in.
+- **Admin credentials were published in this README and are therefore in git history.** The live
+  account must be re-keyed immediately — run `npm run create-admin` or change the password in the
+  UI, then invalidate every session. `SECURITY_RUNBOOK.md` has the exact steps and verification
+  queries. Never commit credentials here again (history rewrite does not substitute for rotation).
 - `npm audit` now reports **2 moderate** advisories, both from `exceljs` → `uuid` (a buffer-bounds
   check in `uuid` v3/v5/v6; exceljs uses only v4 here, so it is not reachable). The offered fix
   is a breaking downgrade to `exceljs@3.4.0`, so it is deferred rather than forced. The critical
   `proxy-addr` (IP spoofing, CVE-2026-90711, via express) and high `brace-expansion` (DoS, via
   exceljs → archiver → glob) advisories that surfaced on 2026-10-11 were fixed with
   `npm audit fix` (non-breaking: express 4.22.2→4.22.3, proxy-addr 2.0.7→2.0.8, qs 6.15.3→6.16.0).
+  The high `body-parser` DoS (GHSA-27r3-jxmh-p828) was fixed the same way on 2026-10-26.
+
+### Third pass (2026-10-26, live audit)
+
+| # | Item | Verdict |
+| - | ---- | ------- |
+| 1 | Published admin credentials reachable on the live URL | **Rotation required** — see `SECURITY_RUNBOOK.md`. The password is no longer recorded in this repo. |
+| 2 | Sessions never expired server-side | **Fixed** — `getUserFromToken` requires `expires_at > now()` and applies the sliding TTL; `clearExpiredSessions()` runs at boot and every 6 hours. Previously a stolen token was valid forever. |
+| 3 | No revocation on credential change | **Fixed** — change-password keeps only the caller's session, recovery-key reset kills all sessions, recovery-key rotation signs out other devices. |
+| 4 | Database TLS certificate not verified | **Fixed** — Supabase Root 2021 CA pinned in `server/certs/supabase-root-2021-ca.pem`; `PGSSL_CA` overrides it, `PGSSL_NO_VERIFY` is a local-dev escape hatch only. |
+| 5 | High-severity `body-parser` DoS | **Fixed** — `npm audit fix`; only the unreachable `exceljs → uuid` moderate remains. |
 
 ---
 

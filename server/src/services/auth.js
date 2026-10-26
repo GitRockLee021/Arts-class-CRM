@@ -5,6 +5,7 @@ import { get, run } from '../db.js';
 const SCRYPT_KEYLEN = 64;
 const SESSION_COOKIE = 'session';
 const SESSION_TTL_MS = (Number(process.env.SESSION_TTL_DAYS) || 30) * 24 * 60 * 60 * 1000;
+export const SESSION_TTL_SECONDS = Math.floor(SESSION_TTL_MS / 1000);
 export const COOKIE_SECURE = process.env.COOKIE_SECURE === 'true';
 
 export function hashPassword(password) {
@@ -51,21 +52,35 @@ export async function destroySession(token) {
   await run('DELETE FROM sessions WHERE token_hash = $1', hashToken(token));
 }
 
+/** Invalidate every session for a user, optionally keeping the caller's current session. */
+export async function revokeUserSessions(userId, { exceptToken = null } = {}) {
+  if (exceptToken) {
+    await run('DELETE FROM sessions WHERE user_id = $1 AND token_hash <> $2', userId, hashToken(exceptToken));
+  } else {
+    await run('DELETE FROM sessions WHERE user_id = $1', userId);
+  }
+}
+
 export async function clearExpiredSessions() {
-  await run('DELETE FROM sessions WHERE expires_at <= $1', new Date().toISOString());
+  const { changes } = await run('DELETE FROM sessions WHERE expires_at <= $1', new Date().toISOString());
+  return changes;
 }
 
 export async function getUserFromToken(token) {
   if (!token) return null;
+  const tokenHash = hashToken(token);
+  // expires_at must be enforced in SQL: a row that is past its TTL is no longer a valid session.
   const row = await get(
     `SELECT u.id, u.email, u.name, u.role, u.active
      FROM sessions s JOIN users u ON u.id = s.user_id
-     WHERE s.token_hash = $1`,
-    hashToken(token),
+     WHERE s.token_hash = $1 AND s.expires_at > now()`,
+    tokenHash,
   );
   if (!row) return null;
   if (!row.active) return null;
-  await run('UPDATE sessions SET last_seen_at = $1 WHERE token_hash = $2', new Date().toISOString(), hashToken(token));
+  // Sliding TTL: activity extends the session, expiry is enforced on the next request.
+  const expiresAt = new Date(Date.now() + SESSION_TTL_MS).toISOString();
+  await run('UPDATE sessions SET last_seen_at = now(), expires_at = $1 WHERE token_hash = $2', expiresAt, tokenHash);
   return row;
 }
 

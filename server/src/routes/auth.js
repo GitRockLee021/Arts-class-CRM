@@ -9,12 +9,14 @@ import {
   verifyPassword,
   issueSession,
   destroySession,
+  revokeUserSessions,
   generateRecoveryKey,
   hashToken,
   requireAuth,
   publicUser,
   sessionCookie,
   clearSessionCookie,
+  SESSION_TTL_SECONDS,
   sleep,
 } from '../services/auth.js';
 
@@ -40,7 +42,7 @@ router.post(
       return res.status(401).json({ error: 'Invalid email or password' });
     }
     const token = await issueSession(user.id);
-    res.setHeader('Set-Cookie', sessionCookie(token, 30 * 24 * 60 * 60));
+    res.setHeader('Set-Cookie', sessionCookie(token, SESSION_TTL_SECONDS));
     res.json({ user: publicUser(user) });
   }),
 );
@@ -76,6 +78,8 @@ router.post(
       return res.status(401).json({ error: 'Current password is incorrect' });
     }
     await run('UPDATE users SET password_hash = $1 WHERE id = $2', hashPassword(next), user.id);
+    // A password change must not leave an attacker's existing session alive. Keep only the caller.
+    await revokeUserSessions(user.id, { exceptToken: req.sessionToken });
     res.json({ ok: true });
   }),
 );
@@ -86,6 +90,8 @@ router.post(
   ah(async (req, res) => {
     const recoveryKey = generateRecoveryKey();
     await run('UPDATE users SET recovery_key_hash = $1 WHERE id = $2', hashToken(recoveryKey), req.user.id);
+    // Rotating the recovery key is a recovery action: sign out every other device.
+    await revokeUserSessions(req.user.id, { exceptToken: req.sessionToken });
     res.json({ recoveryKey });
   }),
 );
@@ -111,6 +117,8 @@ router.post(
       return res.status(400).json({ error: 'Could not reset with the provided details' });
     }
     await run('UPDATE users SET password_hash = $1 WHERE id = $2', hashPassword(newPassword), user.id);
+    // Recovery resets are used when an account may be compromised: kill every existing session.
+    await revokeUserSessions(user.id);
     res.json({ ok: true, message: 'Password reset complete. Sign in with your new password.' });
   }),
 );

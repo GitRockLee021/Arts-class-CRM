@@ -19,7 +19,7 @@ import webhooksRouter from './routes/webhooks.js';
 import shareRouter from './routes/share.js';
 import authRouter from './routes/auth.js';
 import usersRouter from './routes/users.js';
-import { requireAuth, requireRole } from './services/auth.js';
+import { requireAuth, requireRole, clearExpiredSessions } from './services/auth.js';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const PORT = Number(process.env.PORT) || 5001;
@@ -95,6 +95,20 @@ app.use((err, req, res, next) => {
   const message = status === 400 ? 'Invalid request' : 'Internal server error';
   res.status(status).json({ error: message });
 });
+
+async function sweepSessions() {
+  try {
+    const removed = await clearExpiredSessions();
+    if (removed) console.log(`[sessions] cleared ${removed} expired session(s)`);
+  } catch (err) {
+    console.error('[sessions] cleanup failed:', err.message);
+  }
+}
+
+// Drop sessions that are past their TTL even if nobody presents them again, so stolen tokens
+// cannot sit in the table forever. Runs at boot and every 6 hours.
+await sweepSessions();
+setInterval(sweepSessions, 6 * 60 * 60 * 1000).unref();
 
 app.listen(PORT, () => {
   console.log(`CRM server listening on http://localhost:${PORT}`);
