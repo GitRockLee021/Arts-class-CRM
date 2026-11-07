@@ -12,6 +12,7 @@ err.txt
 *.html
 README.md
 SECURITY_RUNBOOK.md
+SECRET_ROTATION.md
 SESSION_MEMORY.md
 design-*.html
 Pravaha_logo.jpeg

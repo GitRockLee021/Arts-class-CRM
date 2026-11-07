@@ -1,0 +1,51 @@
+name: Key rotation reminder
+
+# Opens one tracked issue per quarter for the keys that cannot be rotated safely by API.
+# Session tokens and the admin credential are handled by code / `npm run rotate:admin`.
+on:
+  schedule:
+    - cron: '0 3 1 1,4,7,10 *' # 03:00 UTC on 1 Jan/Apr/Jul/Oct
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  issues: write
+
+jobs:
+  remind:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Open the quarterly rotation issue (if absent)
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const now = new Date();
+            const period = `${now.getUTCFullYear()}-Q${Math.floor(now.getUTCMonth() / 3) + 1}`;
+            const title = `Key rotation — ${period}`;
+            const search = await github.rest.search.issuesAndPullRequests({
+              q: `repo:${context.repo.owner}/${context.repo.repo} in:title "${title}" state:open`,
+            });
+            if (search.data.total_count > 0) {
+              core.info(`Issue already open: ${title}`);
+              return;
+            }
+            const body = [
+              'Quarterly rotation checklist. See `SECRET_ROTATION.md` for the full matrix.',
+              '',
+              '- [ ] Admin password + recovery key — `cd server && npm run rotate:admin`',
+              '- [ ] Supabase DB password — only with the rollback workflow (update `DATABASE_URL` + redeploy + health check)',
+              '- [ ] WhatsApp access token — Business Manager, then update the host env var',
+              '- [ ] Razorpay key secret + webhook secret — dashboard, then update the host env var',
+              '- [ ] Hosting API key (Render/Railway) and GitHub token',
+              '- [ ] Verify `/api/health`, login, one receipt link, and a WhatsApp dry run',
+              '',
+              '_Rotate only what is due; do not bulk-rotate receipt share tokens (it breaks parent links)._',
+            ].join('\n');
+            const issue = await github.rest.issues.create({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              title,
+              body,
+              labels: ['security'],
+            });
+            core.info(`Created #${issue.data.number}`);
