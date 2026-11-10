@@ -487,6 +487,29 @@ Behavior:
 - Then fires `sendPaymentReceiptForPayment` (fire-and-forget) so the parent gets the receipt.
 - The enrollment's due recalculates automatically; refresh Dues/Billing to see it paid.
 
+### Switching from test mode to live keys
+
+Do this only after Razorpay has approved the account/KYC. Keep test mode until then.
+
+1. In the Razorpay dashboard switch to **Live mode**, then **Settings → API Keys → Generate key**.
+2. On Render → `pravaha-crm` → **Environment**, replace:
+   - `RAZORPAY_KEY_ID` with the `rzp_live_...` key id
+   - `RAZORPAY_KEY_SECRET` with the live secret
+   Never put the secret in `client/.env`, a Vite variable, or a chat message.
+3. In **Live mode → Settings → Webhooks**, create a webhook:
+   - URL `https://pravaha-crm.onrender.com/api/webhooks/razorpay`
+   - Event `payment_link.paid`
+   - Copy its signing secret into `RAZORPAY_WEBHOOK_SECRET` on Render.
+   Test-mode and live-mode webhooks are separate; the test webhook does not verify live payments.
+4. Save the Render environment. Render redeploys automatically. Confirm **Settings → Razorpay mode**
+   shows **Live (real payments)**.
+5. Verify with a real **₹1** payment before sending links to parents. Check that the `fee_payments`
+   row, the Dues balance, and the WhatsApp receipt are all correct.
+
+Standard Checkout also needs `RAZORPAY_KEY_ID`/`RAZORPAY_KEY_SECRET` on the server. The browser
+gets the public key id back from `POST /api/create-order`, so the live switch does not require a
+client rebuild.
+
 ### Automatic receipt delivery
 
 `server/src/services/paymentReceipts.js#sendPaymentReceiptForPayment` builds the message and
