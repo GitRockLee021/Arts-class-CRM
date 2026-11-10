@@ -25,6 +25,11 @@ The sample invoice is **not** published on the site. It lives at
 `docs/razorpay/sample-invoice.png` and is uploaded directly to Razorpay when submitting the website
 for verification. Send it to a parent only if they ask for an example.
 
+`invoice.html` and `assets/sample-invoice.png` are deliberately harmless tombstones (a redirect
+stub and a 1×1 transparent image). An earlier Render deploy kept serving the deleted invoice page
+and image, so these two paths overwrite the stale copies on the next deploy. Do not put real
+invoice content there.
+
 The navigation and footer link to the policy pages on every page, which is what Razorpay's website
 review looks for.
 
