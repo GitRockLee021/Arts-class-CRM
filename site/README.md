@@ -20,8 +20,10 @@ It is deliberately separate from the CRM in `client/`:
 | `terms.html` | Terms & conditions |
 | `privacy.html` | Privacy policy |
 | `refund.html` | Refund & cancellation policy |
-| `invoice.html` | Human-readable sample invoice |
-| `assets/sample-invoice.png` | Sample invoice to upload to Razorpay |
+
+The sample invoice is **not** published on the site. It lives at
+`docs/razorpay/sample-invoice.png` and is uploaded directly to Razorpay when submitting the website
+for verification. Send it to a parent only if they ask for an example.
 
 The navigation and footer link to the policy pages on every page, which is what Razorpay's website
 review looks for.
@@ -36,7 +38,7 @@ review looks for.
    - **Build Command:** `echo "static site - no build step"`
    - **Publish Directory:** `.`
 4. Create the site. The URL will be `https://pravaha-art-space.onrender.com`.
-5. Open the URL and check Home, Fees, Contact, Terms, Privacy, Refund and Sample invoice.
+5. Open the URL and check Home, About, Pricing, Contact, Terms, Privacy and Refund.
 
 If you choose a different Render name, update the absolute URLs in `robots.txt` and `sitemap.xml`
 (and optionally add canonical tags). Relative links inside the site do not need changes.
@@ -48,7 +50,7 @@ In Razorpay Dashboard (live mode) → **Account & Settings → Business website 
 - **Website URL:** `https://pravaha-art-space.onrender.com`
 - **Business name:** Pravaha Art Space / Right & Left Learning Academy
 - **Business category:** Education / Fine arts classes
-- **Sample invoice:** upload `site/assets/sample-invoice.png`
+- **Sample invoice:** upload `docs/razorpay/sample-invoice.png`
 - **Payment description:** Monthly fine arts class fees collected through Razorpay payment links and
   standard checkout.
 
@@ -60,7 +62,8 @@ The required pages are:
 - Terms and conditions → `/terms.html`
 - Privacy policy → `/privacy.html`
 - Refund/cancellation policy → `/refund.html`
-- Sample invoice → `/invoice.html` and `assets/sample-invoice.png`
+
+The sample invoice is uploaded in the Razorpay form, not linked from the public site.
 
 After submission, Razorpay review can take up to 3 working days. Live API keys become available only
 after the website is accepted.
@@ -88,4 +91,5 @@ cd server
 node scripts/generate-sample-invoice.mjs
 ```
 
-The script writes `site/assets/sample-invoice.png`. It does not read or write the database.
+The script writes `docs/razorpay/sample-invoice.png`. It does not read or write the database and the
+file is not included in the published `site/` folder.

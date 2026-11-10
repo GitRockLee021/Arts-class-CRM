@@ -500,7 +500,8 @@ The public site lives in [`site/`](site/) and is deployed separately as a Render
 3. The URL is `https://pravaha-art-space.onrender.com` (change `site/robots.txt` and
    `site/sitemap.xml` if you choose a different name).
 4. Open every page, then submit the URL in Razorpay → **Account & Settings → Business website
-   details**. Upload `site/assets/sample-invoice.png` as the sample invoice.
+   details**. Upload `docs/razorpay/sample-invoice.png` as the sample invoice. The invoice is not
+   published on the public site.
 
 Fees on the public site match the CRM `courses` table; update both `pricing.html` table and mobile
 cards if fees change. `site/README.md` has the full checklist. Do not submit the CRM URL.

@@ -2,8 +2,9 @@
  * Generates the sample invoice image used on the public site.
  *
  * Razorpay asks for a sample invoice during business-website verification. This script draws
- * a clean, realistic invoice to `site/assets/sample-invoice.png`. It uses only local files and
- * the already-installed @napi-rs/canvas dependency, so it does not touch the database.
+ * a clean, realistic invoice to `docs/razorpay/sample-invoice.png`. It is deliberately kept out
+ * of the published `site/` folder: it is uploaded to Razorpay directly, not linked publicly.
+ * It uses only local files and the already-installed @napi-rs/canvas dependency.
  *
  * Run from the repo root:
  *   node server/scripts/generate-sample-invoice.mjs
@@ -15,7 +16,7 @@ import { fileURLToPath } from 'node:url';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const root = path.resolve(__dirname, '..', '..');
-const outDir = path.join(root, 'site', 'assets');
+const outDir = path.join(root, 'docs', 'razorpay');
 mkdirSync(outDir, { recursive: true });
 
 GlobalFonts.registerFromPath('C:\\Windows\\Fonts\\segoeui.ttf', 'Segoe');
