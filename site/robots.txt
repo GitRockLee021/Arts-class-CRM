@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://pravaha-art-space.onrender.com/sitemap.xml

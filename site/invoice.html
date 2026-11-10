@@ -1,0 +1,191 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Sample Invoice — Pravaha Art Space</title>
+  <meta name="description" content="A sample fee invoice from Pravaha Art Space showing the format used for tuition, admission and kit charges, and secure Razorpay payment." />
+  <meta name="theme-color" content="#f8f2e8" />
+  <link rel="icon" href="assets/logo.png" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;0,9..144,600;1,9..144,500&family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+
+<header class="site-header">
+  <div class="wrap header-inner">
+    <a class="brand" href="index.html" aria-label="Pravaha Art Space home">
+      <img src="assets/logo.png" alt="Right &amp; Left Learning Academy logo" />
+      <span class="brand-text">
+        <span class="brand-name">Pravaha Art Space</span>
+        <span class="brand-sub">Right &amp; Left Learning Academy</span>
+      </span>
+    </a>
+    <button class="menu-btn" type="button" aria-label="Open menu" aria-expanded="false" data-menu-btn>Menu</button>
+    <nav class="nav" data-nav>
+      <a href="index.html">Home</a>
+      <a href="about.html">About</a>
+      <a href="pricing.html">Fees</a>
+      <a href="contact.html">Contact</a>
+      <a href="invoice.html" class="active">Sample invoice</a>
+      <a class="nav-cta" href="contact.html">Book a trial</a>
+    </nav>
+  </div>
+</header>
+
+<main>
+  <div class="page-head">
+    <div class="wrap">
+      <div class="eyebrow">Fees &amp; receipts</div>
+      <h1>Sample invoice</h1>
+      <p>
+        This sample shows the format used for academy fee invoices. A real invoice and receipt are issued
+        after payment, using the actual student, programme and amount.
+      </p>
+      <div class="meta-line">Sample only · no payment has been collected</div>
+    </div>
+  </div>
+
+  <section class="section-tight" style="padding-top:18px">
+    <div class="wrap">
+      <div class="invoice-actions no-print">
+        <a class="btn btn-primary" href="assets/sample-invoice.png" download>Download sample invoice (PNG)</a>
+        <button class="btn btn-ghost" type="button" onclick="window.print()">Print / save as PDF</button>
+        <a class="btn btn-light" href="pricing.html">View fee table</a>
+      </div>
+
+      <div class="invoice-sheet">
+        <div class="invoice-top">
+          <img src="assets/logo.png" alt="Right &amp; Left Learning Academy" />
+          <div class="invoice-title">
+            <span class="sample-stamp">Sample document</span>
+            <h1>Invoice</h1>
+            <span>Pravaha Art Space</span>
+          </div>
+        </div>
+
+        <div class="invoice-cols">
+          <div>
+            <h4>From</h4>
+            <p><strong>Pravaha Art Space</strong></p>
+            <p>A unit of Right &amp; Left Learning Academy</p>
+            <p>No. 2, Agaram Main Road, Indra Nagar</p>
+            <p>Selaiyur, Chennai 600 073, Tamil Nadu</p>
+            <p>+91 91766 56580</p>
+            <p>rightleftlearningacademy@gmail.com</p>
+          </div>
+          <div>
+            <h4>Invoice details</h4>
+            <p><strong>Invoice no:</strong> PAS/2026-27/0042</p>
+            <p><strong>Invoice date:</strong> 10 November 2026</p>
+            <p><strong>Programme:</strong> Vidhai (Foundation)</p>
+            <p><strong>Fee period:</strong> November 2026</p>
+            <p><strong>Status:</strong> Paid</p>
+          </div>
+        </div>
+
+        <div class="invoice-cols">
+          <div>
+            <h4>Billed to</h4>
+            <p><strong>Parent of Sample Student</strong></p>
+            <p>Selaiyur, Chennai 600 073</p>
+            <p>Phone: +91 90000 00000</p>
+          </div>
+          <div>
+            <h4>Payment</h4>
+            <p><strong>Method:</strong> UPI (Razorpay)</p>
+            <p><strong>Reference:</strong> pay_SAMPLE0042</p>
+            <p><strong>Receipt:</strong> PAS-R-2026-0042</p>
+          </div>
+        </div>
+
+        <table class="invoice-table">
+          <thead>
+            <tr>
+              <th>Description</th>
+              <th>Fee type</th>
+              <th class="right">Amount (INR)</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Monthly tuition — Vidhai, November 2026</td>
+              <td>Tuition</td>
+              <td class="right">1,200.00</td>
+            </tr>
+            <tr>
+              <td>One-time admission fee</td>
+              <td>Admission</td>
+              <td class="right">300.00</td>
+            </tr>
+            <tr>
+              <td>Art kit (starter materials)</td>
+              <td>Kit</td>
+              <td class="right">600.00</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <div class="invoice-total">
+          <span>Total paid</span>
+          <strong>₹ 2,100.00</strong>
+        </div>
+
+        <div class="invoice-foot">
+          <p><b>Thank you.</b> This is a computer-generated sample invoice. No payment was collected for this document.</p>
+          <p>For fee or payment questions, contact +91 91766 56580 or rightleftlearningacademy@gmail.com. Refunds and cancellations are governed by the <a href="refund.html">refund policy</a>.</p>
+        </div>
+      </div>
+
+      <div class="callout" style="margin-top:26px">
+        <strong>How real invoices are issued.</strong> When a fee is paid through the secure Razorpay link,
+        the academy records the payment against the student’s enrolment and issues a receipt with the actual
+        amount, month and payment reference. The parent receives a receipt link on WhatsApp.
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer class="site-footer">
+  <div class="wrap">
+    <div class="footer-grid">
+      <div>
+        <div class="footer-brand">
+          <img src="assets/logo.png" alt="" />
+          <strong>Pravaha Art Space</strong>
+        </div>
+        <p>A unit of Right &amp; Left Learning Academy. Structured fine arts education in Selaiyur, Chennai, since 2019.</p>
+        <p>No. 2, Agaram Main Road, Indra Nagar,<br />Selaiyur, Chennai 600 073.</p>
+      </div>
+      <div>
+        <h4>Explore</h4>
+        <div class="footer-links">
+          <a href="index.html">Home</a>
+          <a href="about.html">About us</a>
+          <a href="pricing.html">Fees &amp; levels</a>
+          <a href="contact.html">Contact us</a>
+          <a href="invoice.html">Sample invoice</a>
+        </div>
+      </div>
+      <div>
+        <h4>Policies</h4>
+        <div class="footer-links">
+          <a href="terms.html">Terms &amp; conditions</a>
+          <a href="privacy.html">Privacy policy</a>
+          <a href="refund.html">Refund &amp; cancellation</a>
+          <a href="contact.html">Payment support</a>
+        </div>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span>© 2026 Pravaha Art Space · Right &amp; Left Learning Academy. All rights reserved.</span>
+      <span>Payments secured by Razorpay · Made in Chennai</span>
+    </div>
+  </div>
+</footer>
+
+<script src="script.js"></script>
+</body>
+</html>

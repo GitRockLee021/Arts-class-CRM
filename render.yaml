@@ -64,3 +64,23 @@ services:
         sync: false
       - key: RAZORPAY_WEBHOOK_SECRET
         sync: false
+
+  # Public business website used for Razorpay website verification. It is a plain static site:
+  # no server, no database, no secrets. See site/README.md.
+  - type: web
+    name: pravaha-art-space
+    runtime: static
+    branch: master
+    buildCommand: echo "static site - no build step"
+    staticPublishPath: ./site
+    autoDeployTrigger: commit
+    headers:
+      - path: /*
+        name: X-Content-Type-Options
+        value: nosniff
+      - path: /*
+        name: X-Frame-Options
+        value: SAMEORIGIN
+      - path: /*
+        name: Referrer-Policy
+        value: strict-origin-when-cross-origin

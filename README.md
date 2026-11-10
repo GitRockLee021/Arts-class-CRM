@@ -487,9 +487,28 @@ Behavior:
 - Then fires `sendPaymentReceiptForPayment` (fire-and-forget) so the parent gets the receipt.
 - The enrollment's due recalculates automatically; refresh Dues/Billing to see it paid.
 
+### Public business website (Razorpay verification)
+
+Razorpay will not issue live API keys until the account has a verified public website with **About us,
+Contact us, Pricing, Terms and conditions, Privacy policy, Refund/cancellation policy** and a **sample
+invoice**. The CRM is login-protected, so it cannot be submitted as the business website.
+
+The public site lives in [`site/`](site/) and is deployed separately as a Render **static site**:
+
+1. Render → **New → Static Site** → repo `GitRockLee021/Arts-class-CRM`, branch `master`.
+2. Build command `echo "static site - no build step"`, publish directory `./site`.
+3. The URL is `https://pravaha-art-space.onrender.com` (change `site/robots.txt` and
+   `site/sitemap.xml` if you choose a different name).
+4. Open every page, then submit the URL in Razorpay → **Account & Settings → Business website
+   details**. Upload `site/assets/sample-invoice.png` as the sample invoice.
+
+Fees on the public site match the CRM `courses` table; update both `pricing.html` table and mobile
+cards if fees change. `site/README.md` has the full checklist. Do not submit the CRM URL.
+
 ### Switching from test mode to live keys
 
-Do this only after Razorpay has approved the account/KYC. Keep test mode until then.
+Do this only after Razorpay has approved the account/KYC **and** verified the public website.
+Keep test mode until then.
 
 1. In the Razorpay dashboard switch to **Live mode**, then **Settings → API Keys → Generate key**.
 2. On Render → `pravaha-crm` → **Environment**, replace:
