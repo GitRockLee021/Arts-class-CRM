@@ -8,7 +8,7 @@ parent communication.
 > docs) and `SESSION_MEMORY.md` (project state + feature history). Duplicated content was
 > collapsed into one entry per topic.
 
-Last updated: 2026-10-11
+Last updated: 2026-11-09
 
 ---
 
@@ -19,7 +19,7 @@ Last updated: 2026-10-11
   auth (no external auth library).
 - **Client** — React 18 + Vite, `react-router-dom` v6, hand-rolled CSS, no UI framework.
 - **WhatsApp** — Meta WhatsApp Business Cloud API (template messages).
-- **Payments** — Razorpay Payment Links + webhook.
+- **Payments** — Razorpay Payment Links, Standard Checkout, and webhook.
 
 Requires Node.js **18+** (Node 22 LTS recommended).
 
@@ -134,10 +134,12 @@ by default; `--yes` applies. Kept for reference — it is not part of the normal
 - PowerShell blocks `npm.ps1` → build the client with `cmd /c "npm run build"` from `client/`.
   Use `railway.cmd` (not `railway`) for the Railway CLI.
 - API is bound to `http://localhost:5001`.
-- **Hosting: Railway** — project `soothing-ambition`, service `pravaha-crm-demo`,
-  repo `GitRockLee021/Arts-class-CRM`. A `Dockerfile` exists at the repo root.
-  - Live URL: **https://pravaha-crm-demo-production.up.railway.app**
-  - Check status with `railway.cmd status` from the repo root. Railway builds the repo itself.
+- **Hosting: Render** — free web service `pravaha-crm` (Singapore), repo
+  `GitRockLee021/Arts-class-CRM`, branch `master`. A `Dockerfile` exists at the repo root.
+  - Live URL: **https://pravaha-crm.onrender.com**
+  - Blueprint: `render.yaml`. Free instances sleep after ~15 minutes idle (cold start ~1 min).
+  - Railway (`pravaha-crm-demo-production.up.railway.app`) is the **old dead host**; do not use its
+    URLs in templates or docs.
 - DB is PostgreSQL (Supabase) via `DATABASE_URL`; the schema is auto-created on boot from
   `server/src/db.js`. (Was SQLite `server/data/crm.db` pre-migration.)
 - **`DATABASE_URL` must use the pooler host and a project-qualified username**:
@@ -267,9 +269,11 @@ deliberately not shown.
 - **Collect modal method branch**: method ≠ Razorpay → plain "Record payment", recorded
   immediately. Method = **Razorpay** → payment-date field hidden, submit becomes
   **"Send payment link"**, shows a "Payment link sent" confirmation, and the row action becomes
-  **"Resend link"**. Recipient number is shown in the modal helper. Recipient rule is
-  `guardian_phone || student_phone`. When the parent pays, the Razorpay webhook records it and
-  the row returns to normal automatically.
+  **"Resend link"**. The same modal also has a **"Pay now"** button that opens Razorpay
+  **Standard Checkout** on the current device; after a successful payment the server verifies
+  the signature, records the payment, and queues the receipt. Recipient number is shown in the
+  modal helper. Recipient rule is `guardian_phone || student_phone`. When a parent pays through
+  the link, the Razorpay webhook records it and the row returns to normal automatically.
 
 Backend: `GET /api/reminders/dues` returns overdue rows
 `{id, student_id, student_name, student_phone, notify_phone, course_name, batch_name, amount_due,
@@ -362,16 +366,17 @@ Send endpoint: `graph.facebook.com/v21.0/{phone_number_id}/messages`
 
 ### Template 1 — fee reminder
 
-Env `WHATSAPP_TEMPLATE_NAME`; **code default `fee_reminder`**, but the live `.env` currently sets
-`payment_reminder_test` (the variant pending Meta re-approval after a bold-text edit).
+Env `WHATSAPP_TEMPLATE_NAME`; **code default `fee_reminder`**, but the live `.env` uses
+**`payment_reminder`** (APPROVED, `en`, UTILITY, WABA `1587440146415195`).
 
 - **4 body placeholders in this order**: `{{1}}` student name, `{{2}}` amount (e.g. "₹1,500"),
   `{{3}}` due date (e.g. "05 Oct 2026"), `{{4}}` batch/course.
-- **1 URL button** "Pay Now" → the Razorpay link slug is substituted automatically.
-- `WHATSAPP_TEMPLATE_LANGUAGE` must match the approved template's language
-  (code default `en_US`; the live `.env` uses `en`).
+- **1 URL button** "Pay Now" → `https://rzp.io/{{1}}`; the Razorpay link slug is substituted
+  automatically (`buttonUrlSuffix()` strips `https://rzp.io/`).
+- `WHATSAPP_TEMPLATE_LANGUAGE` must match the approved template's language (`en` here).
 - Real test recipient: Athuzhai (enrollment 7, `9176462333`).
 - Reminders pause while the template is in review.
+- `payment_reminder_test` was deleted/never approved; do not point the app at it.
 
 ### Template 2 — `payment_receipt` (definitive spec)
 
@@ -380,28 +385,39 @@ Env `WHATSAPP_TEMPLATE_NAME`; **code default `fee_reminder`**, but the live `.en
 - **Body** (3 params, order = name → amount → date, matching `sendReceipt()`):
   `Hello {{1}}, your payment of {{2}} received on {{3}} is confirmed. Thank you! Open your
   receipt using the button below.`
-- **Button**: Website URL, text `View Receipt`, and this exact URL:
-  `https://pravaha-crm-demo-production.up.railway.app/share/r/{{1}}`
+- **Button**: Website URL, text `View receipt`, and this exact URL:
+  `https://pravaha-crm.onrender.com/share/r/{{1}}`
   The host is fixed in the template and only the 24-hex `share_token` varies, so `sendReceipt()`
   sends the **bare token** as the button parameter (see `sendReceipt()` in `services/whatsapp.js`).
 - Sample values: body `Nithilan`, `₹1,220`, `6 Sept 2026`. The button sample must be a **full
   URL** — Meta's editor requires that even though the API takes only the suffix — e.g.
-  `https://pravaha-crm-demo-production.up.railway.app/share/r/9f3a1b7c2d4e5f6a8b0c1d2e`.
-- **When the business subdomain replaces the Railway URL, update two things together**: the
-  button URL in this Meta template *and* `WHATSAPP_RECEIPT_SHARE_BASE`. Missing either one means
-  the button keeps pointing at the old host, since the template's host is frozen at creation.
+  `https://pravaha-crm.onrender.com/share/r/9f3a1b7c2d4e5f6a8b0c1d2e`.
+- **When the receipt host changes, update two things together**: the button URL in this Meta
+  template *and* `WHATSAPP_RECEIPT_SHARE_BASE`. Missing either one means the button keeps
+  pointing at the old host, since the template's host is frozen at editing time.
 - If the template is not approved, the **payment is still recorded** and the failed receipt send is
   written to `reminder_logs`. Note there is **no resend button** - receipts only fire when a
   payment is created (`routes/enrollments.js`) or the Razorpay webhook confirms one
   (`routes/webhooks.js`), so a failed send means messaging that parent manually.
-- **Status: approved by Meta (~2026-10-11).** The button host is the shared Railway URL
-  `https://pravaha-crm-demo-production.up.railway.app`, which is what the `payment_receipt`
-  template was submitted with. `WHATSAPP_RECEIPT_SHARE_BASE` matches it in both `server/.env`
-  and the live Railway env, and the language is `en`. That host is frozen into the template, so
-  when the business subdomain replaces Railway, update **both** the template's button URL *and*
-  `WHATSAPP_RECEIPT_SHARE_BASE` together (see the template spec above).
+- **Status: PENDING (edited 2026-11-09).** The old approved template pointed at the dead Railway
+  host and had a stray encoded `{{1}}`. It was edited to the Render URL above; Meta auto-reviews
+  edits (usually minutes to 24h). While PENDING it cannot be sent.
 - For a real PDF/image receipt you'd send a **document message** instead (media upload +
   document header, or an open 24h window) — not implemented.
+
+### Moving from the test number to real parents
+
+- The Meta **test number** (`+1 555-167-8247`, phone number ID `1293289517206096`) can only
+  message up to **5 numbers added in Meta App Dashboard → WhatsApp → API Setup → To → Manage
+  phone number list**. Adding a number in the CRM does **not** authorize it; Meta returns
+  `#131030 Recipient phone number not in allowed list`.
+- For all parents, add a production number to the WABA (WhatsApp Manager → Account tools →
+  Phone numbers). It must be a dedicated number that can receive SMS/voice, needs an approved
+  display name and a 2-step PIN, and the business should complete Meta business verification.
+  Replace `WHATSAPP_PHONE_NUMBER_ID` and generate a new System User token if the asset changes.
+- The CRM chooses the recipient as `guardian_phone || student_phone`. For real use, fill in the
+  parent's WhatsApp number (with country code) and obtain their opt-in before messaging.
+- Utility-template messages are billable; add a payment method to the WABA before real use.
 
 ### Dry run & notes
 
@@ -427,6 +443,31 @@ The link expires after `RAZORPAY_LINK_EXPIRY_DAYS` (default 7 days).
   the button — and the error is logged.
 - Each student gets a unique link, so a reminder can include it once; re-reminding later
   creates a fresh link for the current balance.
+
+### Standard Checkout (pay on this device)
+
+The Dues → **Collect** modal has a **Pay now** button when the method is Razorpay. It uses
+Razorpay **Standard Checkout** for an in-person payment (for example, a parent at the studio),
+while **Send payment link** remains the remote flow.
+
+1. `POST /api/create-order` accepts `{ amount, currency, enrollment_id, fee_type, notes }`.
+   `amount` is in **paise** (minimum 100). The server creates the Razorpay order and returns
+   `{ order_id, amount, currency, key_id, receipt }`. The secret key never leaves the server.
+2. The browser loads `https://checkout.razorpay.com/v1/checkout.js`, opens the modal with the
+   returned `order_id`, and sends the three `razorpay_*` fields to
+   `POST /api/verify-payment` after success.
+3. The verify endpoint checks
+   `HMAC-SHA256(order_id + "|" + payment_id, RAZORPAY_KEY_SECRET)`, re-fetches the order from
+   Razorpay so the amount/enrollment cannot be tampered with, and inserts a `fee_payments` row
+   with `method = 'razorpay'`. `gateway_ref` holds the payment id, so duplicate verification is
+   ignored. The receipt is queued through the same WhatsApp receipt path.
+4. A cancelled modal or `payment.failed` is shown in the Collect modal; a signature mismatch
+   returns **400** and never records a payment.
+
+Server env: `RAZORPAY_KEY_ID`, `RAZORPAY_KEY_SECRET` (same keys as Payment Links). The optional
+client fallback `VITE_RAZORPAY_KEY_ID` is a public key id only — **never** put the secret in
+`client/.env` or any Vite variable. In test mode use Razorpay's `success@razorpay` or a test
+card; do not send test-mode links to real parents.
 
 ### Webhook → auto-record payment
 
@@ -617,11 +658,11 @@ per-student summary on `StudentDetail.jsx`.
 | Billing page + receipt | Done (code) — needs server restart |
 | Auto receipt via WhatsApp | Done |
 | Public receipt share link | Done |
-| Razorpay links + webhook | Done |
+| Razorpay links + Standard Checkout + webhook | Done |
 | Certificates | Done |
 | CSV/XLSX import | Done |
-| `payment_reminder_test` template | Pending Meta re-approval (bold-text edit) |
-| `payment_receipt` template | Approved by Meta (~2026-10-11); already wired |
+| `payment_reminder` template | Approved (`en`); live `.env` now points at it |
+| `payment_receipt` template | Edited to Render URL 2026-11-09; **PENDING** Meta review |
 | Batch timing-change intimation | Planned |
 | Products & Materials | Planned |
 
@@ -641,7 +682,8 @@ See `server/.env.example` for the annotated list. Key groups:
   `WHATSAPP_RECEIPT_SHARE_BASE`, `WHATSAPP_WEBHOOK_VERIFY_TOKEN`
 - **Certificates** — `CERT_BRAND`, `CERT_OWNER`, `CERT_OWNER_TITLE`, `CERT_SIGNATURE_PATH`
 - **Razorpay** — `RAZORPAY_KEY_ID`, `RAZORPAY_KEY_SECRET`, `RAZORPAY_WEBHOOK_SECRET`,
-  `RAZORPAY_LINK_EXPIRY_DAYS` (default 7)
+  `RAZORPAY_LINK_EXPIRY_DAYS` (default 7); optional client fallback `VITE_RAZORPAY_KEY_ID`
+  (public key id only)
 
 ---
 
@@ -682,6 +724,8 @@ Everything else under `/api` requires a session cookie; **admin-only** endpoints
 | GET | `/api/payments/summary` | `{expected, paid, outstanding, count}` for a month |
 | GET | `/api/payments/:id/receipt` | server-rendered HTML receipt (staff) |
 | DELETE | `/api/payments/:id` | undo a payment |
+| POST | `/api/create-order` | create a Razorpay Standard Checkout order (`amount` in paise) |
+| POST | `/api/verify-payment` | verify checkout signature, record payment, queue receipt |
 
 ### Dues / reminders
 | Method | Path | Purpose |

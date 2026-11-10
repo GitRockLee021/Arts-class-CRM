@@ -1,5 +1,6 @@
 import 'dotenv/config';
 import crypto from 'node:crypto';
+import Razorpay from 'razorpay';
 
 const keyId = process.env.RAZORPAY_KEY_ID || '';
 const keySecret = process.env.RAZORPAY_KEY_SECRET || '';
@@ -7,8 +8,34 @@ const webhookSecret = process.env.RAZORPAY_WEBHOOK_SECRET || '';
 const apiUrl = process.env.RAZORPAY_API_URL || 'https://api.razorpay.com/v1';
 const paymentLinkExpiryDays = Number(process.env.RAZORPAY_LINK_EXPIRY_DAYS) || 7;
 
+let sdkClient = null;
+
+function sdk() {
+  if (!sdkClient) sdkClient = new Razorpay({ key_id: keyId, key_secret: keySecret });
+  return sdkClient;
+}
+
+function sdkFailure(err) {
+  const httpStatus = Number(err?.statusCode || err?.status || 0) || 500;
+  const description =
+    err?.error?.description || err?.error?.reason || err?.message || 'Razorpay request failed.';
+  console.error('[razorpay:error]', description);
+  return { status: 'error', httpStatus, error: description };
+}
+
 export function isRazorpayConfigured() {
   return Boolean(keyId && keySecret);
+}
+
+/** Public key id, safe to return to the browser after authentication. */
+export function razorpayKeyId() {
+  return keyId;
+}
+
+/** `live` / `test` / `unconfigured`, derived from the key prefix. */
+export function razorpayMode() {
+  if (!isRazorpayConfigured()) return 'unconfigured';
+  return keyId.startsWith('rzp_live_') ? 'live' : 'test';
 }
 
 export function isWebhookConfigured() {
@@ -22,6 +49,65 @@ export function verifyWebhookSignature(rawBody, signature) {
   const a = Buffer.from(expected);
   const b = Buffer.from(String(signature));
   return a.length === b.length && crypto.timingSafeEqual(a, b);
+}
+
+/** Verify the Standard Checkout signature: HMAC-SHA256(order_id + "|" + payment_id). */
+export function verifyPaymentSignature(orderId, paymentId, signature) {
+  if (!keySecret || !orderId || !paymentId || !signature) return false;
+  const expected = crypto
+    .createHmac('sha256', keySecret)
+    .update(`${orderId}|${paymentId}`)
+    .digest('hex');
+  const a = Buffer.from(expected);
+  const b = Buffer.from(String(signature));
+  return a.length === b.length && crypto.timingSafeEqual(a, b);
+}
+
+/**
+ * Create a Razorpay order for Standard Checkout.
+ * @param {{amount:number, currency?:string, receipt:string, notes?:object}} opts amount is in paise
+ */
+export async function createOrder({ amount, currency = 'INR', receipt, notes = {} }) {
+  if (!isRazorpayConfigured()) {
+    return {
+      status: 'error',
+      httpStatus: 500,
+      error: 'Razorpay not configured (missing RAZORPAY_KEY_ID / RAZORPAY_KEY_SECRET).',
+    };
+  }
+  if (!Number.isInteger(Number(amount)) || Number(amount) < 100) {
+    return { status: 'error', httpStatus: 400, error: 'Amount must be at least 100 paise.' };
+  }
+
+  try {
+    const order = await sdk().orders.create({
+      amount: Number(amount),
+      currency,
+      receipt,
+      notes,
+    });
+    return { status: 'ok', order };
+  } catch (err) {
+    return sdkFailure(err);
+  }
+}
+
+/** Fetch an order so the server can trust its amount/notes during verification. */
+export async function fetchOrder(orderId) {
+  if (!isRazorpayConfigured()) {
+    return {
+      status: 'error',
+      httpStatus: 500,
+      error: 'Razorpay not configured (missing RAZORPAY_KEY_ID / RAZORPAY_KEY_SECRET).',
+    };
+  }
+
+  try {
+    const order = await sdk().orders.fetch(orderId);
+    return { status: 'ok', order };
+  } catch (err) {
+    return sdkFailure(err);
+  }
 }
 
 /** Local 10-digit number (strip country code) — what Razorpay expects for the customer. */

@@ -4,14 +4,19 @@ import { fetchEnrollments, getEnrollmentWithFees } from '../lib/enrollments.js';
 import { formatMoney, formatDate } from '../lib/fees.js';
 import { enrollmentOverdue } from '../lib/monthly.js';
 import { sendFeeReminder, sendTestMessage, waStatus } from '../services/whatsapp.js';
-import { createPaymentLink, isRazorpayConfigured, isWebhookConfigured } from '../services/razorpay.js';
+import { createPaymentLink, isRazorpayConfigured, isWebhookConfigured, razorpayMode } from '../services/razorpay.js';
 import { requireRole } from '../services/auth.js';
 import { toInt } from '../lib/validate.js';
 
 const router = Router();
 
 router.get('/status', requireRole('admin'), (req, res) => {
-  res.json({ ...waStatus(), razorpayConfigured: isRazorpayConfigured(), razorpayWebhookConfigured: isWebhookConfigured() });
+  res.json({
+    ...waStatus(),
+    razorpayConfigured: isRazorpayConfigured(),
+    razorpayMode: razorpayMode(),
+    razorpayWebhookConfigured: isWebhookConfigured(),
+  });
 });
 
 function dueDateLabel(d) {

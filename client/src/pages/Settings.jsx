@@ -30,14 +30,21 @@ export default function Settings() {
 
   if (!status) return <Spinner />;
 
+  const razorpayMode =
+    status.razorpayMode === 'live' ? 'Live (real payments)' : status.razorpayMode === 'test' ? 'Test mode' : 'Not configured';
+
   const rows = [
     ['Status', status.configured ? 'Configured' : 'Not configured'],
+    ['Sending number', status.fromPhone || '—'],
     ['Phone number ID', status.phoneNumberId || '—'],
     ['Access token', status.hasAccessToken ? 'Set' : '—'],
+    ['Reminder template', status.templateName || '—'],
+    ['Receipt template', status.receiptTemplateName || '—'],
     ['Template language', status.templateLanguage || '—'],
     ['Country code', status.countryCode || '—'],
     ['Mode', status.dryRun ? 'Dry-run (logs only)' : 'Live'],
     ['Razorpay', status.razorpayConfigured ? 'Configured' : 'Not configured'],
+    ['Razorpay mode', razorpayMode],
     ['Razorpay webhook', status.razorpayWebhookConfigured ? 'Configured' : 'Not configured'],
   ];
 
@@ -59,6 +66,18 @@ export default function Settings() {
           Credentials come from the <code>server/.env</code> file (copy <code>.env.example</code>). No keys are stored
           in the database.
         </p>
+        {status.fromPhone && status.fromPhone.includes('555-') && (
+          <p className="muted note">
+            This is a Meta <strong>test number</strong>. It can only message numbers added in Meta App Dashboard →
+            WhatsApp → API Setup → <strong>To → Manage phone number list</strong> (max 5). Adding a number in the CRM
+            alone is not enough.
+          </p>
+        )}
+        {status.razorpayMode === 'test' && (
+          <p className="muted note">
+            Razorpay is in <strong>test mode</strong>. Payment links cannot accept real money.
+          </p>
+        )}
       </div>
 
       <h2>Send a test message</h2>

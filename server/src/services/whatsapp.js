@@ -7,6 +7,9 @@ const phoneNumberId = process.env.WHATSAPP_PHONE_NUMBER_ID || '';
 const accessToken = process.env.WHATSAPP_ACCESS_TOKEN || '';
 const templateLanguage = process.env.WHATSAPP_TEMPLATE_LANGUAGE || 'en_US';
 const countryCode = process.env.WHATSAPP_COUNTRY_CODE || '91';
+const fromPhone = process.env.WHATSAPP_FROM_PHONE || '';
+const templateName = process.env.WHATSAPP_TEMPLATE_NAME || 'fee_reminder';
+const receiptTemplateName = process.env.WHATSAPP_RECEIPT_TEMPLATE_NAME || 'payment_receipt';
 const dryRun = String(process.env.WHATSAPP_DRY_RUN).toLowerCase() !== 'false';
 
 export function isConfigured() {
@@ -17,7 +20,10 @@ export function waStatus() {
   return {
     configured: isConfigured(),
     phoneNumberId: phoneNumberId ? '(set)' : '',
+    fromPhone,
     hasAccessToken: Boolean(accessToken),
+    templateName,
+    receiptTemplateName,
     templateLanguage,
     countryCode,
     dryRun: dryRun || !isConfigured(),
@@ -32,6 +38,35 @@ export function normalizeNumber(phone) {
   if (p.length === 10) return `${countryCode}${p}`;
   if (p.length === 11 && p.startsWith(countryCode)) return p;
   return p;
+}
+
+/**
+ * Meta's raw error text is often cryptic (e.g. "Template name does not exist in the translation").
+ * Map the errors that actually stop a real send to an instruction the admin can act on.
+ */
+function friendlyGraphError(data, payload) {
+  const error = data?.error || {};
+  const code = Number(error.code);
+  const details = error.error_data?.details || '';
+  const template = payload?.template?.name || 'template';
+  const language = payload?.template?.language?.code || templateLanguage;
+
+  if (code === 131030) {
+    return `Recipient ${payload?.to || ''} is not on the Meta test-number allowlist. Add this exact number in Meta App Dashboard → WhatsApp → API Setup → To → Manage phone number list (max 5), or move to a production WhatsApp number.`;
+  }
+  if (code === 132001) {
+    return `WhatsApp template "${template}" does not exist in language "${language}". Check WHATSAPP_TEMPLATE_NAME / WHATSAPP_TEMPLATE_LANGUAGE.${details ? ` (${details})` : ''}`;
+  }
+  if (code === 132000 || code === 132018) {
+    return `WhatsApp template "${template}" parameter mismatch. The number/order of body or button values does not match the approved template.${details ? ` (${details})` : ''}`;
+  }
+  if (code === 131047) {
+    return 'WhatsApp requires a template message: the 24-hour customer-service window is closed.';
+  }
+  if (code === 190) {
+    return 'WhatsApp access token is invalid or expired. Generate a new permanent System User token and update WHATSAPP_ACCESS_TOKEN.';
+  }
+  return error.message || JSON.stringify(data);
 }
 
 async function callGraph(payload) {
@@ -52,9 +87,9 @@ async function callGraph(payload) {
 
   const data = await res.json().catch(() => ({}));
   if (!res.ok) {
-    const err = data?.error?.message || JSON.stringify(data);
+    const err = friendlyGraphError(data, payload);
     console.error('[whatsapp:error]', err);
-    return { status: 'error', message: err };
+    return { status: 'error', message: err, code: data?.error?.code || null };
   }
   return { status: 'sent', waMessageId: data.messages?.[0]?.id || null };
 }

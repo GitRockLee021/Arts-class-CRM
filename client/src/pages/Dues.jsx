@@ -3,6 +3,7 @@ import { api } from '../api.js';
 import { inr, today } from '../format.js';
 import { Modal, Spinner, EmptyState, Field, useForm } from '../components/ui.jsx';
 import { Icon } from '../components/icons.jsx';
+import RazorpayCheckoutButton from '../components/RazorpayCheckoutButton.jsx';
 import { useToast } from '../components/Toast.jsx';
 
 const MONTHS = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
@@ -200,8 +201,9 @@ function CollectModal({ row, reload, onClose }) {
             <p className="link-note span-2">
               <Icon name="link" size={15} />
               <span>
-                Razorpay payment link goes to {phoneLabel(row.notify_phone)} on WhatsApp. The payment is recorded and
-                the receipt sent automatically once they pay — no manual entry.
+                Use Pay now to collect on this device, or send the Razorpay payment link to{' '}
+                {phoneLabel(row.notify_phone)} on WhatsApp. The payment is recorded and the receipt sent
+                automatically once they pay — no manual entry.
               </span>
             </p>
           )}
@@ -212,6 +214,26 @@ function CollectModal({ row, reload, onClose }) {
             <button type="button" className="btn btn-ghost" onClick={onClose}>
               Cancel
             </button>
+            {rzp && (
+              <RazorpayCheckoutButton
+                amount={Number(form.amount)}
+                enrollmentId={row.id}
+                studentName={row.student_name}
+                phone={row.notify_phone}
+                description={`Fee payment — ${row.student_name}`}
+                note={form.notes}
+                label="Pay now"
+                className="btn btn-dark"
+                disabled={busy}
+                onSuccess={() => {
+                  toast('Payment received and recorded. Receipt queued.');
+                  reload();
+                  onClose();
+                }}
+                onError={setError}
+                onDismiss={() => setError('Payment cancelled — nothing was charged.')}
+              />
+            )}
             <button className="btn btn-primary" disabled={busy}>
               {busy ? 'Sending…' : rzp ? 'Send payment link' : 'Record payment'}
             </button>
